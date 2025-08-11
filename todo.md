@@ -2,7 +2,7 @@
 - [] set up the project, install dependenices 
 - [] define slices 
 - [] deploy
-
+- [] a name for the project
 
 === 
 
@@ -15,8 +15,8 @@
 - click on a sphere to oepn an idea
 - a user should be able to post an idea
 - like/ save an idea
-- user should be able to navigate through their profile - liked ideas, connections, profile details –  
-
+- user should be able to navigate through their profile - liked ideas, connections –  
+- user shuld be ablte to get to their profile and change their details
 
 
 
