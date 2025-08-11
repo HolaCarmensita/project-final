@@ -1,14 +1,21 @@
-**11.08**
-- [] set up the project, install dependenices 
-- [] define slices 
-- [] deploy
-- [] a name for the project
+**To do**
+- [] navigation for 3D space, keyboard (player controller)
+- [] connect idea 3D space with idea/ post
+- [] make idea sphere clicable
+- [] colors for each 3D idea
+- [] woobly shape/sphere
+- [] no text inside an orbit 
+
+
+
+
+
+
+
+
 
 === 
-
-
 **Slices** 
-
 - seting up project architecture and components 
 - install dependecies 
 
@@ -31,14 +38,7 @@
 - user shuld be ablte to get to their profile and change their details
 
 
-
-
-
-
-
 **project architecure**
-
-
 PROJECT-FINAL/
 ├─ frontend/ # React app (Vite or CRA)
 │ ├─ public/

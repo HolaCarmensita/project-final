@@ -3,7 +3,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import IdeaOrb from "./IdeaOrb";
-import PlayerController from "./PlayerController";
 
 export default function Scene({ velocity }) {
   // Example: 8 orbs evenly spaced in a circle
@@ -38,7 +37,6 @@ export default function Scene({ velocity }) {
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         {orbs}
-        <PlayerController velocity={velocity} />
         <OrbitControls
           enableZoom={false}
           enablePan={false}
