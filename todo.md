@@ -14,6 +14,9 @@
 - Connect through an idea to other user 
 - click on a sphere to oepn an idea
 - a user should be able to post an idea
+- a user should be able to open and edit an idea
+- a user should be able to open connected idea
+- the user should be able to navigate in the 3d space in mobie with the joystick
 - like/ save an idea
 - user should be able to navigate through their profile - liked ideas, connections –  
 - user shuld be ablte to get to their profile and change their details
