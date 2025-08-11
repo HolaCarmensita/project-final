@@ -38,8 +38,9 @@
 
 **project architecure**
 
-idea-universe/
-├─ client/ # React app (Vite or CRA)
+
+PROJECT-FINAL/
+├─ frontend/ # React app (Vite or CRA)
 │ ├─ public/
 │ └─ src/
 │ ├─ app/
@@ -95,7 +96,7 @@ idea-universe/
 │ ├─ tests/
 │ └─ index.css
 │
-└─ server/ # Node + Express + MongoDB
+└─ backend/ # Node + Express + MongoDB
 ├─ src/
 │ ├─ app.js
 │ ├─ index.js
