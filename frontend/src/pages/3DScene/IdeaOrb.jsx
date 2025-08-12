@@ -7,6 +7,8 @@ import { useRef } from "react";
 export default function IdeaOrb({
   position = [0, 2, 0],
   text = "Placeholder",
+  orbColor = "#b3e0ff",
+  auraColor = "#e0f7fa",
 }) {
   const groupRef = useRef();
   const { camera } = useThree();
@@ -32,10 +34,10 @@ export default function IdeaOrb({
       <mesh>
         <sphereGeometry args={[1.2, 32, 32]} />
         <meshStandardMaterial
-          color="#b3e0ff"
+          color={orbColor}
           transparent
           opacity={0.3}
-          emissive="#aee7ff"
+          emissive={orbColor}
           emissiveIntensity={0.7}
         />
       </mesh>
@@ -43,7 +45,7 @@ export default function IdeaOrb({
       <mesh>
         <sphereGeometry args={[1.7, 32, 32]} />
         <meshBasicMaterial
-          color="#e0f7fa"
+          color={auraColor}
           transparent
           opacity={0.08}
           depthWrite={false}
