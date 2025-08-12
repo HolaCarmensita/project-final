@@ -6,6 +6,7 @@ import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
+import NavBar from "../components/ui/NavBar";
 
 // Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
@@ -37,6 +38,7 @@ const Scene = () => {
     });
   });
   const [input, setInput] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Add a new idea with a unique color pair
   const addIdea = () => {
@@ -75,6 +77,24 @@ const Scene = () => {
     }
   };
 
+  const zoomToNeighbor = (direction) => {
+    let newIndex = selectedIndex;
+    if (direction === "left") newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
+    if (direction === "right") newIndex = (selectedIndex + 1) % ideas.length;
+    setSelectedIndex(newIndex);
+
+    // Calculate the position for the new selected orb
+    const offset = 2 / ideas.length;
+    const increment = Math.PI * (3 - Math.sqrt(5));
+    const y = newIndex * offset - 1 + offset / 2;
+    const r = Math.sqrt(1 - y * y);
+    const phi = newIndex * increment;
+    const x = Math.cos(phi) * r;
+    const z = Math.sin(phi) * r;
+
+    handleOrbClick([x, y * sphereRadius, z]);
+  };
+
   const sphereRadius = 20;
   const orbCount = ideas.length;
 
@@ -103,6 +123,11 @@ const Scene = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
+      <NavBar
+        onAdd={addIdea}
+        onLeft={() => zoomToNeighbor("left")}
+        onRight={() => zoomToNeighbor("right")}
+      />
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
