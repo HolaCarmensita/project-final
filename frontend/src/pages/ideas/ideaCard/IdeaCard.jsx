@@ -1,15 +1,21 @@
 import React from 'react';
-import { ProfileButton } from './components/ProfileButton';
-import { ConnectButton } from './components/ConnectButton';
-import { LikeButton } from './components/LikeButton';
+import styled from 'styled-components';
+import ProfileButton from './components/ProfileButton';
+import ImageCarousel from './components/ImageCarousel';
+import IdeaSocialBar from '../IdeaSocialBar/IdeaSocialBar';
+import IdeaText from './components/IdeaText';
+
+const IdeaCardContainer = styled.div`
+  max-width: 400px;
+`;
 
 export const IdeaCard = () => {
   return (
-    <div>
-      {/* IdeaCard component content will go here */}
+    <IdeaCardContainer>
       <ProfileButton />
-      <ConnectButton />
-      <LikeButton />
-    </div>
+      <ImageCarousel />
+      <IdeaSocialBar />
+      <IdeaText />
+    </IdeaCardContainer>
   );
 };

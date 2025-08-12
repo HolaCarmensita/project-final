@@ -1,0 +1,142 @@
+/* ==========================================================================
+   CSS Reset & Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  font-family: 'Questrial', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+#root {
+  isolation: isolate;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  font-family: 'Questrial', sans-serif;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/* ==========================================================================
+   Accessibility - Skip Link
+   ========================================================================== */
+
+/* 
+  HOW TO USE:
+  1. Add this as the first element in your main content:
+     <a href="#main-content" className="skip-link">
+       Skip to main content
+     </a>
+  
+  2. Add this ID to your main content area:
+     <main id="main-content">
+       {Your main content} 
+     </main>
+  
+  3. This allows screen reader users to skip navigation and go directly to content
+*/
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #007bff;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* ==========================================================================
+   Accessibility - User Preferences
+   ========================================================================== */
+
+/* 
+  Reduce motion for users who prefer it.
+  This respects users who have motion sensitivity or vestibular disorders.
+  Automatically reduces animations and transitions when user has
+  "prefers-reduced-motion: reduce" in their system settings.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 
+  High contrast mode support.
+  This provides enhanced focus styles for users with high contrast mode enabled.
+  Automatically detects when user has "prefers-contrast: high" in system settings.
+  Makes focus indicators more visible for users with visual impairments.
+*/
+@media (prefers-contrast: high) {
+  a:focus,
+  button:focus,
+  input:focus,
+  textarea:focus,
+  select:focus,
+  [tabindex]:focus {
+    outline: 3px solid;
+    outline-offset: 1px;
+  }
+}

@@ -1,16 +1,21 @@
 import React from 'react';
-import { Navigation } from './components/Navigation';
-import { LikeButton } from './components/LikeButton';
-import { ConnectButton } from './components/ConnectButton';
-import { IdeaCard } from './components/IdeaCard';
+import styled from 'styled-components';
+import { IdeaCard } from '../ideaCard/IdeaCard';
 
-export const IdeaCarousel = () => {
+const IdeaCarouselContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  max-width: 400px;
+`;
+
+const IdeaCarousel = () => {
   return (
-    <div>
-      <Navigation />
+    <IdeaCarouselContainer>
       <IdeaCard />
-      <LikeButton />
-      <ConnectButton />
-    </div>
+    </IdeaCarouselContainer>
   );
 };
+
+export default IdeaCarousel;

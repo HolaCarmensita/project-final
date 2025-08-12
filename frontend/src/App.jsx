@@ -1,8 +1,9 @@
-export const App = () => {
+import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
 
+export const App = () => {
   return (
     <>
-      <h1>Welcome to Final Project!</h1>
+      <IdeaCarousel />
     </>
   );
 };
