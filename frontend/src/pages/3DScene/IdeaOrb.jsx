@@ -1,13 +1,16 @@
 // component for idea/ post
-import { Html, Sparkles } from "@react-three/drei";
+import { Sparkles } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
+import * as THREE from "three";
+import { useMemo } from "react";
 
 const IdeaOrb = ({
   position = [0, 2, 0],
   text = "Placeholder",
   orbColor = "#b3e0ff",
   auraColor = "#e0f7fa",
+  onClick,
 }) => {
   const groupRef = useRef();
   const { camera } = useThree();
@@ -27,32 +30,51 @@ const IdeaOrb = ({
     }
   });
 
+  const getWooblyGeometry = (radius = 1.2, detail = 128, wobble = 1) => {
+    const geometry = new THREE.SphereGeometry(radius, detail, detail);
+    const position = geometry.attributes.position;
+    for (let i = 0; i < position.count; i++) {
+      const vertex = new THREE.Vector3().fromBufferAttribute(position, i);
+      const randomFactor = 1 + (Math.random() - 0.5) * wobble;
+      vertex.multiplyScalar(randomFactor);
+      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+    }
+    position.needsUpdate = true;
+    return geometry;
+  };
+
+  // make geometries woobly 
+  const geometry = useMemo(() => getWooblyGeometry(1.2, 128, 0.03), []);
+  const auraGeometry = useMemo(() => getWooblyGeometry(1.7, 128, 0.03), []);
+
   return (
     <group ref={groupRef} position={position}>
       {/* Glowing orb */}
-      <mesh>
-        <sphereGeometry args={[1.2, 32, 32]} />
+      <mesh
+        geometry={geometry}
+        onClick={() => onClick && onClick(position)}
+        onPointerOver={() => { document.body.style.cursor = "pointer"; }}
+        onPointerOut={() => { document.body.style.cursor = "default"; }}
+      >
         <meshStandardMaterial
           color={orbColor}
           transparent
-          opacity={0.3}
+          opacity={1}
           emissive={orbColor}
           emissiveIntensity={0.7}
         />
       </mesh>
       {/* Softer, lighter aura */}
-      <mesh>
-        <sphereGeometry args={[1.7, 32, 32]} />
+      <mesh geometry={auraGeometry}>
         <meshBasicMaterial
           color={auraColor}
           transparent
-          opacity={0.08}
+          opacity={0.5}
           depthWrite={false}
         />
       </mesh>
       {/* Sparkles */}
       <Sparkles count={20} scale={2.5} size={2} color="#e0f7fa" />
-
     </group>
   );
 };
