@@ -62,7 +62,7 @@ const Scene = () => {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       {/* Add Idea UI */}
-      <div style={{
+      {/* <div style={{
         position: "absolute", top: 20, left: 20, zIndex: 10, background: "#fff8", padding: 10, borderRadius: 8
       }}>
         <input
@@ -72,7 +72,7 @@ const Scene = () => {
           style={{ marginRight: 8 }}
         />
         <button onClick={addIdea}>Add</button>
-      </div>
+      </div> */}
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
@@ -80,7 +80,7 @@ const Scene = () => {
         {orbs}
         <OrbitControls enableZoom={false} enablePan={false} target={[0, 0, 0]} />
       </Canvas>
-    </div>
+    </div >
   );
 };
 

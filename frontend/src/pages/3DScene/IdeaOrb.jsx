@@ -1,15 +1,14 @@
 // component for idea/ post
-
 import { Html, Sparkles } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
-export default function IdeaOrb({
+const IdeaOrb = ({
   position = [0, 2, 0],
   text = "Placeholder",
   orbColor = "#b3e0ff",
   auraColor = "#e0f7fa",
-}) {
+}) => {
   const groupRef = useRef();
   const { camera } = useThree();
 
@@ -53,29 +52,9 @@ export default function IdeaOrb({
       </mesh>
       {/* Sparkles */}
       <Sparkles count={20} scale={2.5} size={2} color="#e0f7fa" />
-      {/* Floating text */}
-      <Html
-        center
-        transform
-        distanceFactor={2}
-        style={{ pointerEvents: "none" }}
-      >
-        <div
-          style={{
-            color: "#e0f7fa",
-            textShadow: "0 0 8px #b3e0ff, 0 0 16px #b3e0ff",
-            fontWeight: "bold",
-            fontSize: "1.1rem",
-            background: "rgba(0,0,0,0.15)",
-            borderRadius: "8px",
-            padding: "0.3em 0.8em",
-            pointerEvents: "none",
-            userSelect: "none",
-          }}
-        >
-          {text}
-        </div>
-      </Html>
+
     </group>
   );
-}
+};
+
+export default IdeaOrb;
