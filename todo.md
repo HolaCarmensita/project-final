@@ -1,21 +1,28 @@
-**11.08**
-- [] set up the project, install dependenices 
-- [] define slices 
-- [] deploy
-- [] a name for the project
+**To do**
+- [x] remove white frame
+- [x] colors for each 3D idea
+- [x] no text inside an orbit 
+- [x] navigation for 3D space, keyboard (player controller)
+- [] connect idea 3D space with idea/ post
+- [x] make idea sphere clicable
+- [x] woobly shape/sphere
+- [] fix woobly shape
+- [] fix color spheres
+- [] fix navigation controlls
+
+
+
+
+
+
 
 === 
-
-
 **Slices** 
-
 - seting up project architecture and components 
 - install dependecies 
 
-- navigating the 3D enviroment
+- [x] navigating the 3D enviroment
 - implementing the design of an idea card & navigate through the ideas using arrow btns 
-
-
 
 - user register / log in forms 
 - like/ save an idea
@@ -31,14 +38,7 @@
 - user shuld be ablte to get to their profile and change their details
 
 
-
-
-
-
-
 **project architecure**
-
-
 PROJECT-FINAL/
 ├─ frontend/ # React app (Vite or CRA)
 │ ├─ public/

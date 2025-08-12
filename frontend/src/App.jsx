@@ -1,8 +1,11 @@
+import React from 'react';
+import Scene from './pages/3DScene/3DScene.jsx';
+
 export const App = () => {
 
   return (
     <>
-      <h1>Welcome to Final Project!</h1>
+      <Scene velocity={0} />
     </>
   );
 };
