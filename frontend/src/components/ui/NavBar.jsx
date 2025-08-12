@@ -1,5 +1,5 @@
 // navigation bar
-import React from "react";
+
 
 const NavBar = ({ onAdd, onLeft, onRight }) => (
   <div
