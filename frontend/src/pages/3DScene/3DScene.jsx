@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useRef } from "react";
+import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
@@ -46,18 +47,31 @@ const Scene = () => {
     }
   };
 
+  // Smooth camera zoom handler
   const handleOrbClick = (position) => {
-    // Animate camera to the orb's position (with some offset)
     if (controlsRef.current) {
       const controls = controlsRef.current;
-      // Calculate a position a bit back from the orb (e.g., along the Z axis)
       const target = { x: position[0], y: position[1], z: position[2] };
+      // Camera offset (e.g., 8 units away from orb along z axis)
       const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
 
-      // Animate camera and controls.target (simple version, instant jump)
-      controls.target.set(target.x, target.y, target.z);
-      controls.object.position.set(camOffset.x, camOffset.y, camOffset.z);
-      controls.update();
+      // Animate camera position
+      gsap.to(controls.object.position, {
+        x: camOffset.x,
+        y: camOffset.y,
+        z: camOffset.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
+
+      // Animate controls target
+      gsap.to(controls.target, {
+        x: target.x,
+        y: target.y,
+        z: target.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
     }
   };
 
