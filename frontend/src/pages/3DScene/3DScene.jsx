@@ -1,10 +1,9 @@
 // main 3Dscene component
-
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import IdeaOrb from "./IdeaOrb";
 
-export default function Scene({ velocity }) {
+const Scene = ({ velocity }) => {
   // Example: 8 orbs evenly spaced in a circle
   const orbCount = 40;
   const sphereRadius = 20;
@@ -33,7 +32,7 @@ export default function Scene({ velocity }) {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        <color attach="background" args={["#101820"]} />
+        <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         {orbs}
@@ -46,3 +45,5 @@ export default function Scene({ velocity }) {
     </div>
   );
 }
+
+export default Scene;
