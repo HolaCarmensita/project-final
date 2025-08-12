@@ -42,11 +42,9 @@ const Scene = () => {
 
   // Add a new idea with a unique color pair
   const addIdea = () => {
-    if (input.trim()) {
-      const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-      setIdeas([...ideas, { text: input, orbColor, auraColor }]);
-      setInput("");
-    }
+    const { orbColor, auraColor } = getUniqueColorPair(usedColors);
+    setIdeas([...ideas, { text: `New Idea ${ideas.length + 1}`, orbColor, auraColor }]);
+    setSelectedIndex(ideas.length); // Optionally select the new orb
   };
 
   // Smooth camera zoom handler
@@ -92,7 +90,7 @@ const Scene = () => {
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
 
-    handleOrbClick([x, y * sphereRadius, z]);
+    handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
   };
 
   const sphereRadius = 20;
