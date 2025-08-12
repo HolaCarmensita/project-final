@@ -1,15 +1,20 @@
 **To do**
-- [x] remove white frame
-- [x] colors for each 3D idea
-- [x] no text inside an orbit 
-- [x] navigation for 3D space, keyboard (player controller)
-- [] connect idea 3D space with idea/ post
-- [x] make idea sphere clicable
-- [x] woobly shape/sphere
-- [] fix woobly shape
-- [] fix color spheres
-- [] fix navigation controlls
+- [] 3D enviroment
+  - [x] remove white frame
+  - [x] colors for each 3D idea
+  - [x] no text inside an orbit 
+  - [x] navigation for 3D space, keyboard (player controller)
+  - [] connect idea 3D space with idea/ post
+  - [x] make idea sphere clicable
+  - [x] woobly shape/sphere
+  - [] fix woobly shape
+  - [] fix color spheres
+  - [] fix navigation controlls
 
+- [] ui
+  - [] NavBar
+    - [] fix navbar to better look 
+    
 
 
 
