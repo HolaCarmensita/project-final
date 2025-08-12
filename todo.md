@@ -1,12 +1,14 @@
 **To do**
-- [] navigation for 3D space, keyboard (player controller)
+- [x] remove white frame
+- [x] colors for each 3D idea
+- [x] no text inside an orbit 
+- [x] navigation for 3D space, keyboard (player controller)
 - [] connect idea 3D space with idea/ post
-- [] make idea sphere clicable
-- [] colors for each 3D idea
-- [] woobly shape/sphere
-- [] no text inside an orbit 
-
-
+- [x] make idea sphere clicable
+- [x] woobly shape/sphere
+- [] fix woobly shape
+- [] fix color spheres
+- [] fix navigation controlls
 
 
 
@@ -19,10 +21,8 @@
 - seting up project architecture and components 
 - install dependecies 
 
-- navigating the 3D enviroment
+- [x] navigating the 3D enviroment
 - implementing the design of an idea card & navigate through the ideas using arrow btns 
-
-
 
 - user register / log in forms 
 - like/ save an idea
