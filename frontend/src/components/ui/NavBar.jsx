@@ -13,7 +13,7 @@ const NavBarWrapper = styled.div`
   padding: 8px 8px;
   display: flex;
   align-items: center;
-  gap: 68px;
+  gap: 58px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
   z-index: 20;
 
@@ -39,15 +39,6 @@ const NavButton = styled.button`
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  @media (max-width: 600px) {
-    font-size: 24px;
-    &.add {
-      width: 36px;
-      height: 36px;
-      font-size: 20px;
-    }
   }
 `;
 
