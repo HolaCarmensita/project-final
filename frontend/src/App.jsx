@@ -6,8 +6,8 @@ import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
 export const App = () => {
   return (
     <>
-      <Scene velocity={0} />
       <IdeaCarousel />
+      <Scene velocity={0} />
     </>
   );
 };
