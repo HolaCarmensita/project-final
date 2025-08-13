@@ -43,7 +43,7 @@ const IdeaOrb = ({
     return geometry;
   };
 
-  // make geometries woobly 
+  // [FIX] make geometries woobly,  
   const geometry = useMemo(() => getWooblyGeometry(1.2, 128, 0.03), []);
   const auraGeometry = useMemo(() => getWooblyGeometry(1.7, 128, 0.03), []);
 
