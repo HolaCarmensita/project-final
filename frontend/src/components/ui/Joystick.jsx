@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import nipplejs from "nipplejs";
 
-const Joystick = () => {
+const Joystick = ({ onMove }) => {
   const joystickRef = useRef(null);
 
   useEffect(() => {
@@ -13,23 +13,23 @@ const Joystick = () => {
     });
 
     manager.on("move", (evt, data) => {
-      console.log("Joystick moved!", data);
+      if (onMove && data) {
+        onMove(data);
+      }
     });
-    manager.on("start", () => console.log("Joystick started!"));
-    manager.on("end", () => console.log("Joystick ended!"));
 
     return () => manager.destroy();
-  }, []);
+  }, [onMove]);
 
   return (
     <div
       ref={joystickRef}
       style={{
         position: "absolute",
-        left: "20%",
-        bottom: "30px",
-        width: "120px",
-        height: "120px",
+        left: 0,
+        bottom: "80px",
+        width: "180px",
+        height: "180px",
         zIndex: 1001,
         touchAction: "none",
       }}

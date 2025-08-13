@@ -12,9 +12,10 @@
   - [] fix navigation controlls
 
 - [] ui
+  - [] joystick
   - [] NavBar
     - [x] style component for navBar
-    - [x] fix navbar to better look be aware of components
+    - [] fix navbar to better look be aware of components
     
 
 
