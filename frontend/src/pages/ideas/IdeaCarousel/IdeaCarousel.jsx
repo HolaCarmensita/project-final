@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import IdeaCard from '../ideaCard/IdeaCard';
+import MockNavigation from './components/MockNavigation';
 import { useState, useEffect } from 'react';
 import mockApi from '../../../data/mockData';
 
@@ -57,15 +58,12 @@ const IdeaCarousel = () => {
     <IdeaCarouselContainer>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      {ideas.length > 0 && <IdeaCard idea={ideas[currentIndex]} />}
-      <MockNavigationContainer>
-        <button onClick={goToPrevious}>
-          <p>{'<'}</p>
-        </button>
-        <button onClick={goToNext}>
-          <p>{'>'}</p>
-        </button>
-      </MockNavigationContainer>
+      {ideas.length > 0 && (
+        <>
+          <IdeaCard idea={ideas[currentIndex]} />
+          <MockNavigation onNext={goToNext} onPrevious={goToPrevious} />
+        </>
+      )}
     </IdeaCarouselContainer>
   );
 };
