@@ -7,7 +7,7 @@ const NavBarWrapper = styled.div`
   transform: translateX(-50%);
   background: #232323;
   border-radius: 12px;
-  padding: 12px 20px;
+  padding: 10px 20px; // fix padding so that it follows the size of the screen
   display: flex;
   align-items: center;
   gap: 48px;
