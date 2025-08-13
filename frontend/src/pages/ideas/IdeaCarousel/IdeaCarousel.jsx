@@ -12,7 +12,15 @@ const IdeaCarouselContainer = styled.div`
   max-width: 400px;
 `;
 
+const MockNavigationContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+`;
+
 const IdeaCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,11 +41,31 @@ const IdeaCarousel = () => {
     fetchIdeas();
   }, []);
 
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === ideas.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? ideas.length - 1 : prevIndex - 1
+    );
+  };
+
   return (
     <IdeaCarouselContainer>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      {ideas.length > 0 && <IdeaCard idea={ideas[0]} />}
+      {ideas.length > 0 && <IdeaCard idea={ideas[currentIndex]} />}
+      <MockNavigationContainer>
+        <button onClick={goToPrevious}>
+          <p>{'<'}</p>
+        </button>
+        <button onClick={goToNext}>
+          <p>{'>'}</p>
+        </button>
+      </MockNavigationContainer>
     </IdeaCarouselContainer>
   );
 };
