@@ -16,9 +16,9 @@
     "randomcolor": "^0.6.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "three": "^0.179.1",
     "react-swipeable": "^7.0.2",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "three": "^0.179.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.23",
