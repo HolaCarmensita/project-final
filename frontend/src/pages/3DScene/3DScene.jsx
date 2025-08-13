@@ -126,6 +126,7 @@ const Scene = () => {
         onLeft={() => zoomToNeighbor("left")}
         onRight={() => zoomToNeighbor("right")}
       />
+
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
