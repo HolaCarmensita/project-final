@@ -16,7 +16,6 @@ const NavBarWrapper = styled.div`
   gap: 58px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
   z-index: 20;
-
 `;
 
 const NavButton = styled.button`
