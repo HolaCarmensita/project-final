@@ -36,7 +36,7 @@ body {
 }
 
 
-}
+
 
 img,
 picture,
@@ -124,6 +124,7 @@ h6 {
   "prefers-reduced-motion: reduce" in their system settings.
 */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -140,6 +141,7 @@ h6 {
   Makes focus indicators more visible for users with visual impairments.
 */
 @media (prefers-contrast: high) {
+
   a:focus,
   button:focus,
   input:focus,
