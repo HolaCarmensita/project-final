@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useSwipeable } from 'react-swipeable';
 
 const CarouselContainer = styled.div`
   position: relative;
@@ -7,6 +8,12 @@ const CarouselContainer = styled.div`
   height: 360px;
   overflow: hidden;
   border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 
   &:focus {
     outline: 2px solid #007bff;
@@ -32,41 +39,6 @@ const CarouselImage = styled.img`
   height: 100%;
   object-fit: cover;
   display: block;
-`;
-
-const NavigationButton = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 10;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-50%) scale(1.1);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  ${(props) => (props.direction === 'prev' ? 'left: 10px;' : 'right: 10px;')}
-
-  img {
-    width: 20px;
-    height: 20px;
-    filter: ${(props) => (props.direction === 'prev' ? 'none' : 'none')};
-  }
 `;
 
 const DotsContainer = styled.div`
@@ -98,6 +70,26 @@ const ImageCarousel = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const displayImages = images || [];
+
+  // Swipe handlers
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      // Swipe left = go to next image
+      if (currentIndex < displayImages.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      }
+    },
+    onSwipedRight: () => {
+      // Swipe right = go to previous image
+      if (currentIndex > 0) {
+        setCurrentIndex(currentIndex - 1);
+      }
+    },
+    preventDefaultTouchmoveEvent: true, // Prevents default touch behavior
+    trackMouse: true, // Enables mouse drag support
+    delta: 10, // Minimum distance for a swipe to be registered
+    swipeDuration: 500, // Maximum time for a swipe gesture
+  });
 
   // If no images, show a placeholder message
   if (displayImages.length === 0) {
@@ -146,6 +138,7 @@ const ImageCarousel = ({ images = [] }) => {
 
   return (
     <CarouselContainer
+      {...handlers}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role='region'
@@ -165,32 +158,6 @@ const ImageCarousel = ({ images = [] }) => {
           </CarouselSlide>
         ))}
       </CarouselTrack>
-
-      {/* Navigation Arrows */}
-      {displayImages.length > 1 && (
-        <>
-          <NavigationButton
-            direction='prev'
-            onClick={goToPrevious}
-            disabled={currentIndex === 0}
-            aria-label={`Go to previous image (currently image ${
-              currentIndex + 1
-            } of ${displayImages.length})`}
-          >
-            <img src='/icons/arrow_back.svg' alt='Previous' />
-          </NavigationButton>
-          <NavigationButton
-            direction='next'
-            onClick={goToNext}
-            disabled={currentIndex === displayImages.length - 1}
-            aria-label={`Go to next image (currently image ${
-              currentIndex + 1
-            } of ${displayImages.length})`}
-          >
-            <img src='/icons/arrow_forward.svg' alt='Next' />
-          </NavigationButton>
-        </>
-      )}
 
       {/* Dots Navigation */}
       {displayImages.length > 1 && (
