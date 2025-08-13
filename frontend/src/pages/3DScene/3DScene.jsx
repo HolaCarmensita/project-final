@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import gsap from "gsap";
@@ -51,6 +51,63 @@ const Scene = () => {
     const force = data.force || 0;
     joystickVecRef.current = { x, y, force };
   };
+
+  // Show joystick only on touch phones/tablets (iOS/Android), not desktops
+  const [showJoystick, setShowJoystick] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) {
+      setShowJoystick(false);
+      return;
+    }
+    const compute = () => {
+      const ua = navigator.userAgent || navigator.vendor || window.opera || "";
+      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      const isiPad = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const isIPhone = /iPhone|iPod/.test(ua);
+      const isAndroid = /Android/.test(ua);
+      const isMobile = isiPad || isIPhone || isAndroid;
+      const sw = window.screen?.width || 0;
+      const sh = window.screen?.height || 0;
+      const vw = window.innerWidth || 0;
+      const vh = window.innerHeight || 0;
+      const approxEq = (a, b) => Math.abs(a - b) <= 2; // tolerate minor UI bars
+      const isIpadProByScreen =
+        (approxEq(sw, 1024) && approxEq(sh, 1366)) ||
+        (approxEq(sw, 1366) && approxEq(sh, 1024));
+      const isIpadProByViewport =
+        (approxEq(vw, 1024) && approxEq(vh, 1366)) ||
+        (approxEq(vw, 1366) && approxEq(vh, 1024));
+      const isIpadAirByScreen =
+        (approxEq(sw, 820) && approxEq(sh, 1180)) ||
+        (approxEq(sw, 1180) && approxEq(sh, 820));
+      const isIpadAirByViewport =
+        (approxEq(vw, 820) && approxEq(vh, 1180)) ||
+        (approxEq(vw, 1180) && approxEq(vh, 820));
+
+      // Always allow if detected iPad (Air/Pro)
+      if (isiPad) {
+        setShowJoystick(true);
+        return;
+      }
+
+      // Fallback: allow touch devices that match iPad Pro dimensions
+      if (hasTouch && (isIpadProByScreen || isIpadProByViewport || isIpadAirByScreen || isIpadAirByViewport)) {
+        setShowJoystick(true);
+        return;
+      }
+
+      setShowJoystick(Boolean(hasTouch && isMobile));
+    };
+
+    compute();
+    const handler = () => compute();
+    window.addEventListener("resize", handler);
+    window.addEventListener("orientationchange", handler);
+    return () => {
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("orientationchange", handler);
+    };
+  }, []);
 
   // Add a new idea with a unique color pair
   const addIdea = () => {
@@ -147,7 +204,7 @@ const Scene = () => {
         <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
       </Canvas>
 
-      <Joystick onMove={handleJoystickMove} />
+      {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );
 };
