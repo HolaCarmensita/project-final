@@ -1,0 +1,73 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import at from '/icons/at.svg';
+import atBold from '/icons/at_bold.svg';
+
+const ConnectButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px; /* Fixed width to make sure the width of "Connected" text */
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
+
+const ConnectBtn = styled.button`
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 8px;
+  border: none;
+  padding-inline: 0px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
+const ConnectIcon = styled.img`
+  width: 32px;
+  height: 32px;
+`;
+
+const ConnectText = styled.h4`
+  color: #808080;
+  font-weight: 400;
+`;
+
+const ConnectCount = styled.p`
+  font-weight: 400;
+`;
+
+export const ConnectButton = ({ initialConnections = 0 }) => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [connections, setConnections] = useState(initialConnections);
+
+  const handleClick = () => {
+    setIsConnected(!isConnected);
+    setConnections(isConnected ? connections - 1 : connections + 1);
+  };
+
+  return (
+    <ConnectButtonContainer>
+      <ButtonContainer>
+        <ConnectBtn>
+          <ConnectIcon
+            onClick={handleClick}
+            src={isConnected ? atBold : at}
+            alt={isConnected ? 'connected' : 'connect'}
+          ></ConnectIcon>
+        </ConnectBtn>
+        <ConnectCount>{connections}</ConnectCount>
+      </ButtonContainer>
+      <ConnectText>{isConnected ? 'Connected' : 'Connect'}</ConnectText>
+    </ConnectButtonContainer>
+  );
+};

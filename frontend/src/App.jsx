@@ -1,10 +1,12 @@
 import React from 'react';
 import Scene from './pages/3DScene/3DScene';
 
-export const App = () => {
+import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
 
+export const App = () => {
   return (
     <>
+      <IdeaCarousel />
       <Scene velocity={0} />
     </>
   );

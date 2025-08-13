@@ -1,0 +1,96 @@
+// Mock data for ideas - simulates backend API responses
+export const mockIdeas = [
+  {
+    id: 1,
+    title: 'Revolutionary Social Media App',
+    bodyText:
+      'A new social media platform that focuses on meaningful connections rather than endless scrolling. Features include conversation starters, mood-based content filtering, and digital wellbeing tools.',
+    author: 'Sarah Chen',
+    role: 'UX Designer',
+    createdAt: '2024-01-15',
+    likes: 42,
+    connections: 8,
+    images: [
+      '/mockImg/artpice1.png',
+      '/mockImg/artpice2.png',
+      '/mockImg/cells.png',
+    ],
+  },
+  {
+    id: 2,
+    title: 'AI-Powered Recipe Generator',
+    bodyText:
+      'An app that creates personalized recipes based on ingredients you have at home. Uses machine learning to suggest creative combinations and dietary alternatives.',
+    author: 'Marcus Rodriguez',
+    role: 'Software Engineer',
+    createdAt: '2024-01-14',
+    likes: 67,
+    connections: 12,
+    images: [
+      '/mockImg/artpice2.png',
+      '/mockImg/cells.png',
+      '/mockImg/dots.png',
+    ],
+  },
+  {
+    id: 3,
+    title: 'Sustainable Fashion Marketplace',
+    bodyText:
+      'A platform connecting eco-conscious consumers with sustainable fashion brands. Features include carbon footprint tracking, material transparency, and circular fashion initiatives.',
+    author: 'Emma Thompson',
+    role: 'Product Manager',
+    createdAt: '2024-01-13',
+    likes: 89,
+    connections: 15,
+    images: [
+      '/mockImg/cells.png',
+      '/mockImg/dots.png',
+      '/mockImg/artpice1.png',
+    ],
+  },
+  {
+    id: 4,
+    title: 'Smart Home Energy Optimizer',
+    bodyText:
+      'IoT system that learns your energy usage patterns and automatically optimizes consumption. Integrates with solar panels, smart thermostats, and provides real-time cost savings.',
+    author: 'David Kim',
+    role: 'Data Scientist',
+    createdAt: '2024-01-12',
+    likes: 34,
+    connections: 6,
+    images: [
+      '/mockImg/dots.png',
+      '/mockImg/artpice1.png',
+      '/mockImg/artpice2.png',
+    ],
+  },
+];
+
+// Mock function to simulate API calls
+const mockApi = {
+  // Simulate fetching all ideas
+  getIdeas: () => {
+    return new Promise((resolve) => {
+      // Simulate network delay
+      setTimeout(() => {
+        resolve(mockIdeas);
+      }, 500);
+    });
+  },
+
+  // Simulate fetching a single idea by ID
+  getIdeaById: (id) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const idea = mockIdeas.find((idea) => idea.id === id);
+        if (idea) {
+          resolve(idea);
+        } else {
+          reject(new Error('Idea not found'));
+        }
+      }, 300);
+    });
+  },
+};
+
+export default mockApi;
