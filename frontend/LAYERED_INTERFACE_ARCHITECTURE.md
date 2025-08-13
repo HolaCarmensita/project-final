@@ -27,11 +27,39 @@ App.jsx
 
 ### Routing Strategy
 
+**IMPORTANT**: The 3D environment is NOT part of individual routes. It's a persistent background that stays mounted across ALL routes.
+
 ```
-/                    → 3D environment only (homepage)
-/profile             → 3D environment + profile sidebar overlay
-/ideas               → 3D environment + ideas panel overlay
-/settings            → 3D environment + settings modal overlay
+/                    → 3D environment (persistent background) + no overlay
+/profile             → 3D environment (persistent background) + profile sidebar overlay
+/ideas               → 3D environment (persistent background) + ideas panel overlay
+/settings            → 3D environment (persistent background) + settings modal overlay
+```
+
+**Key Point**: Routes only control what overlay appears on top of the 3D environment. The 3D environment itself never unmounts or re-renders.
+
+### Visual Structure
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    App Container                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │            Background Layer (z-index: 1)            │   │
+│  │  ┌─────────────────────────────────────────────┐   │   │
+│  │  │             3D Scene                        │   │   │ ← ALWAYS HERE
+│  │  │         (orbs, animations)                  │   │   │   NEVER UNMOUNTS
+│  │  └─────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │            Overlay Layer (z-index: 10)             │   │
+│  │  ┌─────────────────────────────────────────────┐   │   │
+│  │  │                                             │   │   │ ← CHANGES BASED ON ROUTE
+│  │  │         Profile Sidebar                     │   │   │   (only this part changes)
+│  │  │                                             │   │   │
+│  │  └─────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Implementation Approach: React Router with Layout Wrapper
