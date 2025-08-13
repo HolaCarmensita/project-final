@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import artpice1 from '../../../../assets/img/artpice1.png';
-import artpice2 from '../../../../assets/img/artpice2.png';
-import cells from '../../../../assets/img/cells.png';
-import dots from '../../../../assets/img/dots.png';
 
 const CarouselContainer = styled.div`
   position: relative;
@@ -101,11 +97,16 @@ const Dot = styled.button`
 const ImageCarousel = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Placeholder images for development - remove when API is ready
-  const placeholderImages = [artpice1, artpice2, cells, dots];
+  const displayImages = images || [];
 
-  // Use provided images or fallback to placeholders
-  const displayImages = images.length > 0 ? images : placeholderImages;
+  // If no images, show a placeholder message
+  if (displayImages.length === 0) {
+    return (
+      <CarouselContainer>
+        <div>No images available</div>
+      </CarouselContainer>
+    );
+  }
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) =>

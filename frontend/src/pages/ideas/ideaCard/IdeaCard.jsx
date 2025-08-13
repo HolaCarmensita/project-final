@@ -9,13 +9,18 @@ const IdeaCardContainer = styled.div`
   max-width: 400px;
 `;
 
-export const IdeaCard = () => {
+const IdeaCard = ({ idea = null }) => {
+  if (!idea) {
+    return <div>No idea data available</div>;
+  }
   return (
     <IdeaCardContainer>
-      <ProfileButton />
-      <ImageCarousel />
-      <IdeaSocialBar />
-      <IdeaText />
+      <ProfileButton author={idea?.author} role={idea?.role} />
+      <ImageCarousel images={idea?.images} />
+      <IdeaSocialBar likes={idea?.likes} connections={idea?.connections} />
+      <IdeaText title={idea?.title} bodyText={idea?.bodyText} />
     </IdeaCardContainer>
   );
 };
+
+export default IdeaCard;

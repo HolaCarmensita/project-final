@@ -6,8 +6,14 @@ import styled from 'styled-components';
 const LikeButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: start;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  max-width: fit-content;
+  gap: 4px;
 `;
 
 const StyledButton = styled.button`
@@ -17,9 +23,9 @@ const StyledButton = styled.button`
   border: none;
   transition: all 0.2s ease;
   cursor: pointer;
+  padding-inline: 0px;
 
   &:hover {
-    background-color: #f5f5f5;
     transform: scale(1.05);
   }
 
@@ -46,18 +52,27 @@ const LikeText = styled.h4`
   font-weight: 400;
 `;
 
-export const LikeButton = () => {
+const LikeCount = styled.p`
+  font-weight: 400;
+`;
+
+export const LikeButton = ({ initialLikes = 0 }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(initialLikes);
 
   const handleClick = () => {
     setIsLiked(!isLiked);
+    setLikes(isLiked ? likes - 1 : likes + 1);
   };
 
   return (
     <LikeButtonContainer>
-      <StyledButton onClick={handleClick}>
-        <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
-      </StyledButton>
+      <ButtonContainer>
+        <StyledButton onClick={handleClick}>
+          <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
+        </StyledButton>
+        <LikeCount>{likes}</LikeCount>
+      </ButtonContainer>
       <LikeText>{isLiked ? 'Liked' : 'Like'}</LikeText>
     </LikeButtonContainer>
   );

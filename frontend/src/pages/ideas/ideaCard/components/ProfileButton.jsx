@@ -36,20 +36,20 @@ const Role = styled.h4`
   line-height: 1.2;
 `;
 
-const ProfileButton = ({ onClick = () => {} }) => {
+const ProfileButton = ({
+  author = 'unknown member',
+  role = 'unknown role',
+}) => {
   const handleClick = () => {
-    // Redirect to profile page (to be implemented)
-    onClick();
-    // You can add navigation logic here later
-    // Example: navigate('/profile');
+    console.log('Profile clicked!'); //redirect to profile page later on
   };
 
   return (
     <ProfileContainer onClick={handleClick}>
       <Circle />
       <TextContainer>
-        <Name>John Doe</Name>
-        <Role>Designer</Role>
+        <Name>{author}</Name>
+        <Role>{role}</Role>
       </TextContainer>
     </ProfileContainer>
   );

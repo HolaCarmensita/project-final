@@ -10,16 +10,25 @@ const ConnectButtonContainer = styled.div`
   min-width: 80px; /* Fixed width to make sure the width of "Connected" text */
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
+
 const ConnectBtn = styled.button`
   background-color: #ffffff;
   color: #000000;
   border-radius: 8px;
   border: none;
+  padding-inline: 0px;
+
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #f5f5f5;
+    transform: scale(1.05);
   }
 `;
 
@@ -33,22 +42,31 @@ const ConnectText = styled.h4`
   font-weight: 400;
 `;
 
-export const ConnectButton = () => {
+const ConnectCount = styled.p`
+  font-weight: 400;
+`;
+
+export const ConnectButton = ({ initialConnections = 0 }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [connections, setConnections] = useState(initialConnections);
 
   const handleClick = () => {
     setIsConnected(!isConnected);
+    setConnections(isConnected ? connections - 1 : connections + 1);
   };
 
   return (
     <ConnectButtonContainer>
-      <ConnectBtn>
-        <ConnectIcon
-          onClick={handleClick}
-          src={isConnected ? atBold : at}
-          alt={isConnected ? 'connected' : 'connect'}
-        ></ConnectIcon>
-      </ConnectBtn>
+      <ButtonContainer>
+        <ConnectBtn>
+          <ConnectIcon
+            onClick={handleClick}
+            src={isConnected ? atBold : at}
+            alt={isConnected ? 'connected' : 'connect'}
+          ></ConnectIcon>
+        </ConnectBtn>
+        <ConnectCount>{connections}</ConnectCount>
+      </ButtonContainer>
       <ConnectText>{isConnected ? 'Connected' : 'Connect'}</ConnectText>
     </ConnectButtonContainer>
   );

@@ -8,14 +8,14 @@ const IdeaSocialBarContainer = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  padding: 16px 0px 16px 0px;
+  padding: 16px 8px 16px 8px;
 `;
 
-const IdeaSocialBar = () => {
+const IdeaSocialBar = ({ likes = 0, connections = 0 }) => {
   return (
     <IdeaSocialBarContainer>
-      <LikeButton />
-      <ConnectButton />
+      <LikeButton initialLikes={likes} />
+      <ConnectButton initialConnections={connections} />
     </IdeaSocialBarContainer>
   );
 };

@@ -5,6 +5,7 @@ const IdeaTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: left;
+  gap: 16px;
 `;
 
 const IdeaText = ({
