@@ -14,7 +14,7 @@
 - [] ui
   - [] NavBar
     - [x] style component for navBar
-    - [] fix navbar to better look be aware of components
+    - [x] fix navbar to better look be aware of components
     
 
 
