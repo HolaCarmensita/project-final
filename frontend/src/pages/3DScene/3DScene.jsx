@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useRef } from "react";
 import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
-import NavBar from "../../components/ui/navBar";
+import NavBar from "../../components/ui/NavBar";
+import Joystick from "../../components/ui/Joystick";
 
 // Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
@@ -39,6 +39,18 @@ const Scene = () => {
   });
   const [input, setInput] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Joystick vector ref
+  const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
+  const handleJoystickMove = (data) => {
+    if (!data || !data.vector) {
+      joystickVecRef.current = { x: 0, y: 0, force: 0 };
+      return;
+    }
+    const { x, y } = data.vector;
+    const force = data.force || 0;
+    joystickVecRef.current = { x, y, force };
+  };
 
   // Add a new idea with a unique color pair
   const addIdea = () => {
@@ -106,7 +118,6 @@ const Scene = () => {
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
 
-
     return (
       <IdeaOrb
         key={i}
@@ -120,7 +131,7 @@ const Scene = () => {
   });
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <NavBar
         onAdd={addIdea}
         onLeft={() => zoomToNeighbor("left")}
@@ -131,10 +142,12 @@ const Scene = () => {
         <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
-        <CameraController />
+        <CameraController joystickVecRef={joystickVecRef} />
         {orbs}
         <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
       </Canvas>
+
+      <Joystick onMove={handleJoystickMove} />
     </div>
   );
 };
