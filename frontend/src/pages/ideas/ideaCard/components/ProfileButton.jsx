@@ -13,6 +13,17 @@ const ProfileContainer = styled.div`
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
+
+  &:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
 `;
 
 const Circle = styled.div`
@@ -45,7 +56,18 @@ const ProfileButton = ({
   };
 
   return (
-    <ProfileContainer onClick={handleClick}>
+    <ProfileContainer
+      onClick={handleClick}
+      tabIndex={1}
+      role='button'
+      aria-label={`View profile of ${author}, ${role}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
       <Circle />
       <TextContainer>
         <Name>{author}</Name>

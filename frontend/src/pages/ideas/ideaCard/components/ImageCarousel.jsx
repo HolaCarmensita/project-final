@@ -41,6 +41,52 @@ const CarouselImage = styled.img`
   display: block;
 `;
 
+// New Navigation Button Components
+const NavigationButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: translateY(-50%);
+  }
+`;
+
+const PrevButton = styled(NavigationButton)`
+  left: 10px;
+`;
+
+const NextButton = styled(NavigationButton)`
+  right: 10px;
+`;
+
 const DotsContainer = styled.div`
   position: absolute;
   bottom: 15px;
@@ -116,31 +162,9 @@ const ImageCarousel = ({ images = [] }) => {
     setCurrentIndex(index);
   };
 
-  // Keyboard navigation
-  const handleKeyDown = (event) => {
-    switch (event.key) {
-      case 'ArrowLeft':
-        event.preventDefault();
-        if (currentIndex > 0) {
-          setCurrentIndex(currentIndex - 1);
-        }
-        break;
-      case 'ArrowRight':
-        event.preventDefault();
-        if (currentIndex < displayImages.length - 1) {
-          setCurrentIndex(currentIndex + 1);
-        }
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <CarouselContainer
       {...handlers}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
       role='region'
       aria-label={`Image carousel, ${currentIndex + 1} of ${
         displayImages.length
@@ -159,7 +183,31 @@ const ImageCarousel = ({ images = [] }) => {
         ))}
       </CarouselTrack>
 
-      {/* Dots Navigation */}
+      {/* Navigation Buttons - Only show if there are multiple images */}
+      {displayImages.length > 1 && (
+        <>
+          <PrevButton
+            onClick={goToPrevious}
+            disabled={currentIndex === 0}
+            tabIndex={2}
+            aria-label={`Go to previous image (${currentIndex} of ${displayImages.length})`}
+          >
+            ‹
+          </PrevButton>
+          <NextButton
+            onClick={goToNext}
+            disabled={currentIndex === displayImages.length - 1}
+            tabIndex={3}
+            aria-label={`Go to next image (${currentIndex + 2} of ${
+              displayImages.length
+            })`}
+          >
+            ›
+          </NextButton>
+        </>
+      )}
+
+      {/* Dots Navigation - Made non-focusable */}
       {displayImages.length > 1 && (
         <DotsContainer>
           {displayImages.map((_, index) => (
@@ -167,8 +215,8 @@ const ImageCarousel = ({ images = [] }) => {
               key={index}
               $active={index === currentIndex}
               onClick={() => goToSlide(index)}
-              aria-label={`Go to image ${index + 1} of ${displayImages.length}`}
-              aria-current={index === currentIndex ? 'true' : 'false'}
+              tabIndex={-1} // Remove from tab order
+              aria-hidden='true' // Hide from screen readers
             />
           ))}
         </DotsContainer>

@@ -29,15 +29,15 @@ const StyledButton = styled.button`
     transform: scale(1.05);
   }
 
-  /* Styled-components built-in focus styles */
-  &:focus-visible {
-    outline: 2px solid #0035f4;
+  &:focus {
+    outline: 2px solid #007bff;
     outline-offset: 2px;
+    background-color: rgba(0, 123, 255, 0.05);
   }
 
-  /* Remove focus for mouse users */
-  &:focus:not(:focus-visible) {
-    outline: none;
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
   }
 `;
 
@@ -68,7 +68,13 @@ export const LikeButton = ({ initialLikes = 0 }) => {
   return (
     <LikeButtonContainer>
       <ButtonContainer>
-        <StyledButton onClick={handleClick}>
+        <StyledButton
+          onClick={handleClick}
+          tabIndex={4}
+          aria-label={`${
+            isLiked ? 'Unlike' : 'Like'
+          } this idea. ${likes} likes`}
+        >
           <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
         </StyledButton>
         <LikeCount>{likes}</LikeCount>

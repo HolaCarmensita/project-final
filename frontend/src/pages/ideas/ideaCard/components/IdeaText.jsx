@@ -6,6 +6,34 @@ const IdeaTextContainer = styled.div`
   flex-direction: column;
   align-items: left;
   gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
+`;
+
+const IdeaTitle = styled.h1`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const IdeaBody = styled.p`
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666;
 `;
 
 const IdeaText = ({
@@ -13,9 +41,14 @@ const IdeaText = ({
   bodyText = 'Idea content default value',
 }) => {
   return (
-    <IdeaTextContainer>
-      <h1>{title}</h1>
-      <p>{bodyText}</p>
+    <IdeaTextContainer
+      tabIndex={-1}
+      role='article'
+      aria-label={`Idea: ${title}`}
+      aria-describedby='idea-body'
+    >
+      <IdeaTitle id='idea-title'>{title}</IdeaTitle>
+      <IdeaBody id='idea-body'>{bodyText}</IdeaBody>
     </IdeaTextContainer>
   );
 };

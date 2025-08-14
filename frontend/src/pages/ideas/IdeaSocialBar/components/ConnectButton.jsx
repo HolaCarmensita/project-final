@@ -30,6 +30,17 @@ const ConnectBtn = styled.button`
   &:hover {
     transform: scale(1.05);
   }
+
+  &:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
 `;
 
 const ConnectIcon = styled.img`
@@ -58,12 +69,17 @@ export const ConnectButton = ({ initialConnections = 0 }) => {
   return (
     <ConnectButtonContainer>
       <ButtonContainer>
-        <ConnectBtn>
+        <ConnectBtn
+          onClick={handleClick}
+          tabIndex={5}
+          aria-label={`${
+            isConnected ? 'Disconnect from' : 'Connect with'
+          } this idea. ${connections} connections`}
+        >
           <ConnectIcon
-            onClick={handleClick}
             src={isConnected ? atBold : at}
             alt={isConnected ? 'connected' : 'connect'}
-          ></ConnectIcon>
+          />
         </ConnectBtn>
         <ConnectCount>{connections}</ConnectCount>
       </ButtonContainer>
