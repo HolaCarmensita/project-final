@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import mockApi from '../../../data/mockData';
 import { responsiveContainer } from '../../../styles/breakpoints';
 
-const IdeaCarouselContainer = styled.div`
+const IdeaPageContainer = styled.div`
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@ const MockNavigationContainer = styled.div`
   gap: 16px;
 `;
 
-const IdeaCarousel = () => {
+const IdeaPage = () => {
   const { id } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [ideas, setIdeas] = useState([]);
@@ -68,7 +68,7 @@ const IdeaCarousel = () => {
   };
 
   return (
-    <IdeaCarouselContainer>
+    <IdeaPageContainer>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       {ideas.length > 0 && (
@@ -77,8 +77,8 @@ const IdeaCarousel = () => {
           <MockNavigation onNext={goToNext} onPrevious={goToPrevious} />
         </>
       )}
-    </IdeaCarouselContainer>
+    </IdeaPageContainer>
   );
 };
 
-export default IdeaCarousel;
+export default IdeaPage;

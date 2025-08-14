@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
 import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
+import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 // Profile pages
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -24,7 +25,7 @@ export const App = () => {
           <Routes>
             <Route path='/' element={null} />
             <Route path='/ideas' element={<IdeaCarousel />} />
-            <Route path='/ideas/:id' element={<IdeaCarousel />} />
+            <Route path='/ideas/:id' element={<IdeaPage />} />
 
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />
