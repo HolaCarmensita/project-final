@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
-import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
+import NavBar from './components/NavBar';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 // Profile pages
@@ -18,13 +18,13 @@ export const App = () => {
   return (
     <Router>
       <div className='app-container'>
+        <NavBar />
         <div className='background-layer'>
           <Scene velocity={0} />
         </div>
         <div className='overlay-layer'>
           <Routes>
             <Route path='/' element={null} />
-            <Route path='/ideas' element={<IdeaCarousel />} />
             <Route path='/ideas/:id' element={<IdeaPage />} />
 
             {/* Profile routes */}

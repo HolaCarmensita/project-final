@@ -207,11 +207,11 @@ const Scene = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <NavBar
+      {/* <NavBar
         onAdd={() => setIsAddOpen(true)}
         onLeft={() => zoomToNeighbor("left")}
         onRight={() => zoomToNeighbor("right")}
-      />
+      /> */}
 
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach="background" args={["#FFFFFF"]} />
