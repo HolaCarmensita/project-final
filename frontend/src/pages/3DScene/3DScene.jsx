@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
@@ -8,6 +9,7 @@ import CameraController from "./CameraController";
 import NavBar from "../../components/ui/NavBar";
 import Joystick from "../../components/ui/Joystick";
 import AddIdeaSheet from "../../components/ui/AddIdeaSheet";
+import mockApi from "../../data/mockData";
 
 const getUniqueColorPair = (usedColors) => {
   let orbColor, auraColor, combo;
@@ -24,14 +26,24 @@ const getUniqueColorPair = (usedColors) => {
 };
 
 const Scene = () => {
+  const navigate = useNavigate();
   const controlsRef = useRef();
   const [usedColors] = useState(new Set());
-  const [ideas, setIdeas] = useState(() => {
-    return Array.from({ length: 6 }).map((_, i) => {
-      const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-      return { text: `Post ${i + 1}`, orbColor, auraColor };
-    });
-  });
+
+  // Load ideas from mock API and decorate with colors for orbs
+  const [ideas, setIdeas] = useState([]);
+  useEffect(() => {
+    const load = async () => {
+      const fetched = await mockApi.getIdeas();
+      const withColors = fetched.map((idea) => {
+        const { orbColor, auraColor } = getUniqueColorPair(usedColors);
+        return { ...idea, orbColor, auraColor };
+      });
+      setIdeas(withColors);
+    };
+    load();
+  }, [usedColors]);
+
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
@@ -103,9 +115,14 @@ const Scene = () => {
   const handleSubmitIdea = ({ title, description, files }) => {
     const { orbColor, auraColor } = getUniqueColorPair(usedColors);
     const newIdea = {
-      text: title && title.trim() ? title.trim() : `New Idea ${ideas.length + 1}`,
-      description: description || "",
-      files: files || [],
+      id: Date.now(),
+      title: title && title.trim() ? title.trim() : `New Idea ${ideas.length + 1}`,
+      bodyText: description || "",
+      images: [],
+      author: "You",
+      role: "Creator",
+      likes: 0,
+      connections: 0,
       orbColor,
       auraColor
     };
@@ -166,15 +183,24 @@ const Scene = () => {
     const phi = i * increment;
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
+    const pos = [x * sphereRadius, y * sphereRadius, z * sphereRadius];
 
     return (
       <IdeaOrb
-        key={i}
-        position={[x * sphereRadius, y * sphereRadius, z * sphereRadius]}
-        text={idea.text}
+        key={idea.id ?? i}
+        position={pos}
+        text={idea.title || idea.text}
         orbColor={idea.orbColor}
         auraColor={idea.auraColor}
-        onClick={handleOrbClick}
+        onClick={() => {
+          handleOrbClick(pos);
+          if (idea.id) {
+            navigate(`/ideas/${idea.id}`);
+          } else {
+            navigate(`/ideas`);
+          }
+          setSelectedIndex(i);
+        }}
       />
     );
   });
@@ -196,7 +222,7 @@ const Scene = () => {
         <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
       </Canvas>
 
-      {showJoystick && <Joystick onMove={handleJoystickMove} />}
+      {showJoystick && !isAddOpen && <Joystick onMove={handleJoystickMove} />}
 
       <AddIdeaSheet
         isOpen={isAddOpen}

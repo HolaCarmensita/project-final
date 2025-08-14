@@ -24,6 +24,7 @@ export const App = () => {
           <Routes>
             <Route path='/' element={null} />
             <Route path='/ideas' element={<IdeaCarousel />} />
+            <Route path='/ideas/:id' element={<IdeaCarousel />} />
 
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />

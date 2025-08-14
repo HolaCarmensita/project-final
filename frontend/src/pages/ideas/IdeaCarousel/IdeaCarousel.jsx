@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import IdeaCard from '../ideaCard/IdeaCard';
 import MockNavigation from './components/MockNavigation';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import mockApi from '../../../data/mockData';
 import { responsiveContainer } from '../../../styles/breakpoints';
 
@@ -25,6 +26,7 @@ const MockNavigationContainer = styled.div`
 `;
 
 const IdeaCarousel = () => {
+  const { id } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,13 @@ const IdeaCarousel = () => {
 
     fetchIdeas();
   }, []);
+
+  useEffect(() => {
+    if (!loading && ideas.length && id) {
+      const idx = ideas.findIndex((i) => i.id === Number(id));
+      if (idx >= 0) setCurrentIndex(idx);
+    }
+  }, [loading, ideas, id]);
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) =>

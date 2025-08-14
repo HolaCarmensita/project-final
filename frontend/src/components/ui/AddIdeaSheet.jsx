@@ -20,7 +20,7 @@ const Sheet = styled.div`
   border-top-right-radius: 24px;
   box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
   padding: 24px 20px 16px;
-  z-index: 31;
+  z-index: 5001;
 `;
 
 const Title = styled.h3`
