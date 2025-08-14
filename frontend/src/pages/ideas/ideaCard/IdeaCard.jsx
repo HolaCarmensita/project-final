@@ -6,7 +6,7 @@ import IdeaSocialBar from '../IdeaSocialBar/IdeaSocialBar';
 import IdeaText from './components/IdeaText';
 
 const IdeaCardContainer = styled.div`
-  max-width: 400px;
+  width: 100%;
 `;
 
 const IdeaCard = ({ idea = null }) => {

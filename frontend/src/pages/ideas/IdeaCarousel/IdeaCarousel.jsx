@@ -4,13 +4,17 @@ import IdeaCard from '../ideaCard/IdeaCard';
 import MockNavigation from './components/MockNavigation';
 import { useState, useEffect } from 'react';
 import mockApi from '../../../data/mockData';
+import { responsiveContainer } from '../../../styles/breakpoints';
 
 const IdeaCarouselContainer = styled.div`
+  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 16px;
-  max-width: 400px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  ${responsiveContainer}
 `;
 
 const MockNavigationContainer = styled.div`

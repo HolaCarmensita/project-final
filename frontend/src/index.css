@@ -35,9 +35,6 @@ body {
   overflow-x: clip;
 }
 
-
-
-
 img,
 picture,
 video,
@@ -79,76 +76,52 @@ h6 {
 }
 
 /* ==========================================================================
-   Accessibility - Skip Link
+   Layered Interface Layout
    ========================================================================== */
 
 /* 
   HOW TO USE:
-  1. Add this as the first element in your main content:
-     <a href="#main-content" className="skip-link">
-       Skip to main content
-     </a>
+  1. Wrap your app in a div with className="app-container"
+  2. Put 3D scene in a div with className="background-layer"
+  3. Put overlays in a div with className="overlay-layer"
   
-  2. Add this ID to your main content area:
-     <main id="main-content">
-       {Your main content} 
-     </main>
-  
-  3. This allows screen reader users to skip navigation and go directly to content
+  This creates a layered interface where:
+  - 3D scene stays in background (z-index: 1)
+  - Overlays appear on top (z-index: 10)
+  - Overlays allow clicks to pass through by default
 */
 
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: #007bff;
-  color: white;
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.skip-link:focus {
-  top: 6px;
+.background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
 }
 
-/* ==========================================================================
-   Accessibility - User Preferences
-   ========================================================================== */
+.overlay-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none; /* Allow clicks to pass through by default */
 
-/* 
-  Reduce motion for users who prefer it.
-  This respects users who have motion sensitivity or vestibular disorders.
-  Automatically reduces animations and transitions when user has
-  "prefers-reduced-motion: reduce" in their system settings.
-*/
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  /* Position all direct children on the right side */
+  display: flex;
+  justify-content: flex-end;
 }
 
-/* 
-  High contrast mode support.
-  This provides enhanced focus styles for users with high contrast mode enabled.
-  Automatically detects when user has "prefers-contrast: high" in system settings.
-  Makes focus indicators more visible for users with visual impairments.
-*/
-@media (prefers-contrast: high) {
-
-  a:focus,
-  button:focus,
-  input:focus,
-  textarea:focus,
-  select:focus,
-  [tabindex]:focus {
-    outline: 3px solid;
-    outline-offset: 1px;
-  }
+/* Individual overlays can override pointer-events when needed */
+.overlay-layer > * {
+  pointer-events: auto;
 }
