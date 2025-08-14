@@ -6,9 +6,7 @@ import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
-import NavBar from "../../components/NavBar";
 import Joystick from "../../components/Joystick";
-import AddIdeaSheet from "../../components/AddIdeaSheet";
 import mockApi from "../../data/mockData";
 
 const getUniqueColorPair = (usedColors) => {
@@ -207,12 +205,6 @@ const Scene = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      {/* <NavBar
-        onAdd={() => setIsAddOpen(true)}
-        onLeft={() => zoomToNeighbor("left")}
-        onRight={() => zoomToNeighbor("right")}
-      /> */}
-
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach="background" args={["#FFFFFF"]} />
         <ambientLight intensity={0.6} />
@@ -223,12 +215,6 @@ const Scene = () => {
       </Canvas>
 
       {showJoystick && !isAddOpen && <Joystick onMove={handleJoystickMove} />}
-
-      <AddIdeaSheet
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onSubmit={handleSubmitIdea}
-      />
     </div>
   );
 };

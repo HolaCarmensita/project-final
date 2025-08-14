@@ -1,6 +1,8 @@
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
+import AddIdeaSheet from './components/AddIdeaSheet';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 // Profile pages
@@ -15,10 +17,35 @@ import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 
 export const App = () => {
+
+  // Global state for AddIdeaSheet
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  // Handlers for NavBar
+  const handleAdd = () => setIsAddOpen(true);
+  const handleLeft = () => { /* global left navigation logic */ };
+  const handleRight = () => { /* global right navigation logic */ };
+
+  // Handler for AddIdeaSheet submission
+  const handleSubmitIdea = (ideaData) => {
+    // Add your logic to handle new ideas here
+    setIsAddOpen(false);
+  };
+
+
   return (
     <Router>
       <div className='app-container'>
-        <NavBar />
+        <NavBar
+          onAdd={handleAdd}
+          onLeft={handleLeft}
+          onRight={handleRight}
+        />
+        <AddIdeaSheet
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          onSubmit={handleSubmitIdea}
+        />
         <div className='background-layer'>
           <Scene velocity={0} />
         </div>
