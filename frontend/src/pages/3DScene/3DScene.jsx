@@ -7,7 +7,7 @@ import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
 import Joystick from "../../components/Joystick";
-import mockApi from "../../data/mockData";
+import { useIdeasStore } from "../../store/useIdeasStore";
 
 const getUniqueColorPair = (usedColors) => {
   let orbColor, auraColor, combo;
@@ -27,21 +27,7 @@ const Scene = () => {
   const navigate = useNavigate();
   const controlsRef = useRef();
   const [usedColors] = useState(new Set());
-
-  // Load ideas from mock API and decorate with colors for orbs
-  const [ideas, setIdeas] = useState([]);
-  useEffect(() => {
-    const load = async () => {
-      const fetched = await mockApi.getIdeas();
-      const withColors = fetched.map((idea) => {
-        const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-        return { ...idea, orbColor, auraColor };
-      });
-      setIdeas(withColors);
-    };
-    load();
-  }, [usedColors]);
-
+  const ideas = useIdeasStore((state) => state.ideas);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
@@ -107,27 +93,7 @@ const Scene = () => {
     };
   }, []);
 
-  // Bottom sheet state
-  const [isAddOpen, setIsAddOpen] = useState(false);
-
-  const handleSubmitIdea = ({ title, description, files }) => {
-    const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-    const newIdea = {
-      id: Date.now(),
-      title: title && title.trim() ? title.trim() : `New Idea ${ideas.length + 1}`,
-      bodyText: description || "",
-      images: [],
-      author: "You",
-      role: "Creator",
-      likes: 0,
-      connections: 0,
-      orbColor,
-      auraColor
-    };
-    setIdeas((prev) => [...prev, newIdea]);
-    setSelectedIndex(ideas.length);
-    setIsAddOpen(false);
-  };
+  // ...existing code...
 
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
@@ -214,7 +180,7 @@ const Scene = () => {
         <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
       </Canvas>
 
-      {showJoystick && !isAddOpen && <Joystick onMove={handleJoystickMove} />}
+      {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );
 };

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
 import AddIdeaSheet from './components/AddIdeaSheet';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
+import { useIdeasStore } from './store/useIdeasStore';
 
 // Profile pages
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -17,9 +18,10 @@ import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 
 export const App = () => {
-
-  // Global state for AddIdeaSheet
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const isAddOpen = useIdeasStore((state) => state.isAddOpen);
+  const setIsAddOpen = useIdeasStore((state) => state.setIsAddOpen);
+  const addIdea = useIdeasStore((state) => state.addIdea);
+  const ideas = useIdeasStore((state) => state.ideas);
 
   // Handlers for NavBar
   const handleAdd = () => setIsAddOpen(true);
@@ -28,7 +30,14 @@ export const App = () => {
 
   // Handler for AddIdeaSheet submission
   const handleSubmitIdea = (ideaData) => {
-    // Add your logic to handle new ideas here
+    addIdea({
+      ...ideaData,
+      id: Date.now(),
+      author: "You",
+      role: "Creator",
+      likes: 0,
+      connections: 0,
+    });
     setIsAddOpen(false);
   };
 
@@ -47,7 +56,7 @@ export const App = () => {
           onSubmit={handleSubmitIdea}
         />
         <div className='background-layer'>
-          <Scene velocity={0} />
+          <Scene ideas={ideas} />
         </div>
         <div className='overlay-layer'>
           <Routes>

@@ -4,7 +4,7 @@ import IdeaCard from '../ideaCard/IdeaCard';
 import MockNavigation from './components/MockNavigation';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import mockApi from '../../../data/mockData';
+import { useIdeasStore } from '../../../store/useIdeasStore';
 import { responsiveContainer } from '../../../styles/breakpoints';
 
 const IdeaPageContainer = styled.div`
@@ -28,32 +28,14 @@ const MockNavigationContainer = styled.div`
 const IdeaPage = () => {
   const { id } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [ideas, setIdeas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const ideas = useIdeasStore((state) => state.ideas);
 
   useEffect(() => {
-    const fetchIdeas = async () => {
-      try {
-        setLoading(true);
-        const fetchedIdeas = await mockApi.getIdeas();
-        setIdeas(fetchedIdeas);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchIdeas();
-  }, []);
-
-  useEffect(() => {
-    if (!loading && ideas.length && id) {
+    if (ideas.length && id) {
       const idx = ideas.findIndex((i) => i.id === Number(id));
       if (idx >= 0) setCurrentIndex(idx);
     }
-  }, [loading, ideas, id]);
+  }, [ideas, id]);
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) =>
@@ -69,13 +51,13 @@ const IdeaPage = () => {
 
   return (
     <IdeaPageContainer>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      {ideas.length > 0 && (
+      {ideas.length > 0 ? (
         <>
           <IdeaCard idea={ideas[currentIndex]} />
           <MockNavigation onNext={goToNext} onPrevious={goToPrevious} />
         </>
+      ) : (
+        <p>No ideas available.</p>
       )}
     </IdeaPageContainer>
   );
