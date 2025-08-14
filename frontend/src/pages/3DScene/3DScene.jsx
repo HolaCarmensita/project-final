@@ -6,9 +6,9 @@ import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
-import NavBar from "../../components/ui/NavBar";
-import Joystick from "../../components/ui/Joystick";
-import AddIdeaSheet from "../../components/ui/AddIdeaSheet";
+import NavBar from "../../components/NavBar";
+import Joystick from "../../components/Joystick";
+import AddIdeaSheet from "../../components/AddIdeaSheet";
 import mockApi from "../../data/mockData";
 
 const getUniqueColorPair = (usedColors) => {
