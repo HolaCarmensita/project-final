@@ -4,8 +4,8 @@ import { useSwipeable } from 'react-swipeable';
 
 const CarouselContainer = styled.div`
   position: relative;
-  max-width: 400px;
-  height: 360px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 8px;
   cursor: grab;
