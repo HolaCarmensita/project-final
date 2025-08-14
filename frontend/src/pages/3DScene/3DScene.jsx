@@ -7,16 +7,13 @@ import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
 import NavBar from "../../components/ui/NavBar";
 import Joystick from "../../components/ui/Joystick";
+import AddIdeaSheet from "../../components/ui/AddIdeaSheet";
 
-// Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
   let orbColor, auraColor, combo;
   do {
     orbColor = randomColor({ luminosity: "bright" });
-    // Get complementary color by shifting hue 180deg
-    // randomColor doesn't provide direct hue shift, so we use HSL manipulation
     const hsl = randomColor({ luminosity: "light", format: "hsl" });
-    // Extract hue from orbColor
     const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
     const compH = (orbH + 180) % 360;
     auraColor = randomColor({ hue: compH, luminosity: "light" });
@@ -28,19 +25,15 @@ const getUniqueColorPair = (usedColors) => {
 
 const Scene = () => {
   const controlsRef = useRef();
-  // Track used color pairs
   const [usedColors] = useState(new Set());
   const [ideas, setIdeas] = useState(() => {
-    // Initialize with unique color pairs
     return Array.from({ length: 6 }).map((_, i) => {
       const { orbColor, auraColor } = getUniqueColorPair(usedColors);
       return { text: `Post ${i + 1}`, orbColor, auraColor };
     });
   });
-  const [input, setInput] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Joystick vector ref
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
   const handleJoystickMove = (data) => {
     if (!data || !data.vector) {
@@ -52,7 +45,6 @@ const Scene = () => {
     joystickVecRef.current = { x, y, force };
   };
 
-  // Show joystick only on touch phones/tablets (iOS/Android), not desktops
   const [showJoystick, setShowJoystick] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) {
@@ -70,7 +62,7 @@ const Scene = () => {
       const sh = window.screen?.height || 0;
       const vw = window.innerWidth || 0;
       const vh = window.innerHeight || 0;
-      const approxEq = (a, b) => Math.abs(a - b) <= 2; // tolerate minor UI bars
+      const approxEq = (a, b) => Math.abs(a - b) <= 2;
       const isIpadProByScreen =
         (approxEq(sw, 1024) && approxEq(sh, 1366)) ||
         (approxEq(sw, 1366) && approxEq(sh, 1024));
@@ -84,18 +76,14 @@ const Scene = () => {
         (approxEq(vw, 820) && approxEq(vh, 1180)) ||
         (approxEq(vw, 1180) && approxEq(vh, 820));
 
-      // Always allow if detected iPad (Air/Pro)
       if (isiPad) {
         setShowJoystick(true);
         return;
       }
-
-      // Fallback: allow touch devices that match iPad Pro dimensions
       if (hasTouch && (isIpadProByScreen || isIpadProByViewport || isIpadAirByScreen || isIpadAirByViewport)) {
         setShowJoystick(true);
         return;
       }
-
       setShowJoystick(Boolean(hasTouch && isMobile));
     };
 
@@ -109,22 +97,29 @@ const Scene = () => {
     };
   }, []);
 
-  // Add a new idea with a unique color pair
-  const addIdea = () => {
+  // Bottom sheet state
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  const handleSubmitIdea = ({ title, description, files }) => {
     const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-    setIdeas([...ideas, { text: `New Idea ${ideas.length + 1}`, orbColor, auraColor }]);
-    setSelectedIndex(ideas.length); // Optionally select the new orb
+    const newIdea = {
+      text: title && title.trim() ? title.trim() : `New Idea ${ideas.length + 1}`,
+      description: description || "",
+      files: files || [],
+      orbColor,
+      auraColor
+    };
+    setIdeas((prev) => [...prev, newIdea]);
+    setSelectedIndex(ideas.length);
+    setIsAddOpen(false);
   };
 
-  // Smooth camera zoom handler
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
       const controls = controlsRef.current;
       const target = { x: position[0], y: position[1], z: position[2] };
-      // Camera offset (e.g., 8 units away from orb along z axis)
       const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
 
-      // Animate camera position
       gsap.to(controls.object.position, {
         x: camOffset.x,
         y: camOffset.y,
@@ -133,7 +128,6 @@ const Scene = () => {
         onUpdate: () => controls.update(),
       });
 
-      // Animate controls target
       gsap.to(controls.target, {
         x: target.x,
         y: target.y,
@@ -150,7 +144,6 @@ const Scene = () => {
     if (direction === "right") newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
-    // Calculate the position for the new selected orb
     const offset = 2 / ideas.length;
     const increment = Math.PI * (3 - Math.sqrt(5));
     const y = newIndex * offset - 1 + offset / 2;
@@ -165,7 +158,6 @@ const Scene = () => {
   const sphereRadius = 20;
   const orbCount = ideas.length;
 
-  // Distribute orbs using Fibonacci sphere
   const orbs = ideas.map((idea, i) => {
     const offset = 2 / orbCount;
     const increment = Math.PI * (3 - Math.sqrt(5));
@@ -190,7 +182,7 @@ const Scene = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <NavBar
-        onAdd={addIdea}
+        onAdd={() => setIsAddOpen(true)}
         onLeft={() => zoomToNeighbor("left")}
         onRight={() => zoomToNeighbor("right")}
       />
@@ -205,6 +197,12 @@ const Scene = () => {
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
+
+      <AddIdeaSheet
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={handleSubmitIdea}
+      />
     </div>
   );
 };
