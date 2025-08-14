@@ -6,7 +6,7 @@ import gsap from "gsap";
 import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
-import NavBar from "../../components/ui/navBar";
+import NavBar from "../../components/ui/NavBar";
 
 // Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
