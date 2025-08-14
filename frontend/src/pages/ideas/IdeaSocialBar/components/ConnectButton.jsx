@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import at from '/icons/at.svg';
-import atBold from '/icons/at_bold.svg';
+import at from '../../../../assets/icons/at.svg';
+import atBold from '../../../../assets/icons/at_bold.svg';
 
 const ConnectButtonContainer = styled.div`
   display: flex;

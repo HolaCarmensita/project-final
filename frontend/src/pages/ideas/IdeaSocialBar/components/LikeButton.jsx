@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import heart from '/icons/heart.svg';
-import heartFill from '/icons/heart_fill.svg';
+import heart from '../../../../assets/icons/heart.svg';
+import heartFill from '../../../../assets/icons/heart_fill.svg';
 import styled from 'styled-components';
 
 const LikeButtonContainer = styled.div`
