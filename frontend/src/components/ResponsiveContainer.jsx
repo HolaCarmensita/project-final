@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
+import { responsiveContainer } from '../styles/breakpoints';
 
 // Reusable responsive container component
 const ResponsiveContainer = styled.div`

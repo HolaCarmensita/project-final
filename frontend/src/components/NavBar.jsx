@@ -1,6 +1,6 @@
-import LeftArrow from "./icons/LeftArrow";
-import PlusIcon from "./icons/PlusIcon";
-import RightArrow from "./icons/RightArrow";
+import LeftArrow from "./ui/icons/LeftArrow";
+import PlusIcon from "./ui/icons/PlusIcon";
+import RightArrow from "./ui/icons/RightArrow";
 import styled from "styled-components";
 
 const NavBarWrapper = styled.div`
