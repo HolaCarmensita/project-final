@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
 import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
