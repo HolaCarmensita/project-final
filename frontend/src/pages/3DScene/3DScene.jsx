@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import gsap from "gsap";
@@ -6,6 +6,7 @@ import randomColor from "randomcolor";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
 import NavBar from "../../components/ui/NavBar";
+import Joystick from "../../components/ui/Joystick";
 
 // Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
