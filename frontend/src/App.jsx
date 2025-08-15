@@ -5,13 +5,14 @@ import NavBar from './components/NavBar';
 import AddIdeaSheet from './components/AddIdeaSheet';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
+import randomColor from 'randomcolor';
 
 // Profile pages
-import ProfilePage from './pages/Profile/ProfilePage';
-import ProfileIdeas from './pages/Profile/ProfileIdeas';
-import ProfileConnections from './pages/Profile/ProfileConnections';
-import ProfileLiked from './pages/Profile/ProfileLiked';
-import ProfileSettings from './pages/Profile/ProfileSettings';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
+import ProfileIdeas from './pages/ProfilePage/ProfileIdeas';
+import ProfileConnections from './pages/ProfilePage/ProfileConnections';
+import ProfileLiked from './pages/ProfilePage/ProfileLiked';
+import ProfileSettings from './pages/ProfilePage/ProfileSettings';
 
 // Auth pages
 import LoginPage from './pages/Auth/LoginPage';
@@ -29,7 +30,24 @@ export const App = () => {
   const handleRight = () => { /* global right navigation logic */ };
 
   // Handler for AddIdeaSheet submission
+  const getUniqueColorPair = (() => {
+    const usedColors = new Set();
+    return () => {
+      let orbColor, auraColor, combo;
+      do {
+        orbColor = randomColor({ luminosity: "bright" });
+        const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
+        const compH = (orbH + 180) % 360;
+        auraColor = randomColor({ hue: compH, luminosity: "light" });
+        combo = orbColor + "-" + auraColor;
+      } while (usedColors.has(combo));
+      usedColors.add(combo);
+      return { orbColor, auraColor };
+    };
+  })();
+
   const handleSubmitIdea = (ideaData) => {
+    const { orbColor, auraColor } = getUniqueColorPair();
     addIdea({
       ...ideaData,
       id: Date.now(),
@@ -37,6 +55,8 @@ export const App = () => {
       role: "Creator",
       likes: 0,
       connections: 0,
+      orbColor,
+      auraColor,
     });
     setIsAddOpen(false);
   };
