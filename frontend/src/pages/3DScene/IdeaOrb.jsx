@@ -64,8 +64,8 @@ const IdeaOrb = ({
           emissiveIntensity={0.7}
         />
       </mesh>
-      {/* Softer, lighter aura */}
-      <mesh geometry={auraGeometry}>
+      {/* Softer, lighter aura - does not block pointer events */}
+      <mesh geometry={auraGeometry} onPointerDown={e => e.stopPropagation()}>
         <meshBasicMaterial
           color={auraColor}
           transparent

@@ -2,31 +2,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
-import gsap from "gsap";
-import randomColor from "randomcolor";
+import { useIdeasStore } from "../../store/useIdeasStore";
+import { gsap } from "gsap";
 import IdeaOrb from "./IdeaOrb";
 import CameraController from "./CameraController";
 import Joystick from "../../components/Joystick";
-import { useIdeasStore } from "../../store/useIdeasStore";
-
-const getUniqueColorPair = (usedColors) => {
-  let orbColor, auraColor, combo;
-  do {
-    orbColor = randomColor({ luminosity: "bright" });
-    const hsl = randomColor({ luminosity: "light", format: "hsl" });
-    const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
-    const compH = (orbH + 180) % 360;
-    auraColor = randomColor({ hue: compH, luminosity: "light" });
-    combo = orbColor + "-" + auraColor;
-  } while (usedColors.has(combo));
-  usedColors.add(combo);
-  return { orbColor, auraColor };
-};
 
 const Scene = () => {
   const navigate = useNavigate();
   const controlsRef = useRef();
-  const [usedColors] = useState(new Set());
+  // ...existing code...
   const ideas = useIdeasStore((state) => state.ideas);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -96,6 +81,7 @@ const Scene = () => {
   // ...existing code...
 
   const handleOrbClick = (position) => {
+    console.log('handleOrbClick called with position:', position);
     if (controlsRef.current) {
       const controls = controlsRef.current;
       const target = { x: position[0], y: position[1], z: position[2] };
@@ -157,10 +143,13 @@ const Scene = () => {
         orbColor={idea.orbColor}
         auraColor={idea.auraColor}
         onClick={() => {
+          console.log('Orb clicked:', idea, pos);
           handleOrbClick(pos);
           if (idea.id) {
+            console.log('Navigating to:', `/ideas/${idea.id}`);
             navigate(`/ideas/${idea.id}`);
           } else {
+            console.log('Navigating to /ideas');
             navigate(`/ideas`);
           }
           setSelectedIndex(i);
