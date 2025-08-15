@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
-import AddIdeaSheet from './components/AddIdeaSheet';
+import AddIdeaModal from './modals/AddIdeaModal';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
 
@@ -35,7 +35,7 @@ export const App = () => {
   const handleLeft = () => handleLeftStore(moveCameraToIndex);
   const handleRight = () => handleRightStore(moveCameraToIndex);
 
-  // Handler for AddIdeaSheet submission
+  // Handler for AddIdeaModal submission
   const handleSubmitIdea = (ideaData) => {
     submitIdea(ideaData);
     setIsAddOpen(false);
@@ -50,7 +50,7 @@ export const App = () => {
           onLeft={handleLeft}
           onRight={handleRight}
         />
-        <AddIdeaSheet
+        <AddIdeaModal
           isOpen={isAddOpen}
           onClose={() => setIsAddOpen(false)}
           onSubmit={handleSubmitIdea}
