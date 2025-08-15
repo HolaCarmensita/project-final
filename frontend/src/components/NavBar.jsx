@@ -13,9 +13,22 @@ const NavBarWrapper = styled.div`
   padding: 8px 8px;
   display: flex;
   align-items: center;
-  gap: 58px;
+  justify-content: space-between;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
   z-index: 20;
+  width: min(420px, 300px);
+  margin-left: auto;
+  margin-right: auto;
+  @media (max-width: 600px) {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    transform: none;
+    width: calc(100vw - 16px);
+    margin: 0 8px;
+    border-radius: 18px;
+  }
 `;
 
 const NavButton = styled.button`
@@ -46,9 +59,11 @@ const NavBar = ({ onAdd, onLeft, onRight }) => (
     <NavButton onClick={onLeft} aria-label="Previous">
       <img src={leftArrowIcon} alt="Left" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
     </NavButton>
-    <NavButton className="add" onClick={onAdd} aria-label="Add">
-      <img src={plusIcon} alt="Add" style={{ width: 28, height: 28 }} />
-    </NavButton>
+    <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <NavButton className="add" onClick={onAdd} aria-label="Add">
+        <img src={plusIcon} alt="Add" style={{ width: 28, height: 28 }} />
+      </NavButton>
+    </div>
     <NavButton onClick={onRight} aria-label="Next">
       <img src={rightArrowIcon} alt="Right" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
     </NavButton>
