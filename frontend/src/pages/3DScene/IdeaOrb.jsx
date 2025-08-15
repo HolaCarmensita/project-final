@@ -30,7 +30,7 @@ const IdeaOrb = ({
     }
   });
 
-  const getWooblyGeometry = (radius = 1.2, detail = 128, wobble = 1) => {
+  const getWooblyGeometry = (radius = 1.2, detail = 32, wobble = 1) => {
     const geometry = new THREE.SphereGeometry(radius, detail, detail);
     const position = geometry.attributes.position;
     for (let i = 0; i < position.count; i++) {
@@ -44,8 +44,8 @@ const IdeaOrb = ({
   };
 
   // [FIX] make geometries woobly,  
-  const geometry = useMemo(() => getWooblyGeometry(1.2, 128, 0.03), []);
-  const auraGeometry = useMemo(() => getWooblyGeometry(1.7, 128, 0.03), []);
+  const geometry = useMemo(() => getWooblyGeometry(1.2, 32, 0.03), []);
+  const auraGeometry = useMemo(() => getWooblyGeometry(1.7, 32, 0.03), []);
 
   return (
     <group ref={groupRef} position={position}>
@@ -79,4 +79,5 @@ const IdeaOrb = ({
   );
 };
 
-export default IdeaOrb;
+import React from "react";
+export default React.memo(IdeaOrb);

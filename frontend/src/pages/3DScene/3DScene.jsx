@@ -17,11 +17,21 @@ const Scene = () => {
   const controlsRef = useRef();
   // ...existing code...
   const handleOrbClick = (position) => {
-    // handle camera movement to orb position
     if (controlsRef.current) {
       const controls = controlsRef.current;
       const target = { x: position[0], y: position[1], z: position[2] };
       const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
+
+      // Only animate if position/target actually changed
+      const pos = controls.object.position;
+      const tgt = controls.target;
+      const needsMove =
+        pos.x !== camOffset.x || pos.y !== camOffset.y || pos.z !== camOffset.z ||
+        tgt.x !== target.x || tgt.y !== target.y || tgt.z !== target.z;
+      if (!needsMove) return;
+
+      // Kill previous tweens to avoid overlap
+      gsap.killTweensOf([controls.object.position, controls.target]);
 
       gsap.to(controls.object.position, {
         x: camOffset.x,
