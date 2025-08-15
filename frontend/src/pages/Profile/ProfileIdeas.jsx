@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 const ProfileIdeasContainer = styled.div`
-  ${responsiveContainer}
-  background-color: #e3f2fd;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
 `;
 
 const ProfileIdeas = () => {

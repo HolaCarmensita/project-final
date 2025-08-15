@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 const ProfileLikedContainer = styled.div`
-  ${responsiveContainer}
-  background-color: #fff3e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  height: 100%;
+  background-color: white;
 `;
 
 const ProfileLiked = () => {

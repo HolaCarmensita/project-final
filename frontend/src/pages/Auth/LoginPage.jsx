@@ -1,12 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 const LoginContainer = styled.div`
-  ${responsiveContainer}
-  background-color: #fce4ec;
-  justify-content: center;
-  align-items: center;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
 `;
 
 const LoginPage = () => {

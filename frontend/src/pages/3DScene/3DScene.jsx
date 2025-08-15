@@ -1,26 +1,27 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import gsap from "gsap";
-import randomColor from "randomcolor";
-import IdeaOrb from "./IdeaOrb";
-import CameraController from "./CameraController";
-import NavBar from "../../components/ui/NavBar";
-import Joystick from "../../components/ui/Joystick";
+import React, { useState, useRef, useEffect } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import gsap from 'gsap';
+import randomColor from 'randomcolor';
+import IdeaOrb from './IdeaOrb';
+import CameraController from './CameraController';
+import NavBar from '../../components/ui/NavBar';
+import Joystick from '../../components/ui/Joystick';
 
 // Helper to generate a unique vivid color pair not in usedColors
 const getUniqueColorPair = (usedColors) => {
   let orbColor, auraColor, combo;
   do {
-    orbColor = randomColor({ luminosity: "bright" });
+    orbColor = randomColor({ luminosity: 'bright' });
     // Get complementary color by shifting hue 180deg
     // randomColor doesn't provide direct hue shift, so we use HSL manipulation
-    const hsl = randomColor({ luminosity: "light", format: "hsl" });
+    const hsl = randomColor({ luminosity: 'light', format: 'hsl' });
     // Extract hue from orbColor
-    const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
+    const orbH =
+      Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
     const compH = (orbH + 180) % 360;
-    auraColor = randomColor({ hue: compH, luminosity: "light" });
-    combo = orbColor + "-" + auraColor;
+    auraColor = randomColor({ hue: compH, luminosity: 'light' });
+    combo = orbColor + '-' + auraColor;
   } while (usedColors.has(combo));
   usedColors.add(combo);
   return { orbColor, auraColor };
@@ -37,7 +38,7 @@ const Scene = () => {
       return { text: `Post ${i + 1}`, orbColor, auraColor };
     });
   });
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Joystick vector ref
@@ -55,14 +56,19 @@ const Scene = () => {
   // Show joystick only on touch phones/tablets (iOS/Android), not desktops
   const [showJoystick, setShowJoystick] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) {
+    if (typeof window === 'undefined' || !window.matchMedia) {
       setShowJoystick(false);
       return;
     }
     const compute = () => {
-      const ua = navigator.userAgent || navigator.vendor || window.opera || "";
-      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const isiPad = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      const hasTouch =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        navigator.msMaxTouchPoints > 0;
+      const isiPad =
+        /iPad/.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const isIPhone = /iPhone|iPod/.test(ua);
       const isAndroid = /Android/.test(ua);
       const isMobile = isiPad || isIPhone || isAndroid;
@@ -91,7 +97,13 @@ const Scene = () => {
       }
 
       // Fallback: allow touch devices that match iPad Pro dimensions
-      if (hasTouch && (isIpadProByScreen || isIpadProByViewport || isIpadAirByScreen || isIpadAirByViewport)) {
+      if (
+        hasTouch &&
+        (isIpadProByScreen ||
+          isIpadProByViewport ||
+          isIpadAirByScreen ||
+          isIpadAirByViewport)
+      ) {
         setShowJoystick(true);
         return;
       }
@@ -101,18 +113,21 @@ const Scene = () => {
 
     compute();
     const handler = () => compute();
-    window.addEventListener("resize", handler);
-    window.addEventListener("orientationchange", handler);
+    window.addEventListener('resize', handler);
+    window.addEventListener('orientationchange', handler);
     return () => {
-      window.removeEventListener("resize", handler);
-      window.removeEventListener("orientationchange", handler);
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('orientationchange', handler);
     };
   }, []);
 
   // Add a new idea with a unique color pair
   const addIdea = () => {
     const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-    setIdeas([...ideas, { text: `New Idea ${ideas.length + 1}`, orbColor, auraColor }]);
+    setIdeas([
+      ...ideas,
+      { text: `New Idea ${ideas.length + 1}`, orbColor, auraColor },
+    ]);
     setSelectedIndex(ideas.length); // Optionally select the new orb
   };
 
@@ -146,8 +161,9 @@ const Scene = () => {
 
   const zoomToNeighbor = (direction) => {
     let newIndex = selectedIndex;
-    if (direction === "left") newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
-    if (direction === "right") newIndex = (selectedIndex + 1) % ideas.length;
+    if (direction === 'left')
+      newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
+    if (direction === 'right') newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
     // Calculate the position for the new selected orb
@@ -188,20 +204,26 @@ const Scene = () => {
   });
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+    <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
       <NavBar
         onAdd={addIdea}
-        onLeft={() => zoomToNeighbor("left")}
-        onRight={() => zoomToNeighbor("right")}
+        onLeft={() => zoomToNeighbor('left')}
+        onRight={() => zoomToNeighbor('right')}
       />
 
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        <color attach="background" args={["#FFFFFF"]} />
+        <color attach='background' args={['#FFFFFF']} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         <CameraController joystickVecRef={joystickVecRef} />
         {orbs}
-        <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
+        <OrbitControls
+          ref={controlsRef}
+          enableZoom={false}
+          enablePan={false}
+          target={[0, 0, 0]}
+          makeDefault
+        />
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}

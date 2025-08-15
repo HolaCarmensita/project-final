@@ -1,6 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
+import { useState } from 'react';
 import Scene from './pages/3DScene/3DScene';
 import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
+import Header from './components/ui/Header';
 
 // Profile pages
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -13,14 +20,37 @@ import ProfileSettings from './pages/Profile/ProfileSettings';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 
-export const App = () => {
+const AppContent = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
+
+  // Modal logic: currently shows modal on all routes except home (/)
+  // To change this, modify the condition below:
+  // - Only /ideas: location.pathname === '/ideas'
+  // - Multiple routes: ['/ideas', '/profile'].includes(location.pathname)
+  // - Route pattern: location.pathname.startsWith('/ideas')
+  const isModalActive = location.pathname !== '/';
+
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+    console.log('Theme toggled to:', !isDarkMode ? 'dark' : 'light');
+  };
+
   return (
-    <Router>
-      <div className='app-container'>
-        <div className='background-layer'>
+    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className='content-layout'>
+        {/* 3D Scene - hidden on mobile when modal active */}
+        <div
+          className={`scene-container ${
+            isModalActive ? 'hidden-on-mobile' : ''
+          }`}
+        >
+          <Header onThemeToggle={handleThemeToggle} />
           <Scene velocity={0} />
         </div>
-        <div className='overlay-layer'>
+
+        {/* Modal - full screen on mobile when active */}
+        <div className={`modal-container ${isModalActive ? 'active' : ''}`}>
           <Routes>
             <Route path='/' element={null} />
             <Route path='/ideas' element={<IdeaCarousel />} />
@@ -41,6 +71,14 @@ export const App = () => {
           </Routes>
         </div>
       </div>
+    </div>
+  );
+};
+
+export const App = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };

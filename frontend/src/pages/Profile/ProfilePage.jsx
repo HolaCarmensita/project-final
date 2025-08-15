@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 const ProfileContainer = styled.div`
-  ${responsiveContainer}
-  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
 `;
 
 const ProfilePage = () => {
