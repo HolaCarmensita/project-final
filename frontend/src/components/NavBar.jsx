@@ -1,6 +1,6 @@
-import LeftArrow from "./icons/LeftArrow";
-import PlusIcon from "./icons/PlusIcon";
-import RightArrow from "./icons/RightArrow";
+import leftArrowIcon from "../assets/icons/arrow_back.svg";
+import rightArrowIcon from "../assets/icons/arrow_forward.svg";
+import plusIcon from "../assets/icons/plus_large.svg";
 import styled from "styled-components";
 
 const NavBarWrapper = styled.div`
@@ -44,13 +44,13 @@ const NavButton = styled.button`
 const NavBar = ({ onAdd, onLeft, onRight }) => (
   <NavBarWrapper>
     <NavButton onClick={onLeft} aria-label="Previous">
-      <LeftArrow />
+      <img src={leftArrowIcon} alt="Left" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
     </NavButton>
     <NavButton className="add" onClick={onAdd} aria-label="Add">
-      <PlusIcon />
+      <img src={plusIcon} alt="Add" style={{ width: 28, height: 28 }} />
     </NavButton>
     <NavButton onClick={onRight} aria-label="Next">
-      <RightArrow />
+      <img src={rightArrowIcon} alt="Right" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
     </NavButton>
   </NavBarWrapper>
 );
