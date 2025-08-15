@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
+import { mockIdeas } from '../data/mockData';
 
 const getUniqueColorPair = (() => {
   const usedColors = new Set();
@@ -18,7 +19,13 @@ const getUniqueColorPair = (() => {
 })();
 
 export const useIdeasStore = create((set) => ({
-  ideas: [],
+  ideas: mockIdeas.map(idea => {
+    const orbColor = randomColor({ luminosity: "bright" });
+    const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
+    const compH = (orbH + 180) % 360;
+    const auraColor = randomColor({ hue: compH, luminosity: "light" });
+    return { ...idea, orbColor, auraColor };
+  }),
   isAddOpen: false,
   addIdea: (idea) => {
     const { orbColor, auraColor } = getUniqueColorPair();
