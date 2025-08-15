@@ -5,7 +5,6 @@ import NavBar from './components/NavBar';
 import AddIdeaSheet from './components/AddIdeaSheet';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
-import randomColor from 'randomcolor';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
@@ -21,43 +20,15 @@ import RegisterPage from './pages/Auth/RegisterPage';
 export const App = () => {
   const isAddOpen = useIdeasStore((state) => state.isAddOpen);
   const setIsAddOpen = useIdeasStore((state) => state.setIsAddOpen);
-  const addIdea = useIdeasStore((state) => state.addIdea);
+  const submitIdea = useIdeasStore((state) => state.submitIdea);
   const ideas = useIdeasStore((state) => state.ideas);
-
-  // Handlers for NavBar
-  const handleAdd = () => setIsAddOpen(true);
-  const handleLeft = () => { /* global left navigation logic */ };
-  const handleRight = () => { /* global right navigation logic */ };
+  const openAddModal = useIdeasStore((state) => state.openAddModal);
+  const handleLeft = useIdeasStore((state) => state.handleLeft);
+  const handleRight = useIdeasStore((state) => state.handleRight);
 
   // Handler for AddIdeaSheet submission
-  const getUniqueColorPair = (() => {
-    const usedColors = new Set();
-    return () => {
-      let orbColor, auraColor, combo;
-      do {
-        orbColor = randomColor({ luminosity: "bright" });
-        const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
-        const compH = (orbH + 180) % 360;
-        auraColor = randomColor({ hue: compH, luminosity: "light" });
-        combo = orbColor + "-" + auraColor;
-      } while (usedColors.has(combo));
-      usedColors.add(combo);
-      return { orbColor, auraColor };
-    };
-  })();
-
   const handleSubmitIdea = (ideaData) => {
-    const { orbColor, auraColor } = getUniqueColorPair();
-    addIdea({
-      ...ideaData,
-      id: Date.now(),
-      author: "You",
-      role: "Creator",
-      likes: 0,
-      connections: 0,
-      orbColor,
-      auraColor,
-    });
+    submitIdea(ideaData);
     setIsAddOpen(false);
   };
 
@@ -66,7 +37,7 @@ export const App = () => {
     <Router>
       <div className='app-container'>
         <NavBar
-          onAdd={handleAdd}
+          onAdd={openAddModal}
           onLeft={handleLeft}
           onRight={handleRight}
         />

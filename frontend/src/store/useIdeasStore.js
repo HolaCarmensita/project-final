@@ -27,4 +27,31 @@ export const useIdeasStore = create((set) => ({
     }));
   },
   setIsAddOpen: (isOpen) => set({ isAddOpen: isOpen }),
+  submitIdea: (ideaData) => {
+    const { orbColor, auraColor } = getUniqueColorPair();
+    set((state) => ({
+      ideas: [
+        ...state.ideas,
+        {
+          ...ideaData,
+          id: Date.now(),
+          author: "You",
+          role: "Creator",
+          likes: 0,
+          connections: 0,
+          orbColor,
+          auraColor,
+        },
+      ],
+    }));
+  },
+  openAddModal: () => set({ isAddOpen: true }),
+  handleLeft: () => {
+    // Add global left navigation logic here
+    // Example: console.log('Left navigation triggered');
+  },
+  handleRight: () => {
+    // Add global right navigation logic here
+    // Example: console.log('Right navigation triggered');
+  },
 }));
