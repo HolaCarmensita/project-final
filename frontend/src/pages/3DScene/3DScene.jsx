@@ -17,7 +17,7 @@ const Scene = () => {
   const controlsRef = useRef();
   // ...existing code...
   const handleOrbClick = (position) => {
-    console.log('handleOrbClick called with position:', position);
+    // handle camera movement to orb position
     if (controlsRef.current) {
       const controls = controlsRef.current;
       const target = { x: position[0], y: position[1], z: position[2] };
@@ -180,13 +180,10 @@ const Scene = () => {
         orbColor={idea.orbColor}
         auraColor={idea.auraColor}
         onClick={() => {
-          console.log('Orb clicked:', idea, pos);
           handleOrbClick(pos);
           if (idea.id) {
-            console.log('Navigating to:', `/ideas/${idea.id}`);
             navigate(`/ideas/${idea.id}`);
           } else {
-            console.log('Navigating to /ideas');
             navigate(`/ideas`);
           }
           setSelectedIndex(i);
