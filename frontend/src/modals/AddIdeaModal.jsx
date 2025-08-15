@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Button from "../components/Button";
 
 const Overlay = styled.div`
   position: fixed;
@@ -61,16 +62,6 @@ const Row = styled.div`
   margin-top: 18px;
 `;
 
-const Button = styled.button`
-  flex: 1;
-  padding: 16px 20px;
-  border-radius: 14px;
-  border: 1px solid #232323;
-  font-size: 16px;
-  cursor: pointer;
-  background: ${(p) => (p.primary ? "#232323" : "#fff")};
-  color: ${(p) => (p.primary ? "#fff" : "#232323")};
-`;
 
 const AddIdeaSheet = ({ isOpen, onClose, onSubmit }) => {
   const [title, setTitle] = useState("");
@@ -111,7 +102,7 @@ const AddIdeaSheet = ({ isOpen, onClose, onSubmit }) => {
             />
 
             <Label htmlFor="idea-files">Upload file</Label>
-            <Input id="idea-files" type="file" multiple onChange={handleFiles} />
+            <Input id="idea-files" type="file" multiple accept="image/png, image/jpeg" onChange={handleFiles} />
 
             <Row>
               <Button type="button" onClick={onClose}>CANCEL</Button>
