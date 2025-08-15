@@ -23,8 +23,17 @@ export const App = () => {
   const submitIdea = useIdeasStore((state) => state.submitIdea);
   const ideas = useIdeasStore((state) => state.ideas);
   const openAddModal = useIdeasStore((state) => state.openAddModal);
-  const handleLeft = useIdeasStore((state) => state.handleLeft);
-  const handleRight = useIdeasStore((state) => state.handleRight);
+  const handleLeftStore = useIdeasStore((state) => state.handleLeft);
+  const handleRightStore = useIdeasStore((state) => state.handleRight);
+
+  // Camera move callback for 3DScene
+  const moveCameraToIndex = (idx) => {
+    // Custom event for 3DScene to listen and move camera
+    window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
+  };
+
+  const handleLeft = () => handleLeftStore(moveCameraToIndex);
+  const handleRight = () => handleRightStore(moveCameraToIndex);
 
   // Handler for AddIdeaSheet submission
   const handleSubmitIdea = (ideaData) => {

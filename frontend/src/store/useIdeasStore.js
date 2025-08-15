@@ -26,6 +26,7 @@ export const useIdeasStore = create((set) => ({
     const auraColor = randomColor({ hue: compH, luminosity: "light" });
     return { ...idea, orbColor, auraColor };
   }),
+  selectedIndex: 0,
   isAddOpen: false,
   addIdea: (idea) => {
     const { orbColor, auraColor } = getUniqueColorPair();
@@ -34,6 +35,10 @@ export const useIdeasStore = create((set) => ({
     }));
   },
   setIsAddOpen: (isOpen) => set({ isAddOpen: isOpen }),
+  setSelectedIndex: (idx, callback) => {
+    set({ selectedIndex: idx });
+    if (typeof callback === 'function') callback(idx);
+  },
   submitIdea: (ideaData) => {
     const { orbColor, auraColor } = getUniqueColorPair();
     set((state) => ({
@@ -53,12 +58,14 @@ export const useIdeasStore = create((set) => ({
     }));
   },
   openAddModal: () => set({ isAddOpen: true }),
-  handleLeft: () => {
-    // Add global left navigation logic here
-    // Example: console.log('Left navigation triggered');
-  },
-  handleRight: () => {
-    // Add global right navigation logic here
-    // Example: console.log('Right navigation triggered');
-  },
+  handleLeft: (callback) => set((state) => {
+    const newIndex = (state.selectedIndex - 1 + state.ideas.length) % state.ideas.length;
+    if (typeof callback === 'function') callback(newIndex);
+    return { selectedIndex: newIndex };
+  }),
+  handleRight: (callback) => set((state) => {
+    const newIndex = (state.selectedIndex + 1) % state.ideas.length;
+    if (typeof callback === 'function') callback(newIndex);
+    return { selectedIndex: newIndex };
+  }),
 }));

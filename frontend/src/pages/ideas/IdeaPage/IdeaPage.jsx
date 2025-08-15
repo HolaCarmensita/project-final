@@ -27,33 +27,30 @@ const MockNavigationContainer = styled.div`
 
 const IdeaPage = () => {
   const { id } = useParams();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const ideas = useIdeasStore((state) => state.ideas);
+  const selectedIndex = useIdeasStore((state) => state.selectedIndex);
+  const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
 
   useEffect(() => {
     if (ideas.length && id) {
       const idx = ideas.findIndex((i) => i.id === Number(id));
-      if (idx >= 0) setCurrentIndex(idx);
+      if (idx >= 0) setSelectedIndex(idx);
     }
-  }, [ideas, id]);
+  }, [ideas, id, setSelectedIndex]);
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === ideas.length - 1 ? 0 : prevIndex + 1
-    );
+    setSelectedIndex((selectedIndex + 1) % ideas.length);
   };
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? ideas.length - 1 : prevIndex - 1
-    );
+    setSelectedIndex((selectedIndex - 1 + ideas.length) % ideas.length);
   };
 
   return (
     <IdeaPageContainer>
       {ideas.length > 0 ? (
         <>
-          <IdeaCard idea={ideas[currentIndex]} />
+          <IdeaCard idea={ideas[selectedIndex]} />
           {/* <MockNavigation onNext={goToNext} onPrevious={goToPrevious} /> */}
         </>
       ) : (

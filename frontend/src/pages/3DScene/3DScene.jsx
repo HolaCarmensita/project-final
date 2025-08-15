@@ -9,11 +9,72 @@ import CameraController from "./CameraController";
 import Joystick from "../../components/Joystick";
 
 const Scene = () => {
+
+  const ideas = useIdeasStore((state) => state.ideas);
+  const selectedIndex = useIdeasStore((state) => state.selectedIndex);
+  const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
   const navigate = useNavigate();
   const controlsRef = useRef();
   // ...existing code...
-  const ideas = useIdeasStore((state) => state.ideas);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const handleOrbClick = (position) => {
+    console.log('handleOrbClick called with position:', position);
+    if (controlsRef.current) {
+      const controls = controlsRef.current;
+      const target = { x: position[0], y: position[1], z: position[2] };
+      const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
+
+      gsap.to(controls.object.position, {
+        x: camOffset.x,
+        y: camOffset.y,
+        z: camOffset.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
+
+      gsap.to(controls.target, {
+        x: target.x,
+        y: target.y,
+        z: target.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
+    }
+  };
+  // Listen for camera move events from NavBar
+  useEffect(() => {
+    const handler = (e) => {
+      const idx = e.detail;
+      if (ideas.length > 0 && typeof idx === 'number') {
+        const offset = 2 / ideas.length;
+        const increment = Math.PI * (3 - Math.sqrt(5));
+        const y = idx * offset - 1 + offset / 2;
+        const r = Math.sqrt(1 - y * y);
+        const phi = idx * increment;
+        const x = Math.cos(phi) * r;
+        const z = Math.sin(phi) * r;
+        handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
+      }
+    };
+    window.addEventListener('moveCameraToIndex', handler);
+    return () => window.removeEventListener('moveCameraToIndex', handler);
+  }, [ideas.length, handleOrbClick]);
+  // Keyboard navigation for left/right arrows (attach only once)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      let newIndex = selectedIndex;
+      if (e.key === 'ArrowLeft') {
+        newIndex = (newIndex - 1 + ideas.length) % ideas.length;
+        setSelectedIndex(newIndex);
+      } else if (e.key === 'ArrowRight') {
+        newIndex = (newIndex + 1) % ideas.length;
+        setSelectedIndex(newIndex);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedIndex, ideas.length, setSelectedIndex]);
 
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
   const handleJoystickMove = (data) => {
@@ -80,30 +141,6 @@ const Scene = () => {
 
   // ...existing code...
 
-  const handleOrbClick = (position) => {
-    console.log('handleOrbClick called with position:', position);
-    if (controlsRef.current) {
-      const controls = controlsRef.current;
-      const target = { x: position[0], y: position[1], z: position[2] };
-      const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
-
-      gsap.to(controls.object.position, {
-        x: camOffset.x,
-        y: camOffset.y,
-        z: camOffset.z,
-        duration: 1.2,
-        onUpdate: () => controls.update(),
-      });
-
-      gsap.to(controls.target, {
-        x: target.x,
-        y: target.y,
-        z: target.z,
-        duration: 1.2,
-        onUpdate: () => controls.update(),
-      });
-    }
-  };
 
   const zoomToNeighbor = (direction) => {
     let newIndex = selectedIndex;
