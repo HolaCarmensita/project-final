@@ -54,7 +54,7 @@ const IdeaPage = () => {
       {ideas.length > 0 ? (
         <>
           <IdeaCard idea={ideas[currentIndex]} />
-          <MockNavigation onNext={goToNext} onPrevious={goToPrevious} />
+          {/* <MockNavigation onNext={goToNext} onPrevious={goToPrevious} /> */}
         </>
       ) : (
         <p>No ideas available.</p>
