@@ -66,6 +66,8 @@ const StackCard = styled.div`
   color: #121212;
   border: 1px solid rgba(0,0,0,0.08);
   background: ${(p) => p.bg || '#e5f3ff'};
+  display: flex;                 /* add */
+  flex-direction: column;        /* add */
   transform: ${(p) => {
     const baseY = typeof p.offset === 'number' ? p.offset : 0;
     if (p.unstacked) {
@@ -99,15 +101,43 @@ const IdeaTitle = styled.h4`
 `;
 
 const OpenButton = styled.button`
+  align-self: flex-end;           /* right edge inside the card */
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #232323;
-  background: #fff;
+  gap: 10px;
+  padding: 10px 16px;
+  min-height: 40px;
+  border: none;
+  border-radius: 20px;            /* pill */
+  background: #232323;            /* black/dark */
+  color: #ffffff;                 /* white text */
+  font-size: 16px;
+  font-weight: lighter;
   cursor: pointer;
-  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+  transition: background-color .2s ease, box-shadow .2s ease, transform .2s ease;
+
+  &:hover {
+    background: #111111;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.20);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+  }
+
+  img {
+    width: 18px;
+    height: 18px;
+    filter: invert(1) brightness(1.4); /* make the arrow icon white */
+    pointer-events: none;
+  }
 `;
 
 const Row = styled.div`
