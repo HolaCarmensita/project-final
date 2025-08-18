@@ -108,7 +108,7 @@ const OpenButton = styled.button`
   padding: 10px 16px;
   min-height: 40px;
   border: none;
-  border-radius: 20px;            /* pill */
+  border-radius: 12px;            /* pill */
   background: #232323;            /* black/dark */
   color: #ffffff;                 /* white text */
   font-size: 16px;
