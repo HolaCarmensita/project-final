@@ -77,6 +77,11 @@ const SignUpText = styled.p`
     }
   }
 `;
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+`;
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -95,22 +100,37 @@ const LoginPage = () => {
     setPasswordError('');
     setGeneralError('');
 
-    // Check each field individually
+    let hasErrors = false;
+
+    // Validate email
     if (!email) {
       setEmailError('Email is required');
-      return;
+      hasErrors = true;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setEmailError('Please enter a valid email address');
+        hasErrors = true;
+      }
     }
 
+    // Validate password
     if (!password) {
       setPasswordError('Password is required');
+      hasErrors = true;
+    }
+
+    // If any errors, stop here
+    if (hasErrors) {
       return;
     }
 
     setIsLoading(true);
 
-    //fake api call
+    // Login API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+
       if (email === 'test@test.com' && password === 'test') {
         console.log('Login Success');
         navigate('/');
@@ -118,15 +138,38 @@ const LoginPage = () => {
         setGeneralError('Invalid email or password');
       }
     } catch (error) {
-      setGeneralError('An error occurred');
+      setGeneralError('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setEmailError(''); // Clear email error when user types
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+
+    // Clear email error when user starts typing
+    if (emailValue === '') {
+      setEmailError('');
+      return;
+    }
+  };
+
+  const handleEmailBlur = (e) => {
+    const emailValue = e.target.value;
+
+    if (emailValue === '') {
+      setEmailError('');
+      return;
+    }
+
+    // Validate email when user leaves the field
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+      setEmailError('Please enter a valid email address');
+    } else {
+      setEmailError(''); // Clear error when email is valid
+    }
   };
 
   const handlePasswordChange = (e) => {
@@ -151,16 +194,13 @@ const LoginPage = () => {
         <Label htmlFor='email'>Email</Label>
         <Input
           id='email'
-          type='email'
+          type='text'
           placeholder='Enter your email'
           value={email}
           onChange={handleEmailChange}
+          onBlur={handleEmailBlur}
         />
-        {emailError && (
-          <p style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
-            {emailError}
-          </p>
-        )}
+        {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
 
         <Label htmlFor='password'>Password</Label>
         <Input
@@ -170,24 +210,9 @@ const LoginPage = () => {
           value={password}
           onChange={handlePasswordChange}
         />
-        {passwordError && (
-          <p style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
-            {passwordError}
-          </p>
-        )}
+        {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
 
-        {generalError && (
-          <p
-            style={{
-              color: 'red',
-              fontSize: '14px',
-              textAlign: 'center',
-              marginTop: '8px',
-            }}
-          >
-            {generalError}
-          </p>
-        )}
+        {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
 
         <ForgotPasswordLink to='/forgot-password'>
           Forgot password?
