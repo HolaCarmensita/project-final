@@ -1,11 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import IdeaCard from '../ideaCard/IdeaCard';
-import MockNavigation from './components/MockNavigation';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIdeasStore } from '../../../store/useIdeasStore';
-import { responsiveContainer } from '../../../styles/breakpoints';
 
 const IdeaPageContainer = styled.div`
   background-color: white;
@@ -15,14 +13,6 @@ const IdeaPageContainer = styled.div`
   padding: 16px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   height: 100vh;
-  ${responsiveContainer}
-`;
-
-const MockNavigationContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
 `;
 
 const IdeaPage = () => {

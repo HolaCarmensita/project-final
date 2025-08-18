@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 const Box = styled.div`
   background: #fff;

@@ -1,10 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
 import AddIdeaModal from './modals/AddIdeaModal';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
+import Header from './components/Header1';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
@@ -17,7 +18,9 @@ import ProfileSettings from './pages/ProfilePage/ProfileSettings';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 
-export const App = () => {
+const App = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
   const isAddOpen = useIdeasStore((state) => state.isAddOpen);
   const setIsAddOpen = useIdeasStore((state) => state.setIsAddOpen);
   const submitIdea = useIdeasStore((state) => state.submitIdea);
@@ -25,6 +28,18 @@ export const App = () => {
   const openAddModal = useIdeasStore((state) => state.openAddModal);
   const handleLeftStore = useIdeasStore((state) => state.handleLeft);
   const handleRightStore = useIdeasStore((state) => state.handleRight);
+  const isModalActive = location.pathname !== '/';
+
+  // Modal logic: currently shows modal on all routes except home (/)
+  // To change this, modify the condition below:
+  // - Only /ideas: location.pathname === '/ideas'
+  // - Multiple routes: ['/ideas', '/profile'].includes(location.pathname)
+  // - Route pattern: location.pathname.startsWith('/ideas')
+
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+    console.log('Theme toggled to:', !isDarkMode ? 'dark' : 'light');
+  };
 
   // Camera move callback for 3DScene
   const moveCameraToIndex = (idx) => {
@@ -41,10 +56,10 @@ export const App = () => {
     setIsAddOpen(false);
   };
 
-
   return (
-    <Router>
-      <div className='app-container'>
+    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className='content-layout'>
+        {/* 3D Scene - hidden on mobile when modal active */}
         <NavBar
           onAdd={openAddModal}
           onLeft={handleLeft}
@@ -55,10 +70,17 @@ export const App = () => {
           onClose={() => setIsAddOpen(false)}
           onSubmit={handleSubmitIdea}
         />
-        <div className='background-layer'>
+        <div
+          className={`scene-container ${
+            isModalActive ? 'hidden-on-mobile' : ''
+          }`}
+        >
+          <Header onThemeToggle={handleThemeToggle} />
           <Scene ideas={ideas} />
         </div>
-        <div className='overlay-layer'>
+
+        {/* Modal - full screen on mobile when active */}
+        <div className={`modal-container ${isModalActive ? 'active' : ''}`}>
           <Routes>
             <Route path='/' element={null} />
             <Route path='/ideas/:id' element={<IdeaPage />} />
@@ -79,6 +101,8 @@ export const App = () => {
           </Routes>
         </div>
       </div>
-    </Router>
+    </div>
   );
 };
+
+export default App;

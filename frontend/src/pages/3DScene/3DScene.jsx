@@ -1,15 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { useNavigate } from "react-router-dom";
-import { useIdeasStore } from "../../store/useIdeasStore";
-import { gsap } from "gsap";
-import IdeaOrb from "./IdeaOrb";
-import CameraController from "./CameraController";
-import Joystick from "../../components/Joystick";
+import React, { useState, useRef, useEffect } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import { useNavigate } from 'react-router-dom';
+import { useIdeasStore } from '../../store/useIdeasStore';
+import { gsap } from 'gsap';
+import IdeaOrb from './IdeaOrb';
+import CameraController from './CameraController';
+import Joystick from '../../components/Joystick';
 
 const Scene = () => {
-
   const ideas = useIdeasStore((state) => state.ideas);
   const selectedIndex = useIdeasStore((state) => state.selectedIndex);
   const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
@@ -26,8 +25,12 @@ const Scene = () => {
       const pos = controls.object.position;
       const tgt = controls.target;
       const needsMove =
-        pos.x !== camOffset.x || pos.y !== camOffset.y || pos.z !== camOffset.z ||
-        tgt.x !== target.x || tgt.y !== target.y || tgt.z !== target.z;
+        pos.x !== camOffset.x ||
+        pos.y !== camOffset.y ||
+        pos.z !== camOffset.z ||
+        tgt.x !== target.x ||
+        tgt.y !== target.y ||
+        tgt.z !== target.z;
       if (!needsMove) return;
 
       // Kill previous tweens to avoid overlap
@@ -99,14 +102,19 @@ const Scene = () => {
 
   const [showJoystick, setShowJoystick] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) {
+    if (typeof window === 'undefined' || !window.matchMedia) {
       setShowJoystick(false);
       return;
     }
     const compute = () => {
-      const ua = navigator.userAgent || navigator.vendor || window.opera || "";
-      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const isiPad = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      const hasTouch =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        navigator.msMaxTouchPoints > 0;
+      const isiPad =
+        /iPad/.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const isIPhone = /iPhone|iPod/.test(ua);
       const isAndroid = /Android/.test(ua);
       const isMobile = isiPad || isIPhone || isAndroid;
@@ -132,7 +140,13 @@ const Scene = () => {
         setShowJoystick(true);
         return;
       }
-      if (hasTouch && (isIpadProByScreen || isIpadProByViewport || isIpadAirByScreen || isIpadAirByViewport)) {
+      if (
+        hasTouch &&
+        (isIpadProByScreen ||
+          isIpadProByViewport ||
+          isIpadAirByScreen ||
+          isIpadAirByViewport)
+      ) {
         setShowJoystick(true);
         return;
       }
@@ -141,21 +155,21 @@ const Scene = () => {
 
     compute();
     const handler = () => compute();
-    window.addEventListener("resize", handler);
-    window.addEventListener("orientationchange", handler);
+    window.addEventListener('resize', handler);
+    window.addEventListener('orientationchange', handler);
     return () => {
-      window.removeEventListener("resize", handler);
-      window.removeEventListener("orientationchange", handler);
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('orientationchange', handler);
     };
   }, []);
 
   // ...existing code...
 
-
   const zoomToNeighbor = (direction) => {
     let newIndex = selectedIndex;
-    if (direction === "left") newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
-    if (direction === "right") newIndex = (selectedIndex + 1) % ideas.length;
+    if (direction === 'left')
+      newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
+    if (direction === 'right') newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
     const offset = 2 / ideas.length;
@@ -203,14 +217,20 @@ const Scene = () => {
   });
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        <color attach="background" args={["#FFFFFF"]} />
+        <color attach='background' args={['#FFFFFF']} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         <CameraController joystickVecRef={joystickVecRef} />
         {orbs}
-        <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} target={[0, 0, 0]} makeDefault />
+        <OrbitControls
+          ref={controlsRef}
+          enableZoom={false}
+          enablePan={false}
+          target={[0, 0, 0]}
+          makeDefault
+        />
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
