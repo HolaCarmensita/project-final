@@ -30,6 +30,7 @@
   min-width: 0;
   overflow-y: auto;
   position: relative;
+  background-color: white;
 }
 
 /* ==========================================================================
@@ -110,6 +111,7 @@
   /* Visual indicator when modal is active (for testing) */
   .modal-container.active {
     background-color: white;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
   }
 
   /* Hide modal when not active */

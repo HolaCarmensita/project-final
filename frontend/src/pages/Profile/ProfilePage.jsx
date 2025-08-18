@@ -7,7 +7,7 @@ const ProfileContainer = styled.div`
   align-items: center;
   padding: 16px;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: white !important;
 `;
 
 const ProfilePage = () => {

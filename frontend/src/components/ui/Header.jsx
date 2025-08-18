@@ -9,9 +9,7 @@ const HeaderWrapper = styled.header`
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
   padding: 12px 20px;
   display: flex;
   justify-content: space-between;
@@ -26,9 +24,7 @@ const HeaderWrapper = styled.header`
     right: auto;
     width: 100%; /* Full width of its container */
     border-radius: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    border-left: none;
-    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
+    background: transparent;
   }
 `;
 

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import Scene from './pages/3DScene/3DScene';
 import IdeaCarousel from './pages/ideas/IdeaCarousel/IdeaCarousel';
@@ -20,7 +15,7 @@ import ProfileSettings from './pages/Profile/ProfileSettings';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 
-const AppContent = () => {
+const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
 
@@ -75,10 +70,4 @@ const AppContent = () => {
   );
 };
 
-export const App = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-};
+export default App;
