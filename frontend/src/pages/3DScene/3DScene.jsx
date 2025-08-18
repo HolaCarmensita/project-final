@@ -1,47 +1,94 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import gsap from 'gsap';
-import randomColor from 'randomcolor';
+import { useNavigate } from 'react-router-dom';
+import { useIdeasStore } from '../../store/useIdeasStore';
+import { gsap } from 'gsap';
 import IdeaOrb from './IdeaOrb';
 import CameraController from './CameraController';
-import NavBar from '../../components/ui/NavBar';
-import Joystick from '../../components/ui/Joystick';
-
-// Helper to generate a unique vivid color pair not in usedColors
-const getUniqueColorPair = (usedColors) => {
-  let orbColor, auraColor, combo;
-  do {
-    orbColor = randomColor({ luminosity: 'bright' });
-    // Get complementary color by shifting hue 180deg
-    // randomColor doesn't provide direct hue shift, so we use HSL manipulation
-    const hsl = randomColor({ luminosity: 'light', format: 'hsl' });
-    // Extract hue from orbColor
-    const orbH =
-      Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
-    const compH = (orbH + 180) % 360;
-    auraColor = randomColor({ hue: compH, luminosity: 'light' });
-    combo = orbColor + '-' + auraColor;
-  } while (usedColors.has(combo));
-  usedColors.add(combo);
-  return { orbColor, auraColor };
-};
+import Joystick from '../../components/Joystick';
 
 const Scene = () => {
+  const ideas = useIdeasStore((state) => state.ideas);
+  const selectedIndex = useIdeasStore((state) => state.selectedIndex);
+  const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
+  const navigate = useNavigate();
   const controlsRef = useRef();
-  // Track used color pairs
-  const [usedColors] = useState(new Set());
-  const [ideas, setIdeas] = useState(() => {
-    // Initialize with unique color pairs
-    return Array.from({ length: 6 }).map((_, i) => {
-      const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-      return { text: `Post ${i + 1}`, orbColor, auraColor };
-    });
-  });
-  const [input, setInput] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  // ...existing code...
+  const handleOrbClick = (position) => {
+    if (controlsRef.current) {
+      const controls = controlsRef.current;
+      const target = { x: position[0], y: position[1], z: position[2] };
+      const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
 
-  // Joystick vector ref
+      // Only animate if position/target actually changed
+      const pos = controls.object.position;
+      const tgt = controls.target;
+      const needsMove =
+        pos.x !== camOffset.x ||
+        pos.y !== camOffset.y ||
+        pos.z !== camOffset.z ||
+        tgt.x !== target.x ||
+        tgt.y !== target.y ||
+        tgt.z !== target.z;
+      if (!needsMove) return;
+
+      // Kill previous tweens to avoid overlap
+      gsap.killTweensOf([controls.object.position, controls.target]);
+
+      gsap.to(controls.object.position, {
+        x: camOffset.x,
+        y: camOffset.y,
+        z: camOffset.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
+
+      gsap.to(controls.target, {
+        x: target.x,
+        y: target.y,
+        z: target.z,
+        duration: 1.2,
+        onUpdate: () => controls.update(),
+      });
+    }
+  };
+  // Listen for camera move events from NavBar
+  useEffect(() => {
+    const handler = (e) => {
+      const idx = e.detail;
+      if (ideas.length > 0 && typeof idx === 'number') {
+        const offset = 2 / ideas.length;
+        const increment = Math.PI * (3 - Math.sqrt(5));
+        const y = idx * offset - 1 + offset / 2;
+        const r = Math.sqrt(1 - y * y);
+        const phi = idx * increment;
+        const x = Math.cos(phi) * r;
+        const z = Math.sin(phi) * r;
+        handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
+      }
+    };
+    window.addEventListener('moveCameraToIndex', handler);
+    return () => window.removeEventListener('moveCameraToIndex', handler);
+  }, [ideas.length, handleOrbClick]);
+  // Keyboard navigation for left/right arrows (attach only once)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      let newIndex = selectedIndex;
+      if (e.key === 'ArrowLeft') {
+        newIndex = (newIndex - 1 + ideas.length) % ideas.length;
+        setSelectedIndex(newIndex);
+      } else if (e.key === 'ArrowRight') {
+        newIndex = (newIndex + 1) % ideas.length;
+        setSelectedIndex(newIndex);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedIndex, ideas.length, setSelectedIndex]);
+
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
   const handleJoystickMove = (data) => {
     if (!data || !data.vector) {
@@ -53,7 +100,6 @@ const Scene = () => {
     joystickVecRef.current = { x, y, force };
   };
 
-  // Show joystick only on touch phones/tablets (iOS/Android), not desktops
   const [showJoystick, setShowJoystick] = useState(false);
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) {
@@ -76,7 +122,7 @@ const Scene = () => {
       const sh = window.screen?.height || 0;
       const vw = window.innerWidth || 0;
       const vh = window.innerHeight || 0;
-      const approxEq = (a, b) => Math.abs(a - b) <= 2; // tolerate minor UI bars
+      const approxEq = (a, b) => Math.abs(a - b) <= 2;
       const isIpadProByScreen =
         (approxEq(sw, 1024) && approxEq(sh, 1366)) ||
         (approxEq(sw, 1366) && approxEq(sh, 1024));
@@ -90,13 +136,10 @@ const Scene = () => {
         (approxEq(vw, 820) && approxEq(vh, 1180)) ||
         (approxEq(vw, 1180) && approxEq(vh, 820));
 
-      // Always allow if detected iPad (Air/Pro)
       if (isiPad) {
         setShowJoystick(true);
         return;
       }
-
-      // Fallback: allow touch devices that match iPad Pro dimensions
       if (
         hasTouch &&
         (isIpadProByScreen ||
@@ -107,7 +150,6 @@ const Scene = () => {
         setShowJoystick(true);
         return;
       }
-
       setShowJoystick(Boolean(hasTouch && isMobile));
     };
 
@@ -121,43 +163,7 @@ const Scene = () => {
     };
   }, []);
 
-  // Add a new idea with a unique color pair
-  const addIdea = () => {
-    const { orbColor, auraColor } = getUniqueColorPair(usedColors);
-    setIdeas([
-      ...ideas,
-      { text: `New Idea ${ideas.length + 1}`, orbColor, auraColor },
-    ]);
-    setSelectedIndex(ideas.length); // Optionally select the new orb
-  };
-
-  // Smooth camera zoom handler
-  const handleOrbClick = (position) => {
-    if (controlsRef.current) {
-      const controls = controlsRef.current;
-      const target = { x: position[0], y: position[1], z: position[2] };
-      // Camera offset (e.g., 8 units away from orb along z axis)
-      const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
-
-      // Animate camera position
-      gsap.to(controls.object.position, {
-        x: camOffset.x,
-        y: camOffset.y,
-        z: camOffset.z,
-        duration: 1.2,
-        onUpdate: () => controls.update(),
-      });
-
-      // Animate controls target
-      gsap.to(controls.target, {
-        x: target.x,
-        y: target.y,
-        z: target.z,
-        duration: 1.2,
-        onUpdate: () => controls.update(),
-      });
-    }
-  };
+  // ...existing code...
 
   const zoomToNeighbor = (direction) => {
     let newIndex = selectedIndex;
@@ -166,7 +172,6 @@ const Scene = () => {
     if (direction === 'right') newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
-    // Calculate the position for the new selected orb
     const offset = 2 / ideas.length;
     const increment = Math.PI * (3 - Math.sqrt(5));
     const y = newIndex * offset - 1 + offset / 2;
@@ -181,7 +186,6 @@ const Scene = () => {
   const sphereRadius = 20;
   const orbCount = ideas.length;
 
-  // Distribute orbs using Fibonacci sphere
   const orbs = ideas.map((idea, i) => {
     const offset = 2 / orbCount;
     const increment = Math.PI * (3 - Math.sqrt(5));
@@ -190,27 +194,30 @@ const Scene = () => {
     const phi = i * increment;
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
+    const pos = [x * sphereRadius, y * sphereRadius, z * sphereRadius];
 
     return (
       <IdeaOrb
-        key={i}
-        position={[x * sphereRadius, y * sphereRadius, z * sphereRadius]}
-        text={idea.text}
+        key={idea.id ?? i}
+        position={pos}
+        text={idea.title || idea.text}
         orbColor={idea.orbColor}
         auraColor={idea.auraColor}
-        onClick={handleOrbClick}
+        onClick={() => {
+          handleOrbClick(pos);
+          if (idea.id) {
+            navigate(`/ideas/${idea.id}`);
+          } else {
+            navigate(`/ideas`);
+          }
+          setSelectedIndex(i);
+        }}
       />
     );
   });
 
   return (
-    <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-      <NavBar
-        onAdd={addIdea}
-        onLeft={() => zoomToNeighbor('left')}
-        onRight={() => zoomToNeighbor('right')}
-      />
-
+    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
         <color attach='background' args={['#FFFFFF']} />
         <ambientLight intensity={0.6} />

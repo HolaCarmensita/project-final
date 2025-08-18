@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import HeadIcon from './icons/head.svg';
+import HeadIcon from '../assets/icons/headIcon.svg';
 
 const HeaderWrapper = styled.header`
   position: fixed;
