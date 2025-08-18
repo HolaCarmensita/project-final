@@ -199,6 +199,7 @@ const ActionButton = styled.button`
 
 const ProfilePage = () => {
   const [unstackMyIdeas, setUnstackMyIdeas] = useState(false);
+  const [unstackLikedIdeas, setUnstackLikedIdeas] = useState(false);
 
   const ideas = useIdeasStore((s) => s.ideas);
   const myIdeas = ideas.slice(0, 5);
@@ -267,33 +268,47 @@ const ProfilePage = () => {
           <h3>
             Liked ideas <span className="count">({likedIdeas.length})</span>
           </h3>
+          <button
+            type="button"
+            className="linklike"
+            onClick={() => setUnstackLikedIdeas((v) => !v)}
+            aria-expanded={unstackLikedIdeas}
+          >
+            {unstackLikedIdeas ? 'Collapse' : 'See all'}
+          </button>
         </SectionHeader>
         <StackWrap>
-          {likedIdeas.map((idea, idx) => (
-            <StackCard
-              key={idea.id}
-              z={idx + 1}
-              offset={idx * 8}
-              bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
-              top={idx === likedIdeas.length - 1}
-              isFirst={idx === 0}
-              unstacked={false}
-            >
-              {idx === likedIdeas.length - 1 ? (
-                <>
-                  <IdeaTitle>{idea.title}</IdeaTitle>
-                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
-                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                  </OpenButton>
-                  <Row>
-                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
-                  </Row>
-                </>
-              ) : (
-                <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
-              )}
-            </StackCard>
-          ))}
+          {likedIdeas.map((idea, idx) => {
+            const isLast = idx === likedIdeas.length - 1;
+            const isFirst = idx === 0;
+            const showDetails = unstackLikedIdeas || isLast;
+
+            return (
+              <StackCard
+                key={idea.id}
+                z={idx + 1}
+                offset={idx * 8}
+                isFirst={isFirst}
+                unstacked={unstackLikedIdeas}
+                bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+                top={!unstackLikedIdeas && isLast}
+              >
+                {showDetails ? (
+                  <>
+                    <IdeaTitle>{idea.title}</IdeaTitle>
+                    <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                      OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
+                    </OpenButton>
+                    <Row>
+                      <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                    </Row>
+                  </>
+                ) : (
+                  <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
+                )}
+              </StackCard>
+            );
+          })}
         </StackWrap>
       </Section>
 
