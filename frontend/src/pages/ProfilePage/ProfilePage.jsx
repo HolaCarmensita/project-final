@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import moreIcon from '../../assets/icons/more_vert.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
+import StackedIdeaCards from './components/StackedIdeaCards';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
@@ -25,13 +25,8 @@ const TopBar = styled.div`
   margin-bottom: 12px;
 `;
 
-const LogoText = styled.div`
-  font-size: 28px;
-  font-weight: 600;
-`;
-
 const Section = styled.section`
-  margin-bottom: 20px;
+  margin-bottom: 60px;
 `;
 
 const SectionHeader = styled.div`
@@ -59,55 +54,6 @@ const SectionHeader = styled.div`
   }
 `;
 
-// Stacked colorful idea previews (purely visual)
-const StackWrap = styled.div`
-  position: relative;
-  padding: 12px 12px 22px;
-  background: #f7f7f7;
-  border-radius: 12px;
-`;
-
-const StackCard = styled.div`
-  position: relative;
-  border-radius: 16px;
-  padding: 16px;
-  color: #121212;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: ${(p) => p.bg || '#e5f3ff'};
-  transform: translateY(${(p) => p.offset || 0}px);
-  box-shadow: ${(p) => (p.top ? '0 8px 18px rgba(0,0,0,0.08)' : 'none')};
-  z-index: ${(p) => p.z || 1};
-  margin-top: -40px;
-
-  &:first-child { margin-top: 0; }
-`;
-
-const IdeaTitle = styled.h4`
-  font-size: 18px;
-  line-height: 1.2;
-  margin-bottom: 12px;
-`;
-
-const OpenButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #232323;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-`;
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  color: #6b6b6b;
-  font-size: 12px;
-`;
 
 const ConnectionsList = styled.div`
   display: flex;
@@ -212,11 +158,6 @@ const ProfilePage = () => {
 
   return (
     <Page className="modal-container active">
-      <TopBar>
-        <LogoText>OurLogo</LogoText>
-        <img src={moreIcon} alt="menu" width={20} height={20} />
-      </TopBar>
-
       {/* My ideas */}
       <Section>
         <SectionHeader>
@@ -225,32 +166,7 @@ const ProfilePage = () => {
           </h3>
           <Link to="/profile/ideas">See all</Link>
         </SectionHeader>
-        <StackWrap>
-          {myIdeas.map((idea, idx) => (
-            <StackCard
-              key={idea.id}
-              z={idx + 1}
-              offset={idx * 8}
-              bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
-              top={idx === myIdeas.length - 1}
-            >
-              {idx === myIdeas.length - 1 ? (
-                <>
-                  <IdeaTitle>{idea.title}</IdeaTitle>
-                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
-                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                  </OpenButton>
-                  <Row>
-                    <span>✦</span>
-                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
-                  </Row>
-                </>
-              ) : (
-                <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
-              )}
-            </StackCard>
-          ))}
-        </StackWrap>
+        <StackedIdeaCards ideas={myIdeas} />
       </Section>
 
       {/* Liked ideas */}
@@ -260,32 +176,7 @@ const ProfilePage = () => {
             Liked ideas <span className="count">({likedIdeas.length})</span>
           </h3>
         </SectionHeader>
-        <StackWrap>
-          {likedIdeas.map((idea, idx) => (
-            <StackCard
-              key={idea.id}
-              z={idx + 1}
-              offset={idx * 8}
-              bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
-              top={idx === likedIdeas.length - 1}
-            >
-              {idx === likedIdeas.length - 1 ? (
-                <>
-                  <IdeaTitle>{idea.title}</IdeaTitle>
-                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
-                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                  </OpenButton>
-                  <Row>
-                    <span>✦</span>
-                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
-                  </Row>
-                </>
-              ) : (
-                <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
-              )}
-            </StackCard>
-          ))}
-        </StackWrap>
+        <StackedIdeaCards ideas={likedIdeas} />
       </Section>
 
       {/* Connections */}
