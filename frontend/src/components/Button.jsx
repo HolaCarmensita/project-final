@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledButton = styled.button`
   flex: 1;
@@ -8,16 +8,16 @@ const StyledButton = styled.button`
   border: 1px solid #232323;
   font-size: 16px;
   cursor: pointer;
-  background: ${(p) => (p.primary ? "#232323" : "#fff")};
-  color: ${(p) => (p.primary ? "#fff" : "#232323")};
+  background: ${(p) => (p.$primary ? '#232323' : '#fff')};
+  color: ${(p) => (p.$primary ? '#fff' : '#232323')};
   transition: background 0.2s, color 0.2s;
   &:hover {
-    background: ${(p) => (p.primary ? "#444" : "#f5f5f5")};
+    background: ${(p) => (p.$primary ? '#444' : '#f5f5f5')};
   }
 `;
 
 const Button = ({ children, primary, ...rest }) => (
-  <StyledButton primary={primary} {...rest}>
+  <StyledButton $primary={primary} {...rest}>
     {children}
   </StyledButton>
 );
