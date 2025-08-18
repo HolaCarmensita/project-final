@@ -39,14 +39,12 @@ const Input = styled.input`
   outline: none;
 `;
 
-const ForgotPasswordLink = styled.button`
-  background: none;
-  border: none;
+const ForgotPasswordLink = styled(Link)`
   color: #007bff;
   font-size: 14px;
-  cursor: pointer;
-  margin: 8px 0 16px 0;
   text-decoration: underline;
+  margin: 8px 0 16px 0;
+  display: inline-block;
 
   &:hover {
     color: #0056b3;
@@ -85,7 +83,9 @@ const LoginPage = () => {
           placeholder='Enter your password'
         />
 
-        <ForgotPasswordLink type='button'>Forgot password?</ForgotPasswordLink>
+        <ForgotPasswordLink to='/forgot-password'>
+          Forgot password?
+        </ForgotPasswordLink>
 
         <Button
           type='submit'
