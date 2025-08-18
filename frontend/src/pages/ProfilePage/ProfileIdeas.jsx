@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useIdeasStore } from '../../store/useIdeasStore';
+import StackedIdeaCards from './components/StackedIdeaCards';
 
 const Box = styled.div`
   background: #fff;
@@ -10,10 +12,11 @@ const Box = styled.div`
 `;
 
 export default function ProfileIdeas() {
+  const ideas = useIdeasStore((s) => s.ideas);
   return (
     <Box className="modal-container active">
-      <h2>My Ideas</h2>
-      <p>Coming soon…</p>
+      <h2 style={{ marginBottom: 12 }}>All my ideas</h2>
+      <StackedIdeaCards ideas={ideas} stacked={false} />
     </Box>
   );
 }

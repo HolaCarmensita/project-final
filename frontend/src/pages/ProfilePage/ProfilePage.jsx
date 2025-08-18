@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import moreIcon from '../../assets/icons/more_vert.svg';
+import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
-import StackedIdeaCards from './components/StackedIdeaCards';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
@@ -13,15 +13,6 @@ const Page = styled.div`
   padding: 16px;
   overflow-y: auto;
 `;
-
-// const TopBar = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding-bottom: 8px;
-//   border-bottom: 2px solid #e9e9e9;
-//   margin-bottom: 12px;
-// `;
 
 const Section = styled.section`
   margin-bottom: 60px;
@@ -50,8 +41,73 @@ const SectionHeader = styled.div`
     text-decoration: none;
     font-size: 14px;
   }
+
+  /* Button styled like a link for the toggle */
+  button.linklike {
+    color: #232323;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+  }
 `;
 
+// Stacked colorful idea previews (purely visual)
+const StackWrap = styled.div`
+  position: relative;
+`;
+
+const StackCard = styled.div`
+  position: relative;
+  border-radius: 16px;
+  padding: 16px;
+  color: #121212;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: ${(p) => p.bg || '#e5f3ff'};
+  /* Animate between stacked and unstacked */
+  transform: translateY(${(p) => (p.unstacked ? 0 : (p.offset || 0))}px);
+  box-shadow: ${(p) =>
+    p.unstacked
+      ? '0 4px 12px rgba(0,0,0,0.06)'
+      : p.top
+        ? '0 8px 18px rgba(0,0,0,0.08)'
+        : 'none'};
+  z-index: ${(p) => p.z || 1};
+  margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 12 : -40)}px;
+  transition:
+    transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-top 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 240ms ease;
+`;
+
+const IdeaTitle = styled.h4`
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+`;
+
+const OpenButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #232323;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  color: #6b6b6b;
+  font-size: 12px;
+`;
 
 const ConnectionsList = styled.div`
   display: flex;
@@ -142,17 +198,14 @@ const ActionButton = styled.button`
 `;
 
 const ProfilePage = () => {
+  const [unstackMyIdeas, setUnstackMyIdeas] = useState(false);
+
   const ideas = useIdeasStore((s) => s.ideas);
   const myIdeas = ideas.slice(0, 5);
   const likedIdeas = ideas.slice(1, 4);
 
   const connections = [
-    {
-      name: 'Mary Smith',
-      role: 'UX Designer',
-      note: 'Working on a idea together.',
-      color: '#C9F46C',
-    },
+    { name: 'Mary Smith', role: 'UX Designer', note: 'Working on a idea together.', color: '#C9F46C' },
     { name: 'Tom Brown', role: 'Teacher', note: 'Working on a idea together.', color: '#F3B7B5' },
     { name: 'Emma Johnson', role: 'Designer', note: 'Co-designing user interfaces.', color: '#224EA0' },
   ];
@@ -165,9 +218,47 @@ const ProfilePage = () => {
           <h3>
             My ideas <span className="count">({myIdeas.length})</span>
           </h3>
-          <Link to="/profile/ideas">See all</Link>
+          <button
+            type="button"
+            className="linklike"
+            onClick={() => setUnstackMyIdeas((v) => !v)}
+            aria-expanded={unstackMyIdeas}
+          >
+            {unstackMyIdeas ? 'Collapse' : 'See all'}
+          </button>
         </SectionHeader>
-        <StackedIdeaCards ideas={myIdeas} />
+        <StackWrap>
+          {myIdeas.map((idea, idx) => {
+            const isLast = idx === myIdeas.length - 1;
+            const isFirst = idx === 0;
+            const showDetails = unstackMyIdeas || isLast;
+            return (
+              <StackCard
+                key={idea.id}
+                z={idx + 1}
+                offset={idx * 8}
+                isFirst={isFirst}
+                unstacked={unstackMyIdeas}
+                bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+                top={!unstackMyIdeas && isLast}
+              >
+                {showDetails ? (
+                  <>
+                    <IdeaTitle>{idea.title}</IdeaTitle>
+                    <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                      OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
+                    </OpenButton>
+                    <Row>
+                      <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                    </Row>
+                  </>
+                ) : (
+                  <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
+                )}
+              </StackCard>
+            );
+          })}
+        </StackWrap>
       </Section>
 
       {/* Liked ideas */}
@@ -177,7 +268,33 @@ const ProfilePage = () => {
             Liked ideas <span className="count">({likedIdeas.length})</span>
           </h3>
         </SectionHeader>
-        <StackedIdeaCards ideas={likedIdeas} />
+        <StackWrap>
+          {likedIdeas.map((idea, idx) => (
+            <StackCard
+              key={idea.id}
+              z={idx + 1}
+              offset={idx * 8}
+              bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+              top={idx === likedIdeas.length - 1}
+              isFirst={idx === 0}
+              unstacked={false}
+            >
+              {idx === likedIdeas.length - 1 ? (
+                <>
+                  <IdeaTitle>{idea.title}</IdeaTitle>
+                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
+                  </OpenButton>
+                  <Row>
+                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                  </Row>
+                </>
+              ) : (
+                <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
+              )}
+            </StackCard>
+          ))}
+        </StackWrap>
       </Section>
 
       {/* Connections */}
@@ -186,7 +303,7 @@ const ProfilePage = () => {
           <h3>
             My Connections <span className="count">(10)</span>
           </h3>
-          <Link to="/profile/connections">See all</Link>
+          <Link>See all</Link>
         </SectionHeader>
         <ConnectionsList>
           {connections.map((c, i) => (
@@ -229,7 +346,7 @@ const ProfilePage = () => {
         </Field>
         <Field>
           <label>Biography</label>
-          <textarea rows={3} defaultValue={"Lorem Ipsum è un testo segnaposto."} />
+          <textarea rows={3} defaultValue={'Lorem Ipsum è un testo segnaposto.'} />
         </Field>
 
         <ActionsRow>
