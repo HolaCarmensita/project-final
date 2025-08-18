@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import moreIcon from '../../assets/icons/more_vert.svg';
+// import moreIcon from '../../assets/icons/more_vert.svg';
 import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
 
@@ -59,6 +59,7 @@ const StackWrap = styled.div`
   position: relative;
 `;
 
+// Replace StackCard with this version (no collapsed logic; heavy overlap)
 const StackCard = styled.div`
   position: relative;
   border-radius: 16px;
@@ -66,8 +67,9 @@ const StackCard = styled.div`
   color: #121212;
   border: 1px solid rgba(0,0,0,0.08);
   background: ${(p) => p.bg || '#e5f3ff'};
-  display: flex;                 /* add */
-  flex-direction: column;        /* add */
+  display: flex;
+  flex-direction: column;
+
   transform: ${(p) => {
     const baseY = typeof p.offset === 'number' ? p.offset : 0;
     if (p.unstacked) {
@@ -84,33 +86,76 @@ const StackCard = styled.div`
           ? '0 8px 18px rgba(0,0,0,0.08)'
           : 'none'};
   z-index: ${(p) => (p.popped ? 1000 : (p.z || 1))};
-  margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 12 : -40)}px;
+  overflow: hidden; /* keep visuals clean at tight overlap */
+
+  /* Heavy overlap so only the title band peeks on non-top cards */
+  margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 12 : -120)}px;
+
+  @media (min-width: 768px) {
+    /* min-height is 220px → 220 - 56 ≈ 164, rounded a bit tighter */
+    margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 16 : -168)}px;
+  }
+  @media (min-width: 1024px) {
+    /* min-height is 260px → 260 - 56 ≈ 204, rounded a bit tighter */
+    margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 16 : -208)}px;
+  }
+
+  /* keep your existing larger sizing when unstacked or for the top card */
+  @media (min-width: 768px) {
+    aspect-ratio: 5 / 3;
+    min-height: 220px;
+  }
+  @media (min-width: 1024px) {
+    aspect-ratio: 16 / 9;
+    min-height: 260px;
+  }
+
   transition:
     transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
     margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 220ms ease,
-    z-index 0ms;
-  cursor: pointer;
-  will-change: transform, box-shadow;
+    box-shadow 220ms ease;
 `;
 
-const IdeaTitle = styled.h4`
-  font-size: 18px;
-  line-height: 1.2;
-  margin-bottom: 12px;
+// Keep CardContent simple (no special offsets)
+const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-top: 0;
 `;
 
+// Optionally let description breathe a bit more on larger screens
+const IdeaDesc = styled.p`
+  font-size: 16px;
+  line-height: 1.35;
+  margin: 6px 0 14px;
+  color: #111;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (min-width: 768px) {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+`;
+
+// Keep the button right-aligned and near the bottom
 const OpenButton = styled.button`
-  align-self: flex-end;           /* right edge inside the card */
+  align-self: flex-end;
+  margin-top: auto;        /* push towards bottom inside the card */
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
   min-height: 40px;
   border: none;
-  border-radius: 12px;            /* pill */
-  background: #232323;            /* black/dark */
-  color: #ffffff;                 /* white text */
+  border-radius: 12px;
+  background: #232323;
+  color: #ffffff;
   font-size: 16px;
   font-weight: lighter;
   cursor: pointer;
@@ -135,7 +180,7 @@ const OpenButton = styled.button`
   img {
     width: 18px;
     height: 18px;
-    filter: invert(1) brightness(1.4); /* make the arrow icon white */
+    filter: invert(1) brightness(1.4);
     pointer-events: none;
   }
 `;
@@ -237,6 +282,14 @@ const ActionButton = styled.button`
   font-size: 16px;
 `;
 
+const IdeaTitle = styled.h4`
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 4px;
+  color: #0f0f0f;
+`;
+
 const ProfilePage = () => {
   const [unstackMyIdeas, setUnstackMyIdeas] = useState(false);
   const [unstackLikedIdeas, setUnstackLikedIdeas] = useState(false);
@@ -278,37 +331,32 @@ const ProfilePage = () => {
         </SectionHeader>
         <StackWrap>
           {myIdeas.map((idea, idx) => {
-            const isLast = idx === myIdeas.length - 1;
+            const isLast = idx === myIdeas.length - 1; // top
             const isFirst = idx === 0;
             const popped = !unstackMyIdeas && poppedMyIdx === idx;
-            const showDetails = unstackMyIdeas || isLast || popped;
 
             return (
               <StackCard
                 key={idea.id}
                 z={idx + 1}
-                offset={idx * 8}
+                offset={idx * 4}         // small per-card translate to keep a subtle cascade
                 isFirst={isFirst}
                 unstacked={unstackMyIdeas}
                 popped={popped}
-                clickable={!unstackMyIdeas}
                 bg={idea.orbColor || '#f2f2f2'}
                 top={!unstackMyIdeas && !popped && isLast}
                 onClick={() => setPoppedMyIdx((cur) => (cur === idx ? null : idx))}
               >
-                {showDetails ? (
-                  <>
-                    <IdeaTitle>{idea.title}</IdeaTitle>
-                    <OpenButton as={Link} to={`/ideas/${idea.id}`}>
-                      OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                    </OpenButton>
-                    <Row>
-                      <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
-                    </Row>
-                  </>
-                ) : (
-                  <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
-                )}
+                <CardContent>
+                  <IdeaTitle>{idea.title}</IdeaTitle>
+                  <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
+                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
+                  </OpenButton>
+                  <Row>
+                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                  </Row>
+                </CardContent>
               </StackCard>
             );
           })}
@@ -341,34 +389,29 @@ const ProfilePage = () => {
             const isLast = idx === likedIdeas.length - 1;
             const isFirst = idx === 0;
             const popped = !unstackLikedIdeas && poppedLikedIdx === idx;
-            const showDetails = unstackLikedIdeas || isLast || popped;
 
             return (
               <StackCard
                 key={idea.id}
                 z={idx + 1}
-                offset={idx * 8}
+                offset={idx * 4}         // small per-card translate to keep a subtle cascade
                 isFirst={isFirst}
                 unstacked={unstackLikedIdeas}
                 popped={popped}
-                clickable={!unstackLikedIdeas}
                 bg={idea.orbColor || '#f2f2f2'}
                 top={!unstackLikedIdeas && !popped && isLast}
                 onClick={() => setPoppedLikedIdx((cur) => (cur === idx ? null : idx))}
               >
-                {showDetails ? (
-                  <>
-                    <IdeaTitle>{idea.title}</IdeaTitle>
-                    <OpenButton as={Link} to={`/ideas/${idea.id}`}>
-                      OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                    </OpenButton>
-                    <Row>
-                      <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
-                    </Row>
-                  </>
-                ) : (
-                  <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
-                )}
+                <CardContent unstacked={unstackLikedIdeas} popped={popped} top={!unstackLikedIdeas && !popped && isLast}>
+                  <IdeaTitle>{idea.title}</IdeaTitle>
+                  <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
+                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                    OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
+                  </OpenButton>
+                  <Row>
+                    <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                  </Row>
+                </CardContent>
               </StackCard>
             );
           })}
