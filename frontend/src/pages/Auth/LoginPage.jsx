@@ -1,20 +1,104 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { responsiveContainer } from '../../styles/breakpoints';
+import Button from '../../components/Button';
 
 const LoginContainer = styled.div`
   ${responsiveContainer}
-  background-color: #fce4ec;
   justify-content: center;
   align-items: center;
+  padding: 24px 16px;
+`;
+
+const LoginForm = styled.form`
+  background: #fff;
+  padding: 32px 24px;
+`;
+
+const Title = styled.h3`
+  margin: 0 0 24px 0;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin: 14px 0 6px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+`;
+
+const ForgotPasswordLink = styled.button`
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 8px 0 16px 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: #0056b3;
+  }
+`;
+
+const SignUpText = styled.p`
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #666;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 const LoginPage = () => {
   return (
     <LoginContainer>
-      <h1>Login</h1>
-      <p>This is a placeholder for the login page.</p>
-      <p>Login form will be displayed here.</p>
+      <LoginForm>
+        <Title>Login</Title>
+
+        <Label htmlFor='email'>Email</Label>
+        <Input id='email' type='email' placeholder='Enter your email' />
+
+        <Label htmlFor='password'>Password</Label>
+        <Input
+          id='password'
+          type='password'
+          placeholder='Enter your password'
+        />
+
+        <ForgotPasswordLink type='button'>Forgot password?</ForgotPasswordLink>
+
+        <Button
+          type='submit'
+          primary
+          style={{ width: '100%', marginTop: '16px' }}
+        >
+          LOGIN
+        </Button>
+
+        <SignUpText>
+          Don't have an account yet? <Link to='/register'>Sign up</Link>
+        </SignUpText>
+      </LoginForm>
     </LoginContainer>
   );
 };
