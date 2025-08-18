@@ -66,20 +66,28 @@ const StackCard = styled.div`
   color: #121212;
   border: 1px solid rgba(0,0,0,0.08);
   background: ${(p) => p.bg || '#e5f3ff'};
-  /* Animate between stacked and unstacked */
-  transform: translateY(${(p) => (p.unstacked ? 0 : (p.offset || 0))}px);
+  transform: ${(p) => {
+    if (p.unstacked) return 'translateY(0)';
+    const baseY = typeof p.offset === 'number' ? p.offset : 0;
+    return p.popped ? `translateY(${baseY}px) scale(1.02)` : `translateY(${baseY}px)`;
+  }};
   box-shadow: ${(p) =>
     p.unstacked
       ? '0 4px 12px rgba(0,0,0,0.06)'
-      : p.top
-        ? '0 8px 18px rgba(0,0,0,0.08)'
-        : 'none'};
-  z-index: ${(p) => p.z || 1};
+      : p.popped
+        ? '0 18px 36px rgba(0,0,0,0.20), 0 8px 16px rgba(0,0,0,0.12)'
+        : p.top
+          ? '0 8px 18px rgba(0,0,0,0.08)'
+          : 'none'};
+  z-index: ${(p) => (p.popped ? 1000 : (p.z || 1))};
   margin-top: ${(p) => (p.isFirst ? 0 : p.unstacked ? 12 : -40)}px;
   transition:
-    transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    margin-top 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 240ms ease;
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms ease,
+    z-index 0ms;
+  cursor: ${(p) => (p.clickable ? 'pointer' : 'default')};
+  will-change: transform, box-shadow;
 `;
 
 const IdeaTitle = styled.h4`
@@ -200,6 +208,8 @@ const ActionButton = styled.button`
 const ProfilePage = () => {
   const [unstackMyIdeas, setUnstackMyIdeas] = useState(false);
   const [unstackLikedIdeas, setUnstackLikedIdeas] = useState(false);
+  const [poppedMyIdx, setPoppedMyIdx] = useState(null);
+  const [poppedLikedIdx, setPoppedLikedIdx] = useState(null);
 
   const ideas = useIdeasStore((s) => s.ideas);
   const myIdeas = ideas.slice(0, 5);
@@ -222,7 +232,13 @@ const ProfilePage = () => {
           <button
             type="button"
             className="linklike"
-            onClick={() => setUnstackMyIdeas((v) => !v)}
+            onClick={() => {
+              setUnstackMyIdeas((v) => {
+                const next = !v;
+                if (next) setPoppedMyIdx(null); // reset pop when unstacking all
+                return next;
+              });
+            }}
             aria-expanded={unstackMyIdeas}
           >
             {unstackMyIdeas ? 'Collapse' : 'See all'}
@@ -232,7 +248,9 @@ const ProfilePage = () => {
           {myIdeas.map((idea, idx) => {
             const isLast = idx === myIdeas.length - 1;
             const isFirst = idx === 0;
-            const showDetails = unstackMyIdeas || isLast;
+            const popped = !unstackMyIdeas && poppedMyIdx === idx;
+            const showDetails = unstackMyIdeas || isLast || popped;
+
             return (
               <StackCard
                 key={idea.id}
@@ -240,8 +258,23 @@ const ProfilePage = () => {
                 offset={idx * 8}
                 isFirst={isFirst}
                 unstacked={unstackMyIdeas}
+                popped={popped}
+                clickable={!unstackMyIdeas}
+                onClick={() => {
+                  if (unstackMyIdeas) return; // ignore clicks when fully unstacked
+                  setPoppedMyIdx((cur) => (cur === idx ? null : idx));
+                }}
+                onKeyDown={(e) => {
+                  if (unstackMyIdeas) return;
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setPoppedMyIdx((cur) => (cur === idx ? null : idx));
+                  }
+                }}
+                role={!unstackMyIdeas ? 'button' : undefined}
+                tabIndex={!unstackMyIdeas ? 0 : -1}
                 bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
-                top={!unstackMyIdeas && isLast}
+                top={!unstackMyIdeas && !popped && isLast}
               >
                 {showDetails ? (
                   <>
@@ -271,7 +304,13 @@ const ProfilePage = () => {
           <button
             type="button"
             className="linklike"
-            onClick={() => setUnstackLikedIdeas((v) => !v)}
+            onClick={() => {
+              setUnstackLikedIdeas((v) => {
+                const next = !v;
+                if (next) setPoppedLikedIdx(null);
+                return next;
+              });
+            }}
             aria-expanded={unstackLikedIdeas}
           >
             {unstackLikedIdeas ? 'Collapse' : 'See all'}
@@ -281,7 +320,8 @@ const ProfilePage = () => {
           {likedIdeas.map((idea, idx) => {
             const isLast = idx === likedIdeas.length - 1;
             const isFirst = idx === 0;
-            const showDetails = unstackLikedIdeas || isLast;
+            const popped = !unstackLikedIdeas && poppedLikedIdx === idx;
+            const showDetails = unstackLikedIdeas || isLast || popped;
 
             return (
               <StackCard
@@ -290,8 +330,23 @@ const ProfilePage = () => {
                 offset={idx * 8}
                 isFirst={isFirst}
                 unstacked={unstackLikedIdeas}
+                popped={popped}
+                clickable={!unstackLikedIdeas}
+                onClick={() => {
+                  if (unstackLikedIdeas) return;
+                  setPoppedLikedIdx((cur) => (cur === idx ? null : idx));
+                }}
+                onKeyDown={(e) => {
+                  if (unstackLikedIdeas) return;
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setPoppedLikedIdx((cur) => (cur === idx ? null : idx));
+                  }
+                }}
+                role={!unstackLikedIdeas ? 'button' : undefined}
+                tabIndex={!unstackLikedIdeas ? 0 : -1}
                 bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
-                top={!unstackLikedIdeas && isLast}
+                top={!unstackLikedIdeas && !popped && isLast}
               >
                 {showDetails ? (
                   <>
