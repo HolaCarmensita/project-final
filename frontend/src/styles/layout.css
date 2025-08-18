@@ -13,7 +13,8 @@
 /* Content layout wrapper - flex container for scene and modal */
 .content-layout {
   display: flex;
-  height: calc(100vh - 60px); /* Adjust for header height on mobile */
+  height: calc(100vh - 60px);
+  /* Adjust for header height on mobile */
   width: 100vw;
 }
 
@@ -39,6 +40,7 @@
 
 /* Mobile: Stacked layout with full-screen modal */
 @media (max-width: 767px) {
+
   /* Stack scene and modal vertically */
   .content-layout {
     flex-direction: column;
@@ -64,14 +66,16 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px; /* Only show header height */
+    height: 60px;
+    /* Only show header height */
     z-index: 5;
   }
 
   /* Show modal full screen when active */
   .modal-container.active {
     position: absolute;
-    top: 60px; /* Start below header */
+    top: 40px;
+    /* Start below header */
     left: 0;
     width: 100%;
     height: calc(100vh - 60px);
@@ -85,24 +89,30 @@
 
 /* iPad Mini and larger screens: Side-by-side layout */
 @media (min-width: 768px) {
+
   /* Arrange scene and modal horizontally */
   .content-layout {
     flex-direction: row;
-    height: 100vh; /* Full height since header is within 3D scene */
+    height: 100vh;
+    /* Full height since header is within 3D scene */
   }
 
   /* 3D scene takes remaining space on the left */
   .scene-container {
     flex: 1;
     min-width: 0;
-    position: relative; /* For header positioning within */
+    position: relative;
+    /* For header positioning within */
   }
 
   /* Modal appears as side panel on the right */
   .modal-container {
-    flex: none; /* Override base flex: 1 to use fixed width */
-    width: 40vw; /* 40% of viewport width */
-    height: 100vh; /* Full height */
+    flex: none;
+    /* Override base flex: 1 to use fixed width */
+    width: 40vw;
+    /* 40% of viewport width */
+    height: 100vh;
+    /* Full height */
     overflow-y: auto;
     position: relative;
     z-index: 10;
@@ -121,7 +131,8 @@
 
   /* 3D scene takes full width when no modal is active */
   .scene-container:not(.hidden-on-mobile) {
-    width: 100vw; /* Full viewport width when no modal */
+    width: 100vw;
+    /* Full viewport width when no modal */
   }
 }
 
@@ -132,6 +143,7 @@
 /* Larger screens: Smaller modal width for better proportions */
 @media (min-width: 1024px) {
   .modal-container.active {
-    width: 30vw; /* 30% of viewport width on larger screens */
+    width: 30vw;
+    /* 30% of viewport width on larger screens */
   }
 }

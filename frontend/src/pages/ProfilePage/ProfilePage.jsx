@@ -7,23 +7,21 @@ import StackedIdeaCards from './components/StackedIdeaCards';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
-  background: #fff;
   height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   overflow-y: auto;
 `;
 
-const TopBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e9e9e9;
-  margin-bottom: 12px;
-`;
+// const TopBar = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   padding-bottom: 8px;
+//   border-bottom: 2px solid #e9e9e9;
+//   margin-bottom: 12px;
+// `;
 
 const Section = styled.section`
   margin-bottom: 60px;
