@@ -67,15 +67,17 @@ const StackCard = styled.div`
   border: 1px solid rgba(0,0,0,0.08);
   background: ${(p) => p.bg || '#e5f3ff'};
   transform: ${(p) => {
-    if (p.unstacked) return 'translateY(0)';
     const baseY = typeof p.offset === 'number' ? p.offset : 0;
+    if (p.unstacked) {
+      return p.popped ? 'translateY(0) scale(1.02)' : 'translateY(0)';
+    }
     return p.popped ? `translateY(${baseY}px) scale(1.02)` : `translateY(${baseY}px)`;
   }};
   box-shadow: ${(p) =>
-    p.unstacked
-      ? '0 4px 12px rgba(0,0,0,0.06)'
-      : p.popped
-        ? '0 18px 36px rgba(0,0,0,0.20), 0 8px 16px rgba(0,0,0,0.12)'
+    p.popped
+      ? '0 18px 36px rgba(0,0,0,0.20), 0 8px 16px rgba(0,0,0,0.12)'
+      : p.unstacked
+        ? '0 4px 12px rgba(0,0,0,0.06)'
         : p.top
           ? '0 8px 18px rgba(0,0,0,0.08)'
           : 'none'};
@@ -86,7 +88,7 @@ const StackCard = styled.div`
     margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 220ms ease,
     z-index 0ms;
-  cursor: ${(p) => (p.clickable ? 'pointer' : 'default')};
+  cursor: pointer;
   will-change: transform, box-shadow;
 `;
 
@@ -260,21 +262,9 @@ const ProfilePage = () => {
                 unstacked={unstackMyIdeas}
                 popped={popped}
                 clickable={!unstackMyIdeas}
-                onClick={() => {
-                  if (unstackMyIdeas) return; // ignore clicks when fully unstacked
-                  setPoppedMyIdx((cur) => (cur === idx ? null : idx));
-                }}
-                onKeyDown={(e) => {
-                  if (unstackMyIdeas) return;
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setPoppedMyIdx((cur) => (cur === idx ? null : idx));
-                  }
-                }}
-                role={!unstackMyIdeas ? 'button' : undefined}
-                tabIndex={!unstackMyIdeas ? 0 : -1}
-                bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+                bg={idea.orbColor || '#f2f2f2'}
                 top={!unstackMyIdeas && !popped && isLast}
+                onClick={() => setPoppedMyIdx((cur) => (cur === idx ? null : idx))}
               >
                 {showDetails ? (
                   <>
@@ -332,21 +322,9 @@ const ProfilePage = () => {
                 unstacked={unstackLikedIdeas}
                 popped={popped}
                 clickable={!unstackLikedIdeas}
-                onClick={() => {
-                  if (unstackLikedIdeas) return;
-                  setPoppedLikedIdx((cur) => (cur === idx ? null : idx));
-                }}
-                onKeyDown={(e) => {
-                  if (unstackLikedIdeas) return;
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setPoppedLikedIdx((cur) => (cur === idx ? null : idx));
-                  }
-                }}
-                role={!unstackLikedIdeas ? 'button' : undefined}
-                tabIndex={!unstackLikedIdeas ? 0 : -1}
-                bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+                bg={idea.orbColor || '#f2f2f2'}
                 top={!unstackLikedIdeas && !popped && isLast}
+                onClick={() => setPoppedLikedIdx((cur) => (cur === idx ? null : idx))}
               >
                 {showDetails ? (
                   <>
