@@ -5,12 +5,11 @@ const Box = styled.div`
   background: #fff;
   height: 100vh;
   padding: 16px;
-  ${responsiveContainer}
 `;
 
 export default function ProfileConnections() {
   return (
-    <Box>
+    <Box className="modal-container active">
       <h2>Connections</h2>
       <p>Coming soon…</p>
     </Box>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import moreIcon from '../../assets/icons/more_vert.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
-import { responsiveContainer } from '../../styles/breakpoints';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
@@ -14,7 +13,6 @@ const Page = styled.div`
   flex-direction: column;
   padding: 16px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  ${responsiveContainer}
   overflow-y: auto;
 `;
 
@@ -213,7 +211,7 @@ const ProfilePage = () => {
   ];
 
   return (
-    <Page>
+    <Page className="modal-container active">
       <TopBar>
         <LogoText>OurLogo</LogoText>
         <img src={moreIcon} alt="menu" width={20} height={20} />
