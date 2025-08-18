@@ -88,6 +88,9 @@ const Role = styled.div`
 const Note = styled.div`
   color: #3d3d3d;
   font-size: 14px;
+  /* Override layout.css .modal-container.active mobile offset */
+  position: relative !important;
+  top: 0 !important;
 `;
 
 const ProfileCard = styled.div`

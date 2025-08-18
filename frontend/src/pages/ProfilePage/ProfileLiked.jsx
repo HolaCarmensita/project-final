@@ -5,6 +5,8 @@ const Box = styled.div`
   background: #fff;
   height: 100vh;
   padding: 16px;
+  position: relative !important;
+  top: 0 !important;
 `;
 
 export default function ProfileLiked() {

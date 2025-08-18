@@ -74,11 +74,12 @@
   /* Show modal full screen when active */
   .modal-container.active {
     position: absolute;
-    top: 40px;
+    /* top: 60px; */
+    /* [TODO] to be fixed is not workig everywhere */
     /* Start below header */
     left: 0;
     width: 100%;
-    height: calc(100vh - 60px);
+    /* height: calc(100vh - 60px); */
     z-index: 10;
   }
 }
