@@ -26,6 +26,8 @@ export const useIdeasStore = create((set) => ({
     const auraColor = randomColor({ hue: compH, luminosity: "light" });
     return { ...idea, orbColor, auraColor };
   }),
+  // Track liked ideas by id
+  likedIds: mockIdeas.slice(1, 4).map((i) => i.id),
   selectedIndex: 0,
   isAddOpen: false,
   addIdea: (idea) => {
@@ -58,11 +60,26 @@ export const useIdeasStore = create((set) => ({
     }));
   },
   openAddModal: () => set({ isAddOpen: true }),
+  likeIdea: (id) => set((state) => {
+    if (state.likedIds.includes(id)) return {};
+    const updatedIdeas = state.ideas.map((i) =>
+      i.id === id ? { ...i, likes: Math.max(0, (i.likes || 0) + 1) } : i
+    );
+    return { likedIds: [...state.likedIds, id], ideas: updatedIdeas };
+  }),
+  unlikeIdea: (id) => set((state) => {
+    if (!state.likedIds.includes(id)) return {};
+    const updatedIdeas = state.ideas.map((i) =>
+      i.id === id ? { ...i, likes: Math.max(0, (i.likes || 0) - 1) } : i
+    );
+    return { likedIds: state.likedIds.filter((x) => x !== id), ideas: updatedIdeas };
+  }),
   deleteIdea: (id) => set((state) => {
     const nextIdeas = state.ideas.filter((i) => i.id !== id);
     let nextIndex = state.selectedIndex;
     if (nextIndex >= nextIdeas.length) nextIndex = Math.max(0, nextIdeas.length - 1);
-    return { ideas: nextIdeas, selectedIndex: nextIndex };
+    const nextLiked = state.likedIds.filter((x) => x !== id);
+    return { ideas: nextIdeas, likedIds: nextLiked, selectedIndex: nextIndex };
   }),
   handleLeft: (callback) => set((state) => {
     const newIndex = (state.selectedIndex - 1 + state.ideas.length) % state.ideas.length;

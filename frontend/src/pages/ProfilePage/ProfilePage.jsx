@@ -4,8 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 // import moreIcon from '../../assets/icons/more_vert.svg';
 import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
-import editIcon from '../../assets/icons/edit.svg';
-import deleteIcon from '../../assets/icons/delete.svg';
+import editIcon from '../../assets/icons/edit_square_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg';
+import deleteIcon from '../../assets/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg';
+import heartBrokenIcon from '../../assets/icons/heart_broken.svg';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
@@ -143,22 +144,22 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   padding: 0;
-
-  &:hover {
-    background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.16);
-  }
 
   img {
     width: 16px;
     height: 16px;
-    filter: invert(0);
+    filter: none;
+    opacity: 0.55; /* greyed out look */
+    transition: opacity 120ms ease-in-out;
     pointer-events: none;
+  }
+
+  &:hover img {
+    opacity: 1; /* turn black on hover */
   }
 `;
 
@@ -344,9 +345,11 @@ const ProfilePage = () => {
   const [poppedLikedIdx, setPoppedLikedIdx] = useState(null);
 
   const ideas = useIdeasStore((s) => s.ideas);
+  const likedIds = useIdeasStore((s) => s.likedIds);
+  const unlikeIdea = useIdeasStore((s) => s.unlikeIdea);
   const deleteIdea = useIdeasStore((s) => s.deleteIdea);
   const myIdeas = ideas.slice(0, 5);
-  const likedIdeas = ideas.slice(1, 4);
+  const likedIdeas = ideas.filter((i) => likedIds.includes(i.id));
 
   const connections = [
     { name: 'Mary Smith', role: 'UX Designer', note: 'Working on a idea together.', color: '#C9F46C' },
@@ -475,6 +478,20 @@ const ProfilePage = () => {
                 top={!unstackLikedIdeas && !popped && isLast}
                 onClick={() => setPoppedLikedIdx((cur) => (cur === idx ? null : idx))}
               >
+                {/* Top-right action for liked ideas: remove like */}
+                <CardActions>
+                  <IconButton
+                    type="button"
+                    aria-label="Remove like"
+                    title="Remove like"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      unlikeIdea(idea.id);
+                    }}
+                  >
+                    <img src={heartBrokenIcon} alt="Remove like" />
+                  </IconButton>
+                </CardActions>
                 <CardContent unstacked={unstackLikedIdeas} popped={popped} top={!unstackLikedIdeas && !popped && isLast}>
                   <IdeaTitle>{idea.title}</IdeaTitle>
                   <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
