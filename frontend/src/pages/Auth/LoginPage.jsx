@@ -6,12 +6,10 @@ import Button from '../../components/Button';
 
 const LoginContainer = styled.div`
   align-items: center;
-  padding: 24px 16px;
-
+  padding: 48px 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
 `;
 
 const WelcomeText = styled.div`
@@ -24,7 +22,15 @@ const WelcomeText = styled.div`
 const LoginForm = styled.form`
   width: 100%;
   background: #fff;
-  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const Title = styled.h3`
@@ -35,10 +41,7 @@ const Title = styled.h3`
 `;
 
 const Label = styled.label`
-  display: block;
-  font-size: 14px;
   color: #333;
-  margin: 14px 0 6px;
 `;
 
 const Input = styled.input`
@@ -179,38 +182,42 @@ const LoginPage = () => {
 
   return (
     <LoginContainer>
-      <WelcomeText>
+      {/* <WelcomeText>
         <h2>
           Welcome to Penive, a place to explore, share and connect with creative
           ideas and minds.
         </h2>
 
         <h2> Please login or register to get started.</h2>
-      </WelcomeText>
+      </WelcomeText> */}
 
       <LoginForm onSubmit={handleSubmit}>
         <Title>Login</Title>
 
-        <Label htmlFor='email'>Email</Label>
-        <Input
-          id='email'
-          type='text'
-          placeholder='Enter your email'
-          value={email}
-          onChange={handleEmailChange}
-          onBlur={handleEmailBlur}
-        />
-        {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+        <InputContainer>
+          <Label htmlFor='email'>Email</Label>
+          <Input
+            id='email'
+            type='text'
+            placeholder='Enter your email'
+            value={email}
+            onChange={handleEmailChange}
+            onBlur={handleEmailBlur}
+          />
+          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+        </InputContainer>
 
-        <Label htmlFor='password'>Password</Label>
-        <Input
-          id='password'
-          type='password'
-          placeholder='Enter your password'
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+        <InputContainer>
+          <Label htmlFor='password'>Password</Label>
+          <Input
+            id='password'
+            type='password'
+            placeholder='Enter your password'
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+        </InputContainer>
 
         {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
 
