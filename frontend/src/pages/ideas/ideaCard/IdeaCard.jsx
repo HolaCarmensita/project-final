@@ -7,6 +7,13 @@ import IdeaText from './components/IdeaText';
 
 const IdeaCardContainer = styled.div`
   width: 100%;
+  cursor: default;
+  &:hover {
+    cursor: pointer;
+  }
+  &:hover * {
+    cursor: pointer !important;
+  }
 `;
 
 const IdeaCard = ({ idea = null }) => {

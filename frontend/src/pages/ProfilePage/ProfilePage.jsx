@@ -69,6 +69,15 @@ const StackCard = styled.div`
   background: ${(p) => p.bg || '#e5f3ff'};
   display: flex;
   flex-direction: column;
+  cursor: default;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:hover * {
+    cursor: pointer !important;
+  }
 
   transform: ${(p) => {
     const baseY = typeof p.offset === 'number' ? p.offset : 0;
