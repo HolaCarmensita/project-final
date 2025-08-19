@@ -101,7 +101,7 @@ export default function MyIdeaCardEdit() {
             title="Back"
             style={{ width: 28, height: 28, padding: 0 }}
           />
-          <span style={{ fontSize: 18, fontWeight: 500, marginLeft: 2 }}>IDEAS</span>
+          <span style={{ fontSize: 18, fontWeight: 500, marginLeft: 2 }}>My Profile</span>
         </button>
         <button
           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 18, fontWeight: 400 }}
