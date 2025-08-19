@@ -129,21 +129,36 @@ export default function MyIdeaCardEdit() {
       <ImageGallery>
         {(form.images || idea.images).map((img, idx) => (
           <div key={img + idx}>
-            <ImgWrap>
+            <ImgWrap style={{ position: 'relative' }}>
               <img src={img} alt={form.altTexts ? form.altTexts[idx] : 'Alternative text'} />
+              {editMode && (
+                <IconButton
+                  iconSrc={deleteIcon}
+                  ariaLabel="Delete image"
+                  title="Delete image"
+                  onClick={() => {
+                    setForm(f => {
+                      const images = [...f.images];
+                      const altTexts = [...f.altTexts];
+                      images.splice(idx, 1);
+                      altTexts.splice(idx, 1);
+                      return { ...f, images, altTexts };
+                    });
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    width: 28,
+                    height: 28,
+                    background: 'rgba(255,255,255,0.85)',
+                    borderRadius: '50%',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    zIndex: 2,
+                  }}
+                />
+              )}
             </ImgWrap>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 2 }}>
-              <IconButton iconSrc={deleteIcon} ariaLabel="Delete image" title="Delete image" onClick={editMode ? () => {
-                setForm(f => {
-                  const images = [...f.images];
-                  const altTexts = [...f.altTexts];
-                  images.splice(idx, 1);
-                  altTexts.splice(idx, 1);
-                  return { ...f, images, altTexts };
-                });
-              } : undefined} style={{ opacity: editMode ? 1 : 0.5, pointerEvents: editMode ? 'auto' : 'none' }} />
-              <IconButton iconSrc={aiIcon} ariaLabel="AI" title="AI" onClick={() => { }} />
-            </div>
             {editMode ? (
               <Input
                 value={form.altTexts[idx]}
@@ -160,6 +175,33 @@ export default function MyIdeaCardEdit() {
             )}
           </div>
         ))}
+        {editMode && (
+          <div style={{ marginTop: 8 }}>
+            <label style={{ display: 'inline-block', cursor: 'pointer', color: '#3a7afe', fontWeight: 500 }}>
+              + Add image
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new window.FileReader();
+                    reader.onload = (ev) => {
+                      setForm(f => ({
+                        ...f,
+                        images: [...f.images, ev.target.result],
+                        altTexts: [...f.altTexts, 'Alternative text'],
+                      }));
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+        )}
       </ImageGallery>
       <Connections>
         <ConnRow>
