@@ -75,6 +75,7 @@ export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBu
               <OpenButton
                 as={Link}
                 to={linkBuilder(idea.id)}
+                aria-label={`Open idea "${idea.title}"`}
                 onClick={() => {
                   const idx = storeIdeas.findIndex((i) => i.id === idea.id);
                   if (idx >= 0) {

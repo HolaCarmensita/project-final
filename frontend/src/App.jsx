@@ -9,10 +9,6 @@ import Header from './components/Header1';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
-import ProfileIdeas from './pages/ProfilePage/ProfileIdeas';
-import ProfileConnections from './pages/ProfilePage/ProfileConnections';
-import ProfileLiked from './pages/ProfilePage/ProfileLiked';
-import ProfileSettings from './pages/ProfilePage/ProfileSettings';
 
 // Auth pages
 import LoginPage from './pages/Auth/LoginPage';
@@ -90,13 +86,6 @@ const App = () => {
 
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />
-            <Route path='/profile/ideas' element={<ProfileIdeas />} />
-            <Route
-              path='/profile/connections'
-              element={<ProfileConnections />}
-            />
-            <Route path='/profile/liked' element={<ProfileLiked />} />
-            <Route path='/profile/settings' element={<ProfileSettings />} />
 
             {/* Auth routes */}
             <Route path='/login' element={<LoginPage />} />
