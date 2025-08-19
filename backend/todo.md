@@ -2,24 +2,24 @@
 
 ## 1. Dependencies Setup
 
-- [ ] Install additional dependencies (bcrypt, express-validator, jsonwebtoken, express-list-endpoints)
-- [ ] Update package.json with new dependencies
-- [ ] Run npm install
+- [x ] Install additional dependencies (bcrypt, express-validator, jsonwebtoken, express-list-endpoints)
+- [ x] Update package.json with new dependencies
+- [x ] Run npm install
 
 ## 2. Database & Models
 
-- [ ] Create User model with email/username validation
-- [ ] Implement bcrypt password encryption
-- [ ] Create Idea model
+- [x ] Create User model with email/username validation
+- [x ] Implement bcrypt password encryption
+- [ x] Create Idea model
 - [ ] Set up proper MongoDB connection with error handling
 
 ## 3. Authentication System
 
-- [ ] Create registration route with validation
-- [ ] Create login route with JWT token generation
-- [ ] Implement password hashing with bcrypt
-- [ ] Add email/username uniqueness validation
-- [ ] Create authentication middleware
+- [x ] Create registration route with validation
+- [ x] Create login route with JWT token generation
+- [x ] Implement password hashing with bcrypt
+- [x ] Add email/username uniqueness validation
+- [x ] Create authentication middleware
 
 ## 4. API Routes
 
@@ -29,7 +29,7 @@
 
 ## 5. Validation & Error Handling
 
-- [ ] Implement express-validator for input validation
+- [ x] Implement express-validator for input validation
 - [ ] Create custom error handling middleware
 - [ ] Add proper HTTP status codes
 - [ ] Implement validation error responses
