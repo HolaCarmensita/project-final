@@ -9,6 +9,7 @@ import Header from './components/Header1';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
+import MyIdeaCardEdit from './pages/MyIdeaPage/MyIdeaCardEdit';
 
 // Auth pages
 import LoginPage from './pages/Auth/LoginPage';
@@ -83,9 +84,8 @@ const App = () => {
 
         {/* Modal - full screen on mobile when active */}
         <div
-          className={`modal-container ${isModalActive ? 'active' : ''} ${
-            isAuthPage ? 'auth-modal' : ''
-          }`}
+          className={`modal-container ${isModalActive ? 'active' : ''} ${isAuthPage ? 'auth-modal' : ''
+            }`}
         >
           <Routes>
             <Route path='/' element={null} />
@@ -95,6 +95,7 @@ const App = () => {
 
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />
+            <Route path='/profile/my-idea/:id' element={<MyIdeaCardEdit />} />
 
             {/* Auth routes */}
             <Route path='/login' element={<LoginPage />} />

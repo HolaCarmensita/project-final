@@ -123,7 +123,7 @@ export default function MyIdeasSection() {
                   aria-label="Edit idea"
                   title="Edit"
                   iconSrc={editIcon}
-                  onClick={(e) => { e.stopPropagation(); navigate(`/ideas/${idea.id}`); }}
+                  onClick={(e) => { e.stopPropagation(); navigate(`/profile/my-idea/${idea.id}`); }}
                 />
                 <IconButton
                   aria-label="Delete idea"
@@ -137,7 +137,7 @@ export default function MyIdeasSection() {
                 <IdeaTitle>{idea.title}</IdeaTitle>
                 <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
                 <OpenButtonWrap>
-                  <OpenIdeaButton ideaId={idea.id} to={`/ideas/${idea.id}`} title={idea.title} />
+                  <OpenIdeaButton ideaId={idea.id} to={`/profile/my-idea/${idea.id}`} title={idea.title} />
                 </OpenButtonWrap>
                 <Row>
                   <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
