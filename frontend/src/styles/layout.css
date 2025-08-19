@@ -71,11 +71,23 @@
   /* Show modal full screen when active */
   .modal-container.active {
     position: absolute;
-    top: 60px; /* Start below header */
+    top: calc(72px); /* Start below header */
     left: 0;
     width: 100%;
-    height: calc(100vh - 60px);
+    height: 100vh;
     z-index: 10;
+  }
+
+  /* Auth modals (login/register) - full width but only 70% height on mobile */
+  .modal-container.active.auth-modal {
+    top: auto; /* Override the top: 60px from regular modal */
+    bottom: 0px; /* Position at bottom of screen */
+    width: 100%; /* Full width */
+    height: fit-content;
+    max-height: 80vh;
+    background-color: bisque;
+    border-radius: 24px 24px 0 0; /* Rounded corners only on top - matching Add Idea modal */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Enhanced shadow for modal effect */
   }
 }
 

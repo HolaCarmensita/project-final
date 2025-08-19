@@ -6,12 +6,10 @@ import Button from '../../components/Button';
 
 const RegisterContainer = styled.div`
   align-items: center;
-  padding: 24px 16px;
-
+  padding: 48px 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
 `;
 
 const WelcomeText = styled.div`
@@ -24,7 +22,15 @@ const WelcomeText = styled.div`
 const RegisterForm = styled.form`
   width: 100%;
   background: #fff;
-  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const Title = styled.h3`
@@ -35,10 +41,7 @@ const Title = styled.h3`
 `;
 
 const Label = styled.label`
-  display: block;
-  font-size: 14px;
   color: #333;
-  margin: 14px 0 6px;
 `;
 
 const Input = styled.input`
@@ -50,19 +53,7 @@ const Input = styled.input`
   outline: none;
 `;
 
-const ForgotPasswordLink = styled(Link)`
-  color: #007bff;
-  font-size: 14px;
-  text-decoration: underline;
-  margin: 8px 0 16px 0;
-  display: inline-block;
-
-  &:hover {
-    color: #0056b3;
-  }
-`;
-
-const SignUpText = styled.p`
+const AlreadyAccountText = styled.p`
   text-align: center;
   margin-top: 24px;
   font-size: 14px;
@@ -221,60 +212,66 @@ const RegisterPage = () => {
 
   return (
     <RegisterContainer>
-      <WelcomeText>
+      {/* <WelcomeText>
         <h2>
           Welcome to Penive, a place to explore, share and connect with creative
           ideas and minds.
         </h2>
 
         <h2> Please login or register to get started.</h2>
-      </WelcomeText>
+      </WelcomeText> */}
 
       <RegisterForm onSubmit={handleSubmit}>
         <Title>Register</Title>
 
-        <Label htmlFor='name'>Name</Label>
-        <Input
-          id='name'
-          type='text'
-          placeholder='Enter your name'
-          value={name}
-          onChange={handleNameChange}
-        />
-        {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
+        <InputContainer>
+          <Label htmlFor='name'>Name</Label>
+          <Input
+            id='name'
+            type='text'
+            placeholder='Enter your name'
+            value={name}
+            onChange={handleNameChange}
+          />
+          {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
+        </InputContainer>
 
-        <Label htmlFor='email'>Email</Label>
-        <Input
-          id='email'
-          type='text'
-          placeholder='Enter your email'
-          value={email}
-          onChange={handleEmailChange}
-          onBlur={handleEmailBlur}
-        />
-        {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+        <InputContainer>
+          <Label htmlFor='email'>Email</Label>
+          <Input
+            id='email'
+            type='text'
+            placeholder='Enter your email'
+            value={email}
+            onChange={handleEmailChange}
+            onBlur={handleEmailBlur}
+          />
+          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+        </InputContainer>
 
-        <Label htmlFor='password'>Password</Label>
-        <Input
-          id='password'
-          type='password'
-          placeholder='Enter your password'
-          value={password}
-          onChange={handlePasswordChange}
-        />
+        <InputContainer>
+          <Label htmlFor='password'>Password</Label>
+          <Input
+            id='password'
+            type='password'
+            placeholder='Enter your password'
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          {passwordError && <ErrorMessage> {passwordError} </ErrorMessage>}
+        </InputContainer>
 
-        {passwordError && <ErrorMessage> {passwordError} </ErrorMessage>}
-
-        <Label htmlFor='password-repeat'>Repeat Password</Label>
-        <Input
-          id='password-repeat'
-          type='password'
-          placeholder='Repeat password'
-          value={repeatedPassword}
-          onChange={handlePasswordConfirmation}
-        />
-
-        {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+        <InputContainer>
+          <Label htmlFor='password-repeat'>Repeat Password</Label>
+          <Input
+            id='password-repeat'
+            type='password'
+            placeholder='Repeat password'
+            value={repeatedPassword}
+            onChange={handlePasswordConfirmation}
+          />
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+        </InputContainer>
         {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
 
         <Button
@@ -286,9 +283,9 @@ const RegisterPage = () => {
           {isLoading ? 'REGISTER...' : 'REGISTER'}
         </Button>
 
-        <SignUpText>
+        <AlreadyAccountText>
           Already have an account? <Link to='/login'>Login</Link>
-        </SignUpText>
+        </AlreadyAccountText>
       </RegisterForm>
     </RegisterContainer>
   );

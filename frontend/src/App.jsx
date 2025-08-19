@@ -30,6 +30,9 @@ const App = () => {
   const handleRightStore = useIdeasStore((state) => state.handleRight);
   const isModalActive = location.pathname !== '/';
 
+  // Check if current route is an auth page (login/register)
+  const isAuthPage = ['/login', '/register'].includes(location.pathname);
+
   // Modal logic: currently shows modal on all routes except home (/)
   // To change this, modify the condition below:
   // - Only /ideas: location.pathname === '/ideas'
@@ -80,7 +83,11 @@ const App = () => {
         </div>
 
         {/* Modal - full screen on mobile when active */}
-        <div className={`modal-container ${isModalActive ? 'active' : ''}`}>
+        <div
+          className={`modal-container ${isModalActive ? 'active' : ''} ${
+            isAuthPage ? 'auth-modal' : ''
+          }`}
+        >
           <Routes>
             <Route path='/' element={null} />
             <Route path='/ideas/:id' element={<IdeaPage />} />
