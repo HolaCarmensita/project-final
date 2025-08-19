@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import arrowIcon from '../../../assets/icons/arrow_forward.svg';
+import OpenIdeaButton from '../../../components/OpenIdeaButton';
 import { useIdeasStore } from '../../../store/useIdeasStore';
 
 const StackWrap = styled.div`
@@ -29,17 +28,7 @@ const IdeaTitle = styled.h4`
   margin-bottom: 12px;
 `;
 
-const OpenButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #232323;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-`;
+// Open button now uses shared component; keep a wrapper only if we need custom layout.
 
 const Row = styled.div`
   display: flex;
@@ -72,19 +61,13 @@ export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBu
           {idx === ideas.length - 1 ? (
             <>
               <IdeaTitle>{idea.title}</IdeaTitle>
-              <OpenButton
-                as={Link}
+              <OpenIdeaButton
+                ideaId={idea.id}
                 to={linkBuilder(idea.id)}
-                aria-label={`Open idea "${idea.title}"`}
-                onClick={() => {
-                  const idx = storeIdeas.findIndex((i) => i.id === idea.id);
-                  if (idx >= 0) {
-                    window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
-                  }
-                }}
-              >
-                OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-              </OpenButton>
+                title={idea.title}
+                variant="outlined"
+                style={{ padding: '8px 12px', fontSize: 14 }}
+              />
               {showFooter && (
                 <Row>
                   <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
