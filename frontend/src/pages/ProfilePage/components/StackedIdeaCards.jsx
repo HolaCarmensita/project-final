@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import arrowIcon from '../../../assets/icons/arrow_forward.svg';
+import { useIdeasStore } from '../../../store/useIdeasStore';
 
 const StackWrap = styled.div`
   position: relative;
@@ -57,6 +58,7 @@ const Row = styled.div`
  * - linkBuilder: (id) => string (route to open idea)
  */
 export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBuilder = (id) => `/ideas/${id}` }) {
+  const storeIdeas = useIdeasStore((s) => s.ideas);
   return (
     <StackWrap>
       {ideas.map((idea, idx) => (
@@ -70,7 +72,16 @@ export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBu
           {idx === ideas.length - 1 ? (
             <>
               <IdeaTitle>{idea.title}</IdeaTitle>
-              <OpenButton as={Link} to={linkBuilder(idea.id)}>
+              <OpenButton
+                as={Link}
+                to={linkBuilder(idea.id)}
+                onClick={() => {
+                  const idx = storeIdeas.findIndex((i) => i.id === idea.id);
+                  if (idx >= 0) {
+                    window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
+                  }
+                }}
+              >
                 OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
               </OpenButton>
               {showFooter && (

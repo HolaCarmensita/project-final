@@ -426,7 +426,16 @@ const ProfilePage = () => {
                 <CardContent>
                   <IdeaTitle>{idea.title}</IdeaTitle>
                   <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
-                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                  <OpenButton
+                    as={Link}
+                    to={`/ideas/${idea.id}`}
+                    onClick={(e) => {
+                      const idx = ideas.findIndex((i) => i.id === idea.id);
+                      if (idx >= 0) {
+                        window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
+                      }
+                    }}
+                  >
                     OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
                   </OpenButton>
                   <Row>
@@ -495,7 +504,16 @@ const ProfilePage = () => {
                 <CardContent unstacked={unstackLikedIdeas} popped={popped} top={!unstackLikedIdeas && !popped && isLast}>
                   <IdeaTitle>{idea.title}</IdeaTitle>
                   <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
-                  <OpenButton as={Link} to={`/ideas/${idea.id}`}>
+                  <OpenButton
+                    as={Link}
+                    to={`/ideas/${idea.id}`}
+                    onClick={(e) => {
+                      const idx = ideas.findIndex((i) => i.id === idea.id);
+                      if (idx >= 0) {
+                        window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
+                      }
+                    }}
+                  >
                     OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
                   </OpenButton>
                   <Row>
