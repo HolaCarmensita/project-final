@@ -87,7 +87,7 @@ export default function MyIdeasSection() {
   const navigate = useNavigate();
   const ideas = useIdeasStore((s) => s.ideas);
   const deleteIdea = useIdeasStore((s) => s.deleteIdea);
-  const myIdeas = useMemo(() => ideas.slice(0, 5), [ideas]);
+  const myIdeas = useMemo(() => ideas.filter(i => i.author === 'You'), [ideas]);
 
   const [unstack, setUnstack] = useState(false);
   const [poppedIdx, setPoppedIdx] = useState(null);
