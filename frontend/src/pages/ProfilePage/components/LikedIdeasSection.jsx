@@ -1,24 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import arrowIcon from '../../../assets/icons/arrow_forward.svg';
 import heartBrokenIcon from '../../../assets/icons/heart_broken.svg';
 import { useIdeasStore } from '../../../store/useIdeasStore';
+import SectionHeader from '../../../components/SectionHeader';
+import OpenIdeaButton from '../../../components/OpenIdeaButton';
+import CardActions from '../../../components/CardActions';
+import IconButton from '../../../components/IconButton';
 
 const Section = styled.section`
   margin-bottom: 60px;
 `;
 
-const SectionHeader = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 10px;
-
-  h3 { font-size: 18px; font-weight: 600; }
-  .count { color: #6b6b6b; font-weight: 400; margin-left: 6px; font-size: 14px; }
-  button.linklike { color: #232323; background: transparent; border: 0; padding: 0; font-size: 14px; cursor: pointer; text-decoration: none; }
-`;
+// SectionHeader moved to a shared component
 
 const StackWrap = styled.div`
   position: relative;
@@ -64,28 +58,7 @@ const StackCard = styled.div`
   transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease;
 `;
 
-const CardActions = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  gap: 8px;
-`;
-
-const IconButton = styled.button`
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  cursor: pointer;
-  padding: 0;
-  img { width: 16px; height: 16px; filter: none; opacity: 0.55; transition: opacity 120ms ease-in-out; pointer-events: none; }
-  &:hover img { opacity: 1; }
-`;
+// Use shared CardActions + IconButton
 
 const CardContent = styled.div`
   display: flex;
@@ -100,11 +73,9 @@ const IdeaDesc = styled.p`
   font-size: 16px; line-height: 1.35; margin: 6px 0 14px; color: #111; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;
   @media (min-width: 768px) { -webkit-line-clamp: 3; line-clamp: 3; }
 `;
-const OpenButton = styled.button`
-  align-self: flex-end; margin-top: auto; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; min-height: 40px; border: none; border-radius: 12px; background: #232323; color: #ffffff; font-size: 16px; font-weight: lighter; cursor: pointer; text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; line-height: 1; box-shadow: 0 6px 16px rgba(0,0,0,0.16); transition: background-color .2s ease, box-shadow .2s ease, transform .2s ease;
-  &:hover { background: #111111; box-shadow: 0 8px 20px rgba(0,0,0,0.20); transform: translateY(-1px); }
-  &:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(0,0,0,0.16); }
-  img { width: 18px; height: 18px; filter: invert(1) brightness(1.4); pointer-events: none; }
+const OpenButtonWrap = styled.div`
+  align-self: flex-end;
+  margin-top: auto;
 `;
 const Row = styled.div`
   display: flex; align-items: center; justify-content: space-between; margin-top: 16px; color: #6b6b6b; font-size: 12px;
@@ -121,19 +92,12 @@ export default function LikedIdeasSection() {
 
   return (
     <Section>
-      <SectionHeader>
-        <h3>
-          Liked ideas <span className="count">({likedIdeas.length})</span>
-        </h3>
-        <button
-          type="button"
-          className="linklike"
-          onClick={() => { setUnstack((v) => { const next = !v; if (next) setPoppedIdx(null); return next; }); }}
-          aria-expanded={unstack}
-        >
-          {unstack ? 'Collapse' : 'See all'}
-        </button>
-      </SectionHeader>
+      <SectionHeader
+        title="Liked ideas"
+        count={likedIdeas.length}
+        isExpanded={unstack}
+        onToggle={() => { setUnstack((v) => { const next = !v; if (next) setPoppedIdx(null); return next; }); }}
+      />
 
       <StackWrap>
         {likedIdeas.map((idea, idx) => {
@@ -154,29 +118,19 @@ export default function LikedIdeasSection() {
             >
               <CardActions>
                 <IconButton
-                  type="button"
                   aria-label="Remove like"
                   title="Remove like"
+                  iconSrc={heartBrokenIcon}
                   onClick={(e) => { e.stopPropagation(); unlikeIdea(idea.id); }}
-                >
-                  <img src={heartBrokenIcon} alt="Remove like" />
-                </IconButton>
+                />
               </CardActions>
 
               <CardContent>
                 <IdeaTitle>{idea.title}</IdeaTitle>
                 <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
-                <OpenButton
-                  as={Link}
-                  to={`/ideas/${idea.id}`}
-                  aria-label={`Open idea "${idea.title}"`}
-                  onClick={() => {
-                    const idxAbs = ideas.findIndex((i) => i.id === idea.id);
-                    if (idxAbs >= 0) window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idxAbs }));
-                  }}
-                >
-                  OPEN IDEA <img src={arrowIcon} width={14} height={14} alt="open" />
-                </OpenButton>
+                <OpenButtonWrap>
+                  <OpenIdeaButton ideaId={idea.id} to={`/ideas/${idea.id}`} title={idea.title} />
+                </OpenButtonWrap>
                 <Row>
                   <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
                 </Row>
