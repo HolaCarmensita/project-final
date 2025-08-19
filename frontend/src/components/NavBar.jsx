@@ -19,6 +19,12 @@ const NavBarWrapper = styled.div`
   width: min(420px, 300px);
   margin-left: auto;
   margin-right: auto;
+  
+  /* Hide on mobile if requested */
+  @media (max-width: 767px) {
+    display: 
+      ${(p) => (p.hideOnMobile ? 'none' : 'flex')};
+  }
   @media (max-width: 600px) {
     position: fixed;
     left: 0;
@@ -54,8 +60,8 @@ const NavButton = styled.button`
   }
 `;
 
-const NavBar = ({ onAdd, onLeft, onRight }) => (
-  <NavBarWrapper>
+const NavBar = ({ onAdd, onLeft, onRight, hideOnMobile = false }) => (
+  <NavBarWrapper hideOnMobile={hideOnMobile}>
     <NavButton onClick={onLeft} aria-label="Previous">
       <img src={leftArrowIcon} alt="Left" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
     </NavButton>

@@ -56,6 +56,9 @@ const App = () => {
     setIsAddOpen(false);
   };
 
+  // Hide NavBar on mobile when on Profile pages
+  const isProfileRoute = location.pathname.startsWith('/profile');
+
   return (
     <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <div className='content-layout'>
@@ -64,6 +67,7 @@ const App = () => {
           onAdd={openAddModal}
           onLeft={handleLeft}
           onRight={handleRight}
+          hideOnMobile={isProfileRoute}
         />
         <AddIdeaModal
           isOpen={isAddOpen}
@@ -71,9 +75,8 @@ const App = () => {
           onSubmit={handleSubmitIdea}
         />
         <div
-          className={`scene-container ${
-            isModalActive ? 'hidden-on-mobile' : ''
-          }`}
+          className={`scene-container ${isModalActive ? 'hidden-on-mobile' : ''
+            }`}
         >
           <Header onThemeToggle={handleThemeToggle} />
           <Scene ideas={ideas} />
