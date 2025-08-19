@@ -159,20 +159,6 @@ export default function MyIdeaCardEdit() {
                 />
               )}
             </ImgWrap>
-            {editMode ? (
-              <Input
-                value={form.altTexts[idx]}
-                onChange={e => setForm(f => {
-                  const altTexts = [...f.altTexts];
-                  altTexts[idx] = e.target.value;
-                  return { ...f, altTexts };
-                })}
-                placeholder="Alternative text"
-                style={{ fontSize: 13, marginBottom: 4 }}
-              />
-            ) : (
-              <AltText>Alternative text</AltText>
-            )}
           </div>
         ))}
         {editMode && (
@@ -205,11 +191,11 @@ export default function MyIdeaCardEdit() {
       </ImageGallery>
       <Connections>
         <ConnRow>
-          <span role="img" aria-label="connected" style={{ color: '#3a7afe', fontSize: 18 }}>🟢</span>
+          <span role="img" aria-label="connected" style={{ color: '#3a7afe', fontSize: 18 }}>@</span>
           Mary Smith connected <span style={{ marginLeft: 'auto', color: '#888', fontSize: 13 }}>2021-10-11</span>
         </ConnRow>
         <ConnRow>
-          <span role="img" aria-label="connected" style={{ color: '#3a7afe', fontSize: 18 }}>🟢</span>
+          <span role="img" aria-label="connected" style={{ color: '#3a7afe', fontSize: 18 }}>@</span>
           Harry Styles connected <span style={{ marginLeft: 'auto', color: '#888', fontSize: 13 }}>2021-10-11</span>
         </ConnRow>
       </Connections>
