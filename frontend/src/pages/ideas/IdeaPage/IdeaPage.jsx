@@ -12,7 +12,7 @@ const IdeaPageContainer = styled.div`
   align-items: center;
   padding: 16px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  height: 100%;
 `;
 
 const IdeaPage = () => {

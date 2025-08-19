@@ -90,6 +90,8 @@ const App = () => {
         >
           <Routes>
             <Route path='/' element={null} />
+            <Route path='/ideas/' element={<IdeaPage />} />
+
             <Route path='/ideas/:id' element={<IdeaPage />} />
 
             {/* Profile routes */}
