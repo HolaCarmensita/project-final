@@ -8,10 +8,10 @@
 
 ## 2. Database & Models
 
-- [x ] Create User model with email/username validation
-- [x ] Implement bcrypt password encryption
-- [ x] Create Idea model
-- [ ] Set up proper MongoDB connection with error handling
+- [x] Create User model with email/username validation
+- [x] Implement bcrypt password encryption
+- [x] Create Idea model
+- [x] Set up proper MongoDB connection with error handling
 
 ## 3. Authentication System
 
@@ -29,7 +29,7 @@
 
 ## 5. Validation & Error Handling
 
-- [ x] Implement express-validator for input validation
+- [ x] Implement express-validator for input validation (only done in auth routes)
 - [ ] Create custom error handling middleware
 - [ ] Add proper HTTP status codes
 - [ ] Implement validation error responses
