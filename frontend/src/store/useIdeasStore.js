@@ -58,6 +58,12 @@ export const useIdeasStore = create((set) => ({
     }));
   },
   openAddModal: () => set({ isAddOpen: true }),
+  deleteIdea: (id) => set((state) => {
+    const nextIdeas = state.ideas.filter((i) => i.id !== id);
+    let nextIndex = state.selectedIndex;
+    if (nextIndex >= nextIdeas.length) nextIndex = Math.max(0, nextIdeas.length - 1);
+    return { ideas: nextIdeas, selectedIndex: nextIndex };
+  }),
   handleLeft: (callback) => set((state) => {
     const newIndex = (state.selectedIndex - 1 + state.ideas.length) % state.ideas.length;
     if (typeof callback === 'function') callback(newIndex);

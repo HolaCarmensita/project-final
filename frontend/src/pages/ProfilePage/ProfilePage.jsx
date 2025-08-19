@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // import moreIcon from '../../assets/icons/more_vert.svg';
 import arrowIcon from '../../assets/icons/arrow_forward.svg';
 import { useIdeasStore } from '../../store/useIdeasStore';
+import editIcon from '../../assets/icons/edit.svg';
+import deleteIcon from '../../assets/icons/delete.svg';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
@@ -123,6 +125,41 @@ const StackCard = styled.div`
     transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
     margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 220ms ease;
+`;
+
+// Small icon buttons container in the top-right of a card
+const CardActions = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+`;
+
+const IconButton = styled.button`
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.16);
+  }
+
+  img {
+    width: 16px;
+    height: 16px;
+    filter: invert(0);
+    pointer-events: none;
+  }
 `;
 
 // Keep CardContent simple (no special offsets)
@@ -300,12 +337,14 @@ const IdeaTitle = styled.h4`
 `;
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [unstackMyIdeas, setUnstackMyIdeas] = useState(false);
   const [unstackLikedIdeas, setUnstackLikedIdeas] = useState(false);
   const [poppedMyIdx, setPoppedMyIdx] = useState(null);
   const [poppedLikedIdx, setPoppedLikedIdx] = useState(null);
 
   const ideas = useIdeasStore((s) => s.ideas);
+  const deleteIdea = useIdeasStore((s) => s.deleteIdea);
   const myIdeas = ideas.slice(0, 5);
   const likedIdeas = ideas.slice(1, 4);
 
@@ -356,6 +395,31 @@ const ProfilePage = () => {
                 top={!unstackMyIdeas && !popped && isLast}
                 onClick={() => setPoppedMyIdx((cur) => (cur === idx ? null : idx))}
               >
+                {/* Card actions (edit/delete) for My ideas */}
+                <CardActions>
+                  <IconButton
+                    type="button"
+                    aria-label="Edit idea"
+                    title="Edit"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/ideas/${idea.id}`);
+                    }}
+                  >
+                    <img src={editIcon} alt="Edit" />
+                  </IconButton>
+                  <IconButton
+                    type="button"
+                    aria-label="Delete idea"
+                    title="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteIdea(idea.id);
+                    }}
+                  >
+                    <img src={deleteIcon} alt="Delete" />
+                  </IconButton>
+                </CardActions>
                 <CardContent>
                   <IdeaTitle>{idea.title}</IdeaTitle>
                   <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>

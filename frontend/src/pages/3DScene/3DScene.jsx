@@ -8,6 +8,20 @@ import IdeaOrb from './IdeaOrb';
 import CameraController from './CameraController';
 import Joystick from '../../components/Joystick';
 
+// Helper to detect when user is typing in an input/textarea/contentEditable field
+const isTypingIntoField = () => {
+  if (typeof document === 'undefined') return false;
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = el.tagName;
+  return (
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    el.isContentEditable === true ||
+    (typeof el.getAttribute === 'function' && el.getAttribute('role') === 'textbox')
+  );
+};
+
 const Scene = () => {
   const ideas = useIdeasStore((state) => state.ideas);
   const selectedIndex = useIdeasStore((state) => state.selectedIndex);
@@ -74,6 +88,7 @@ const Scene = () => {
   // Keyboard navigation for left/right arrows (attach only once)
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (isTypingIntoField()) return; // ignore navigation when typing
       let newIndex = selectedIndex;
       if (e.key === 'ArrowLeft') {
         newIndex = (newIndex - 1 + ideas.length) % ideas.length;
