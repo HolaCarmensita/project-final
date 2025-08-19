@@ -45,11 +45,10 @@ const IdeaOrb = ({
 
   // [FIX] make geometries woobly,  
   const geometry = useMemo(() => getWooblyGeometry(1.2, 32, 0.03), []);
-  const auraGeometry = useMemo(() => getWooblyGeometry(1.7, 32, 0.03), []);
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Glowing orb */}
+      {/* Glowing orb (no outer aura) */}
       <mesh
         geometry={geometry}
         onClick={() => onClick && onClick(position)}
@@ -61,20 +60,11 @@ const IdeaOrb = ({
           transparent
           opacity={1}
           emissive={orbColor}
-          emissiveIntensity={0.7}
-        />
-      </mesh>
-      {/* Softer, lighter aura - does not block pointer events */}
-      <mesh geometry={auraGeometry} onPointerDown={e => e.stopPropagation()}>
-        <meshBasicMaterial
-          color={auraColor}
-          transparent
-          opacity={0.5}
-          depthWrite={false}
+          emissiveIntensity={2.5}
         />
       </mesh>
       {/* Sparkles */}
-      <Sparkles count={20} scale={2.5} size={2} color="#e0f7fa" />
+      <Sparkles count={40} scale={3.5} size={40} color="#fff" />
     </group>
   );
 };
