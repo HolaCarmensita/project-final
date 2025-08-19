@@ -3,6 +3,8 @@ import { Sparkles } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
+
+// Removed complementary color utility
 import { useMemo } from "react";
 
 const IdeaOrb = ({

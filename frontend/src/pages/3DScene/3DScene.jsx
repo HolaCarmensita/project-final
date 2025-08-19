@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+// Removed Bloom imports
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
@@ -247,9 +247,8 @@ const Scene = () => {
           target={[0, 0, 0]}
           makeDefault
         />
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={2.5} />
-        </EffectComposer>
+        {/* Bloom must be inside Canvas, not in a fragment or outside */}
+  {/* Removed Bloom and EffectComposer */}
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
