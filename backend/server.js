@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import ideaRoutes from './routes/ideas.js';
+import userRoutes from './routes/users.js';
 
 // Load environment variables
 dotenv.config();
@@ -44,3 +45,4 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/ideas', ideaRoutes);
+app.use('/users', userRoutes);
