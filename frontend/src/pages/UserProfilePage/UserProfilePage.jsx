@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import SectionHeader from '../../components/SectionHeader';
 import StackedIdeaCards from '../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../components/ColorIdeaCard';
 import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
 import lightbulbIcon from '../../assets/icons/at.svg';
+import { mockIdeas } from '../../data/mockData';
 
 const Page = styled.div`
   /* max-width: 420px; */
@@ -65,34 +67,21 @@ const IdeasSection = styled.div`
   margin-top: 18px;
 `;
 
-const mockIdeas = [
-  {
-    id: 1,
-    title: 'Lorem Ipsum è un testo segnaposto.',
-    bodyText: 'Lorem Ipsum è un testo segnaposto.',
-    orbColor: '#a6b8ff',
-    createdAt: '2 feb 2021',
-  },
-  {
-    id: 2,
-    title: 'Lorem Ipsum è un testo segnaposto.',
-    bodyText: 'Lorem Ipsum è un testo segnaposto.',
-    orbColor: '#e47c6a',
-    createdAt: '2 feb 2021',
-  },
-  {
-    id: 3,
-    title: 'Lorem Ipsum è un testo segnaposto.',
-    bodyText: 'Lorem Ipsum è un testo segnaposto.',
-    orbColor: '#d6ff8a',
-    createdAt: '2 feb 2021',
-  },
-];
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [unstacked, setUnstacked] = React.useState(false);
+
+  // Use the first idea's author as the profile user for demo purposes
+  const profileUser = mockIdeas[0] ? {
+    name: mockIdeas[0].author,
+    role: mockIdeas[0].role,
+    details: mockIdeas[0].bodyText,
+  } : { name: '', role: '', details: '' };
+
+  // Filter ideas authored by this user
+  const userIdeas = mockIdeas.filter(idea => idea.author === profileUser.name);
 
   return (
     <Page>
@@ -105,22 +94,22 @@ export default function UserProfilePage() {
       <UserRow>
         <Avatar />
         <UserInfo>
-          <UserName>Mary Smith</UserName>
-          <UserRole>Designer</UserRole>
+          <UserName>{profileUser.name}</UserName>
+          <UserRole>{profileUser.role}</UserRole>
         </UserInfo>
       </UserRow>
 
       <UserDetails>
-        Here add text details of the user... etc
+        {profileUser.details}
       </UserDetails>
 
       <IdeasSection>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-          <SectionHeader title="ideas" count={mockIdeas.length} />
+          <SectionHeader title="ideas" count={userIdeas.length} />
           <UnstackToggleButton unstacked={unstacked} onClick={() => setUnstacked((v) => !v)} />
         </div>
         <StackedIdeaCards
-          ideas={mockIdeas}
+          ideas={userIdeas}
           renderContent={(idea) => (
             <ColorIdeaCard
               idea={idea}
