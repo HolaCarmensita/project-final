@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import SectionHeader from '../../components/SectionHeader';
 import StackedIdeaCards from '../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../components/ColorIdeaCard';
 import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
-import lightbulbIcon from '../../assets/icons/at.svg';
 import { mockIdeas } from '../../data/mockData';
 import { users } from '../../data/mockData';
 
