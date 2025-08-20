@@ -4,15 +4,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SectionHeader from '../../components/SectionHeader';
 import StackedIdeaCards from '../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../components/ColorIdeaCard';
+import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
 import lightbulbIcon from '../../assets/icons/at.svg';
 
 const Page = styled.div`
-  max-width: 420px;
-  margin: 0 auto;
+  /* max-width: 420px; */
+  /* margin: 0 auto; */
   padding: 32px 18px 32px 18px;
-  background: #fff;
-  min-height: 100vh;
+  /* background: #fff; */
+  /* min-height: 100vh; */
 `;
 const TopBar = styled.div`
   display: flex;
@@ -124,21 +125,7 @@ export default function UserProfilePage() {
             <ColorIdeaCard
               idea={idea}
               openButton={
-                <button style={{
-                  background: '#232323',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 18px',
-                  fontWeight: 500,
-                  fontSize: 15,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  cursor: 'pointer',
-                }}>
-                  OPEN IDEA <img src={lightbulbIcon} alt="icon" style={{ width: 18, height: 18 }} />
-                </button>
+                <OpenIdeaButton ideaId={idea.id} to={`/ideas/${idea.id}`} title={idea.title} />
               }
               showDate={true}
             />
