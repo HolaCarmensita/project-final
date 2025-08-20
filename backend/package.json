@@ -12,8 +12,14 @@
     "@babel/core": "^7.17.9",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.17.3",
+    "express-list-endpoints": "^6.0.0",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^6.18.0",
     "mongoose": "^8.4.0",
     "nodemon": "^3.0.1"
   }
