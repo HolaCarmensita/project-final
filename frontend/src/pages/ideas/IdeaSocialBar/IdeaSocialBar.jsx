@@ -11,10 +11,10 @@ const IdeaSocialBarContainer = styled.div`
   padding: 16px 8px 16px 8px;
 `;
 
-const IdeaSocialBar = ({ likes = 0, connections = 0 }) => {
+const IdeaSocialBar = ({ ideaId, likes = 0, connections = 0 }) => {
   return (
     <IdeaSocialBarContainer>
-      <LikeButton initialLikes={likes} />
+      <LikeButton ideaId={ideaId} initialLikes={likes} />
       <ConnectButton initialConnections={connections} />
     </IdeaSocialBarContainer>
   );

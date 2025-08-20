@@ -1,6 +1,34 @@
 // Mock data for ideas - simulates backend API responses
 export const mockIdeas = [
   {
+    id: 1001,
+    title: 'My First Example Idea',
+    bodyText: 'This is a temporary example idea for development. It has a cool image.',
+    author: 'You',
+    role: 'Creator',
+    createdAt: '2025-08-19',
+    likes: 0,
+    connections: 0,
+    images: [
+      '/mockImg/artpice1.png',
+      '/mockImg/cells.png',
+    ],
+  },
+  {
+    id: 1002,
+    title: 'My Second Example Idea',
+    bodyText: 'Another temporary idea for development, with a different image.',
+    author: 'You',
+    role: 'Creator',
+    createdAt: '2025-08-19',
+    likes: 0,
+    connections: 0,
+    images: [
+      '/mockImg/artpice2.png',
+      '/mockImg/dots.png',
+    ],
+  },
+  {
     id: 1,
     title: 'Revolutionary Social Media App',
     bodyText:

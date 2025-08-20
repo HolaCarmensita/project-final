@@ -9,10 +9,7 @@ import Header from './components/Header1';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
-import ProfileIdeas from './pages/ProfilePage/ProfileIdeas';
-import ProfileConnections from './pages/ProfilePage/ProfileConnections';
-import ProfileLiked from './pages/ProfilePage/ProfileLiked';
-import ProfileSettings from './pages/ProfilePage/ProfileSettings';
+import MyIdeaCardEdit from './pages/MyIdeaPage/MyIdeaCardEdit';
 
 // Auth pages
 import LoginPage from './pages/Auth/LoginPage';
@@ -59,6 +56,9 @@ const App = () => {
     setIsAddOpen(false);
   };
 
+  // Hide NavBar on mobile when on Profile pages
+  const isProfileRoute = location.pathname.startsWith('/profile');
+
   return (
     <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <div className='content-layout'>
@@ -67,6 +67,7 @@ const App = () => {
           onAdd={openAddModal}
           onLeft={handleLeft}
           onRight={handleRight}
+          hideOnMobile={isProfileRoute}
         />
         <AddIdeaModal
           isOpen={isAddOpen}
@@ -74,9 +75,8 @@ const App = () => {
           onSubmit={handleSubmitIdea}
         />
         <div
-          className={`scene-container ${
-            isModalActive ? 'hidden-on-mobile' : ''
-          }`}
+          className={`scene-container ${isModalActive ? 'hidden-on-mobile' : ''
+            }`}
         >
           <Header onThemeToggle={handleThemeToggle} />
           <Scene ideas={ideas} />
@@ -84,23 +84,18 @@ const App = () => {
 
         {/* Modal - full screen on mobile when active */}
         <div
-          className={`modal-container ${isModalActive ? 'active' : ''} ${
-            isAuthPage ? 'auth-modal' : ''
-          }`}
+          className={`modal-container ${isModalActive ? 'active' : ''} ${isAuthPage ? 'auth-modal' : ''
+            }`}
         >
           <Routes>
             <Route path='/' element={null} />
+            <Route path='/ideas/' element={<IdeaPage />} />
+
             <Route path='/ideas/:id' element={<IdeaPage />} />
 
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />
-            <Route path='/profile/ideas' element={<ProfileIdeas />} />
-            <Route
-              path='/profile/connections'
-              element={<ProfileConnections />}
-            />
-            <Route path='/profile/liked' element={<ProfileLiked />} />
-            <Route path='/profile/settings' element={<ProfileSettings />} />
+            <Route path='/profile/my-idea/:id' element={<MyIdeaCardEdit />} />
 
             {/* Auth routes */}
             <Route path='/login' element={<LoginPage />} />

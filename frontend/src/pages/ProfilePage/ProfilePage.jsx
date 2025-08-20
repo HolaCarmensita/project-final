@@ -1,22 +1,35 @@
 import React from 'react';
 import styled from 'styled-components';
+import MyIdeasSection from './components/MyIdeasSection';
+import LikedIdeasSection from './components/LikedIdeasSection';
+import ConnectionsSection from './components/ConnectionsSection';
+import ProfileSettingsSection from './components/ProfileSettingsSection';
 
-const ProfileContainer = styled.div`
+// Container pinned to the right using global overlay rules
+const Page = styled.div`
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 16px;
-  height: 100%;
-  background-color: white !important;
+  overflow-y: auto;
 `;
 
+// The content sections below are now split into dedicated components.
+
 const ProfilePage = () => {
+  const connections = [
+    { name: 'Mary Smith', role: 'UX Designer', note: 'Working on a idea together.', color: '#C9F46C' },
+    { name: 'Tom Brown', role: 'Teacher', note: 'Working on a idea together.', color: '#F3B7B5' },
+    { name: 'Emma Johnson', role: 'Designer', note: 'Co-designing user interfaces.', color: '#224EA0' },
+  ];
+
   return (
-    <ProfileContainer>
-      <h1>Profile Page</h1>
-      <p>This is a placeholder for the main profile page.</p>
-      <p>Navigation to sub-routes will be added here.</p>
-    </ProfileContainer>
+    <Page className="modal-container active">
+      <MyIdeasSection />
+      <LikedIdeasSection />
+      <ConnectionsSection connections={connections} />
+      <ProfileSettingsSection />
+    </Page>
   );
 };
 

@@ -7,6 +7,13 @@ import IdeaText from './components/IdeaText';
 
 const IdeaCardContainer = styled.div`
   width: 100%;
+  cursor: default;
+  &:hover {
+    cursor: pointer;
+  }
+  &:hover * {
+    cursor: pointer !important;
+  }
 `;
 
 const IdeaCard = ({ idea = null }) => {
@@ -17,7 +24,7 @@ const IdeaCard = ({ idea = null }) => {
     <IdeaCardContainer>
       <ProfileButton author={idea?.author} role={idea?.role} />
       <ImageCarousel images={idea?.images} />
-      <IdeaSocialBar likes={idea?.likes} connections={idea?.connections} />
+      <IdeaSocialBar ideaId={idea?.id} likes={idea?.likes} connections={idea?.connections} />
       <IdeaText title={idea?.title} bodyText={idea?.bodyText} />
     </IdeaCardContainer>
   );

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import heart from '../../../../assets/icons/heart.svg';
 import heartFill from '../../../../assets/icons/heart_fill.svg';
 import styled from 'styled-components';
+import { useIdeasStore } from '../../../../store/useIdeasStore';
 
 const LikeButtonContainer = styled.div`
   display: flex;
@@ -56,13 +57,21 @@ const LikeCount = styled.p`
   font-weight: 400;
 `;
 
-export const LikeButton = ({ initialLikes = 0 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(initialLikes);
+export const LikeButton = ({ ideaId, initialLikes = 0 }) => {
+  const likedIds = useIdeasStore((s) => s.likedIds);
+  const likeIdea = useIdeasStore((s) => s.likeIdea);
+  const unlikeIdea = useIdeasStore((s) => s.unlikeIdea);
+
+  const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
+  const likes = useIdeasStore((s) => {
+    const idea = s.ideas.find((i) => i.id === ideaId);
+    return idea?.likes ?? initialLikes;
+  });
 
   const handleClick = () => {
-    setIsLiked(!isLiked);
-    setLikes(isLiked ? likes - 1 : likes + 1);
+    if (!ideaId) return;
+    if (isLiked) unlikeIdea(ideaId);
+    else likeIdea(ideaId);
   };
 
   return (
@@ -71,9 +80,8 @@ export const LikeButton = ({ initialLikes = 0 }) => {
         <StyledButton
           onClick={handleClick}
           tabIndex={4}
-          aria-label={`${
-            isLiked ? 'Unlike' : 'Like'
-          } this idea. ${likes} likes`}
+          aria-label={`${isLiked ? 'Unlike' : 'Like'
+            } this idea. ${likes} likes`}
         >
           <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
         </StyledButton>

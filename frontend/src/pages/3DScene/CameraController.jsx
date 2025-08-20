@@ -1,6 +1,20 @@
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef, useEffect } from "react";
 
+// Helper to detect when user is typing in an input/textarea/contentEditable field
+const isTypingIntoField = () => {
+  if (typeof document === 'undefined') return false;
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = el.tagName;
+  return (
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    el.isContentEditable === true ||
+    (typeof el.getAttribute === 'function' && el.getAttribute('role') === 'textbox')
+  );
+};
+
 const MOVE_SPEED = 0.5;
 const JOYSTICK_SCALE = 0.6;
 
@@ -21,16 +35,24 @@ export default function CameraController({ joystickVecRef }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (isTypingIntoField()) return; // ignore movement keys while typing
       if (keyMap[e.key]) pressed.current[keyMap[e.key]] = true;
     };
     const handleKeyUp = (e) => {
+      if (isTypingIntoField()) return; // ignore key state updates while typing
       if (keyMap[e.key]) pressed.current[keyMap[e.key]] = false;
+    };
+    const handleFocusIn = () => {
+      // Clear any stuck keys when focusing into an input field
+      if (isTypingIntoField()) pressed.current = {};
     };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("focusin", handleFocusIn);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("focusin", handleFocusIn);
     };
   }, []);
 
