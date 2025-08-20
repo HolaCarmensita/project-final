@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Section = styled.section`
@@ -23,6 +24,7 @@ const Role = styled.div` color: #6b6b6b; font-size: 14px; `;
 const Note = styled.div` color: #3d3d3d; font-size: 14px; position: relative !important; top: 0 !important; `;
 
 export default function ConnectionsSection({ connections = [] }) {
+  const navigate = useNavigate();
   return (
     <Section>
       <SectionHeader>
@@ -32,7 +34,7 @@ export default function ConnectionsSection({ connections = [] }) {
       </SectionHeader>
       <ConnectionsList>
         {connections.map((c, i) => (
-          <Person key={i}>
+          <Person key={i} style={{ cursor: 'pointer' }} onClick={() => navigate(`/user/${c.id || c.name}`)}>
             <Avatar style={{ background: c.color }} />
             <div>
               <Name>{c.name}</Name>

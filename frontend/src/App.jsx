@@ -10,6 +10,7 @@ import Header from './components/Header1';
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import MyIdeaCardEdit from './pages/MyIdeaPage/MyIdeaCardEdit';
+import UserProfilePage from './pages/UserProfilePage/UserProfilePage';
 
 // Auth pages
 import LoginPage from './pages/Auth/LoginPage';
@@ -96,6 +97,7 @@ const App = () => {
             {/* Profile routes */}
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/profile/my-idea/:id' element={<MyIdeaCardEdit />} />
+            <Route path='/user/:userId' element={<UserProfilePage />} />
 
             {/* Auth routes */}
             <Route path='/login' element={<LoginPage />} />
