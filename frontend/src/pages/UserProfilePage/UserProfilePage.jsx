@@ -74,7 +74,11 @@ export default function UserProfilePage() {
 
   // Get user from userId param
   const currentUserId = '1'; // Replace with auth logic if available
-  const profileUser = users.find(u => u.id === userId) || users[0];
+  const decodedParam = decodeURIComponent(userId || '');
+  const profileUser =
+    users.find((u) => u.id === userId) ||
+    users.find((u) => u.name === decodedParam) ||
+    { id: decodedParam, name: decodedParam, role: 'Member' };
   const isOwnProfile = userId === currentUserId;
   // Filter ideas authored by this user
   const userIdeas = mockIdeas.filter(idea => idea.author === profileUser.name);

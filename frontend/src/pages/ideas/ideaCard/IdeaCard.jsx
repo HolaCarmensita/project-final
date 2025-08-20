@@ -22,7 +22,7 @@ const IdeaCard = ({ idea = null }) => {
   }
   return (
     <IdeaCardContainer>
-      <ProfileButton author={idea?.author} role={idea?.role} />
+      <ProfileButton author={idea?.author} role={idea?.role} userId={idea?.authorId} />
       <ImageCarousel images={idea?.images} />
       <IdeaSocialBar ideaId={idea?.id} likes={idea?.likes} connections={idea?.connections} />
       <IdeaText title={idea?.title} bodyText={idea?.bodyText} />

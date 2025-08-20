@@ -1,5 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { users } from '../../../../data/mockData';
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -50,9 +52,14 @@ const Role = styled.h4`
 const ProfileButton = ({
   author = 'unknown member',
   role = 'unknown role',
+  userId,
 }) => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    console.log('Profile clicked!'); //redirect to profile page later on
+    // Prefer explicit userId; otherwise resolve by matching author's name in mock users
+    const resolvedId = userId || (users.find((u) => u.name === author)?.id) || (author || 'user');
+    navigate(`/user/${encodeURIComponent(resolvedId)}`);
   };
 
   return (

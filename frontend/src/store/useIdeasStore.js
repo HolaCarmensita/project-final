@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
-import { mockIdeas } from '../data/mockData';
+import { mockIdeas, users } from '../data/mockData';
 
 const getUniqueColorPair = (() => {
   const usedColors = new Set();
@@ -24,7 +24,10 @@ export const useIdeasStore = create((set) => ({
     const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
     const compH = (orbH + 180) % 360;
     const auraColor = randomColor({ hue: compH, luminosity: "light" });
-    return { ...idea, orbColor, auraColor };
+    // Attach authorId by matching mock users by name when missing
+    const matchedUser = users?.find?.((u) => u.name === idea.author);
+    const authorId = idea.authorId || matchedUser?.id;
+    return { ...idea, authorId, orbColor, auraColor };
   }),
   // Track liked ideas by id
   likedIds: mockIdeas.slice(1, 4).map((i) => i.id),
