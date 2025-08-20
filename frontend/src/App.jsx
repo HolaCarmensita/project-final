@@ -1,8 +1,9 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
 import AddIdeaModal from './modals/AddIdeaModal';
+import ConnectModal from './modals/ConnectModal';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
 import Header from './components/Header1';
@@ -27,6 +28,7 @@ const App = () => {
   const handleLeftStore = useIdeasStore((state) => state.handleLeft);
   const handleRightStore = useIdeasStore((state) => state.handleRight);
   const isModalActive = location.pathname !== '/';
+  const openConnect = useIdeasStore((s) => s.openConnectModal);
 
   // Check if current route is an auth page (login/register)
   const isAuthPage = ['/login', '/register'].includes(location.pathname);
@@ -57,6 +59,13 @@ const App = () => {
     setIsAddOpen(false);
   };
 
+  // bridge window event from ConnectButton to store action
+  useEffect(() => {
+    const handler = (e) => openConnect(e.detail || {});
+    window.addEventListener('openConnectModal', handler);
+    return () => window.removeEventListener('openConnectModal', handler);
+  }, [openConnect]);
+
   // Hide NavBar on mobile when on Profile pages
   const isProfileRoute = location.pathname.startsWith('/profile');
 
@@ -75,6 +84,7 @@ const App = () => {
           onClose={() => setIsAddOpen(false)}
           onSubmit={handleSubmitIdea}
         />
+        <ConnectModal />
         <div
           className={`scene-container ${isModalActive ? 'hidden-on-mobile' : ''
             }`}

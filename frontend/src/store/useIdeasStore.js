@@ -30,6 +30,10 @@ export const useIdeasStore = create((set) => ({
     const authorId = idea.authorId || matchedUser?.id || '1';
     return { ...idea, authorId, orbColor, auraColor };
   }),
+  // connections state
+  connections: [], // { id, name, role, note, color }
+  isConnectOpen: false,
+  connectTarget: null, // { ideaId, userId, userName }
   // Track liked ideas by id
   likedIds: mockIdeas.slice(1, 4).map((i) => i.id),
   selectedIndex: 0,
@@ -64,6 +68,49 @@ export const useIdeasStore = create((set) => ({
       ],
     }));
   },
+  openConnectModal: ({ ideaId, userId }) =>
+    set(() => {
+      const user = users.find((u) => u.id === String(userId));
+      return {
+        isConnectOpen: true,
+        connectTarget: {
+          ideaId,
+          userId: String(userId),
+          userName: user?.name || String(userId),
+        },
+      };
+    }),
+  closeConnectModal: () => set({ isConnectOpen: false, connectTarget: null }),
+  submitConnection: (message) =>
+    set((state) => {
+      const target = state.connectTarget;
+      if (!target) return { isConnectOpen: false };
+      const user = users.find((u) => u.id === String(target.userId));
+      const exists = state.connections.some((c) => String(c.id) === String(target.userId));
+      const newConn = exists
+        ? null
+        : {
+          id: String(target.userId),
+          name: user?.name || target.userName,
+          role: user?.role || 'Member',
+          note: message || '',
+          color: randomColor({ luminosity: 'light' }),
+        };
+      // increment idea connections counter if not already connected
+      const updatedIdeas = exists
+        ? state.ideas
+        : state.ideas.map((i) =>
+          i.id === target.ideaId
+            ? { ...i, connections: Math.max(0, (i.connections || 0) + 1) }
+            : i
+        );
+      return {
+        isConnectOpen: false,
+        connectTarget: null,
+        connections: newConn ? [...state.connections, newConn] : state.connections,
+        ideas: updatedIdeas,
+      };
+    }),
   openAddModal: () => set({ isAddOpen: true }),
   likeIdea: (id) => set((state) => {
     if (state.likedIds.includes(id)) return {};

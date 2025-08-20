@@ -57,13 +57,14 @@ const ConnectCount = styled.p`
   font-weight: 400;
 `;
 
-export const ConnectButton = ({ initialConnections = 0 }) => {
+export const ConnectButton = ({ ideaId, authorId, authorName, initialConnections = 0 }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connections, setConnections] = useState(initialConnections);
 
   const handleClick = () => {
-    setIsConnected(!isConnected);
-    setConnections(isConnected ? connections - 1 : connections + 1);
+    // Open connect modal via custom event to keep component decoupled
+    const event = new CustomEvent('openConnectModal', { detail: { ideaId, userId: authorId, userName: authorName } });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -72,9 +73,8 @@ export const ConnectButton = ({ initialConnections = 0 }) => {
         <ConnectBtn
           onClick={handleClick}
           tabIndex={5}
-          aria-label={`${
-            isConnected ? 'Disconnect from' : 'Connect with'
-          } this idea. ${connections} connections`}
+          aria-label={`${isConnected ? 'Disconnect from' : 'Connect with'
+            } this idea. ${connections} connections`}
         >
           <ConnectIcon
             src={isConnected ? atBold : at}
