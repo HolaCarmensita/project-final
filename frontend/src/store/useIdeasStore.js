@@ -30,8 +30,19 @@ export const useIdeasStore = create((set) => ({
     const authorId = idea.authorId || matchedUser?.id || '1';
     return { ...idea, authorId, orbColor, auraColor };
   }),
-  // connections state
-  connections: [], // { id, name, role, note, color }
+  // connections state (seed with one example for development)
+  connections: [
+    (() => {
+      const u = users.find((x) => x.id === '4') || users[0] || { id: '1', name: 'Sample User', role: 'Member' };
+      return {
+        id: String(u.id),
+        name: u.name,
+        role: u.role,
+        note: 'Working on an idea together.',
+        color: randomColor({ luminosity: 'light' }),
+      };
+    })(),
+  ], // { id, name, role, note, color }
   isConnectOpen: false,
   connectTarget: null, // { ideaId, userId, userName }
   // Track liked ideas by id
