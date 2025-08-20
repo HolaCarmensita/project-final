@@ -9,6 +9,7 @@ import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
 import lightbulbIcon from '../../assets/icons/at.svg';
 import { mockIdeas } from '../../data/mockData';
+import { users } from '../../data/mockData';
 
 const Page = styled.div`
   /* max-width: 420px; */
@@ -73,13 +74,10 @@ export default function UserProfilePage() {
   const { userId } = useParams();
   const [unstacked, setUnstacked] = React.useState(false);
 
-  // Use the first idea's author as the profile user for demo purposes
-  const profileUser = mockIdeas[0] ? {
-    name: mockIdeas[0].author,
-    role: mockIdeas[0].role,
-    details: mockIdeas[0].bodyText,
-  } : { name: '', role: '', details: '' };
-
+  // Get user from userId param
+  const currentUserId = '1'; // Replace with auth logic if available
+  const profileUser = users.find(u => u.id === userId) || users[0];
+  const isOwnProfile = userId === currentUserId;
   // Filter ideas authored by this user
   const userIdeas = mockIdeas.filter(idea => idea.author === profileUser.name);
 
@@ -92,7 +90,11 @@ export default function UserProfilePage() {
       </TopBar>
 
       <UserRow>
-        <Avatar />
+        <Avatar>
+          {profileUser.avatar && (
+            <img src={profileUser.avatar} alt="avatar" style={{ width: '100%', borderRadius: '50%' }} />
+          )}
+        </Avatar>
         <UserInfo>
           <UserName>{profileUser.name}</UserName>
           <UserRole>{profileUser.role}</UserRole>
@@ -100,7 +102,28 @@ export default function UserProfilePage() {
       </UserRow>
 
       <UserDetails>
-        {profileUser.details}
+        {profileUser.bio}
+        {profileUser.socialLinks && (
+          <div style={{ marginTop: 8 }}>
+            {profileUser.socialLinks.twitter && (
+              <a href={profileUser.socialLinks.twitter} target="_blank" rel="noopener noreferrer" style={{ marginRight: 12 }}>
+                Twitter
+              </a>
+            )}
+            {profileUser.socialLinks.linkedin && (
+              <a href={profileUser.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                LinkedIn
+              </a>
+            )}
+          </div>
+        )}
+        {isOwnProfile && (
+          <div style={{ marginTop: 16 }}>
+            <button style={{ padding: '8px 16px', borderRadius: 6, background: '#d46a8c', color: '#fff', border: 'none', cursor: 'pointer' }}>
+              Edit Profile
+            </button>
+          </div>
+        )}
       </UserDetails>
 
       <IdeasSection>

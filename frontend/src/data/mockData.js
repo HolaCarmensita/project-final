@@ -1,3 +1,28 @@
+// Dedicated user data model
+export const users = [
+  {
+    id: '1',
+    name: 'Alice Example',
+    role: 'Designer',
+    avatar: '/src/assets/img/artpice1.png',
+    bio: 'Passionate about creative ideas and design. And cats.',
+    socialLinks: {
+      twitter: 'https://twitter.com/alice',
+      linkedin: 'https://linkedin.com/in/alice',
+    },
+  },
+  {
+    id: '2',
+    name: 'Bob Creator',
+    role: 'Developer',
+    avatar: '/src/assets/img/artpice2.png',
+    bio: 'Building the future, one idea at a time.',
+    socialLinks: {
+      twitter: 'https://twitter.com/bob',
+      linkedin: 'https://linkedin.com/in/bob',
+    },
+  },
+];
 // Mock data for ideas - simulates backend API responses
 export const mockIdeas = [
   {
@@ -93,32 +118,3 @@ export const mockIdeas = [
     ],
   },
 ];
-
-// Mock function to simulate API calls
-const mockApi = {
-  // Simulate fetching all ideas
-  getIdeas: () => {
-    return new Promise((resolve) => {
-      // Simulate network delay
-      setTimeout(() => {
-        resolve(mockIdeas);
-      }, 500);
-    });
-  },
-
-  // Simulate fetching a single idea by ID
-  getIdeaById: (id) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const idea = mockIdeas.find((idea) => idea.id === id);
-        if (idea) {
-          resolve(idea);
-        } else {
-          reject(new Error('Idea not found'));
-        }
-      }, 300);
-    });
-  },
-};
-
-export default mockApi;
