@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import authRoutes from './routes/auth.js';
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project';
 const port = process.env.PORT || 8080;
@@ -23,7 +24,7 @@ database.once('open', () => {
 
   // Start server here
   app.listen(port, () => {
-    consogit adle.log(`🚀 Server running on http://localhost:${port}`);
+    console.log(`🚀 Server running on http://localhost:${port}`);
   });
 });
 
@@ -35,3 +36,5 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Hello Technigo!');
 });
+
+app.use('/auth', authRoutes);

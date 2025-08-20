@@ -15,11 +15,11 @@
 
 ## 3. Authentication System
 
-- [x ] Create registration route with validation
-- [ x] Create login route with JWT token generation
-- [x ] Implement password hashing with bcrypt
-- [x ] Add email/username uniqueness validation
-- [x ] Create authentication middleware
+- [x] Create registration route with validation
+- [x] Create login route with JWT token generation
+- [x] Implement password hashing with bcrypt
+- [x] Add email/username uniqueness validation
+- [x] Create authentication middleware
 
 ## 4. API Routes
 
