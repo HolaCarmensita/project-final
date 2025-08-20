@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { users } from '../../../../data/mockData';
+import { users } from '../../../../data/users';
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const Name = styled.h3`
   line-height: 1.2;
 `;
 
-const Role = styled.h4`
+const Role = styled.h4` 
   font-weight: 400;
   color: #666;
   line-height: 1.2;

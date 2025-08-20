@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
-import { mockIdeas, users } from '../data/mockData';
+import { mockIdeas } from '../data/ideas';
+import { users } from '../data/users';
 
 const getUniqueColorPair = (() => {
   const usedColors = new Set();
@@ -19,14 +20,14 @@ const getUniqueColorPair = (() => {
 })();
 
 export const useIdeasStore = create((set) => ({
-  ideas: mockIdeas.map(idea => {
+  ideas: mockIdeas.map((idea) => {
     const orbColor = randomColor({ luminosity: "bright" });
     const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
     const compH = (orbH + 180) % 360;
     const auraColor = randomColor({ hue: compH, luminosity: "light" });
-    // Attach authorId by matching mock users by name when missing
-    const matchedUser = users?.find?.((u) => u.name === idea.author);
-    const authorId = idea.authorId || matchedUser?.id;
+    // Ensure authorId exists at ingestion
+    const matchedUser = users.find((u) => u.name === idea.author || u.id === idea.authorId);
+    const authorId = idea.authorId || matchedUser?.id || '1';
     return { ...idea, authorId, orbColor, auraColor };
   }),
   // Track liked ideas by id
@@ -53,6 +54,7 @@ export const useIdeasStore = create((set) => ({
           ...ideaData,
           id: Date.now(),
           author: "You",
+          authorId: '1',
           role: "Creator",
           likes: 0,
           connections: 0,

@@ -6,8 +6,8 @@ import StackedIdeaCards from '../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../components/ColorIdeaCard';
 import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
-import { mockIdeas } from '../../data/mockData';
-import { users } from '../../data/mockData';
+import { mockIdeas } from '../../data/ideas';
+import { users } from '../../data/users';
 
 const Page = styled.div`
   /* max-width: 420px; */
@@ -81,7 +81,7 @@ export default function UserProfilePage() {
     { id: decodedParam, name: decodedParam, role: 'Member' };
   const isOwnProfile = userId === currentUserId;
   // Filter ideas authored by this user
-  const userIdeas = mockIdeas.filter(idea => idea.author === profileUser.name);
+  const userIdeas = mockIdeas.filter((idea) => idea.authorId === profileUser.id || idea.author === profileUser.name);
 
   return (
     <Page>
