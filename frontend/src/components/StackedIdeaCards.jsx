@@ -45,8 +45,7 @@ const StackCard = styled.div`
   transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 260ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease;
 `;
 
-export default function StackedIdeaCards({ ideas, renderActions, renderContent }) {
-  const [unstack, setUnstack] = useState(false);
+export default function StackedIdeaCards({ ideas, renderActions, renderContent, unstacked = false }) {
   const [poppedIdx, setPoppedIdx] = useState(null);
 
   return (
@@ -54,17 +53,17 @@ export default function StackedIdeaCards({ ideas, renderActions, renderContent }
       {ideas.map((idea, idx) => {
         const isLast = idx === ideas.length - 1;
         const isFirst = idx === 0;
-        const popped = !unstack && poppedIdx === idx;
+        const popped = !unstacked && poppedIdx === idx;
         return (
           <StackCard
             key={idea.id}
             $z={idx + 1}
             $offset={idx * 4}
             $isFirst={isFirst}
-            $unstacked={unstack}
+            $unstacked={unstacked}
             $popped={popped}
             $bg={idea.orbColor || '#f2f2f2'}
-            $top={!unstack && !popped && isLast}
+            $top={!unstacked && !popped && isLast}
             onClick={() => setPoppedIdx((cur) => (cur === idx ? null : idx))}
           >
             {renderActions && renderActions(idea, idx)}

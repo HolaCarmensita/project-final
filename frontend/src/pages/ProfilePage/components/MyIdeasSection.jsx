@@ -11,23 +11,29 @@ import CardActions from '../../../components/CardActions';
 import IconButton from '../../../components/IconButton';
 import StackedIdeaCards from '../../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../../components/ColorIdeaCard';
+import UnstackToggleButton from '../../../components/UnstackToggleButton';
 
 const Section = styled.section`
   margin-bottom: 60px;
 `;
+
 
 export default function MyIdeasSection() {
   const navigate = useNavigate();
   const ideas = useIdeasStore((s) => s.ideas);
   const deleteIdea = useIdeasStore((s) => s.deleteIdea);
   const myIdeas = useMemo(() => ideas.filter(i => i.author === 'You'), [ideas]);
+  const [unstacked, setUnstacked] = React.useState(false);
 
   return (
     <Section>
-      <SectionHeader
-        title="My ideas"
-        count={myIdeas.length}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+        <SectionHeader
+          title="My ideas"
+          count={myIdeas.length}
+        />
+        <UnstackToggleButton unstacked={unstacked} onClick={() => setUnstacked((v) => !v)} />
+      </div>
       <StackedIdeaCards
         ideas={myIdeas}
         renderContent={(idea) => (
@@ -55,6 +61,7 @@ export default function MyIdeasSection() {
             showDate={true}
           />
         )}
+        unstacked={unstacked}
       />
     </Section>
   );

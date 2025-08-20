@@ -3,6 +3,7 @@ import { useIdeasStore } from '../../../store/useIdeasStore';
 import SectionHeader from '../../../components/SectionHeader';
 import StackedIdeaCards from '../../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../../components/ColorIdeaCard';
+import UnstackToggleButton from '../../../components/UnstackToggleButton';
 import CardActions from '../../../components/CardActions';
 import IconButton from '../../../components/IconButton';
 import OpenIdeaButton from '../../../components/OpenIdeaButton';
@@ -13,13 +14,17 @@ export default function LikedIdeasSection() {
   const likedIds = useIdeasStore((s) => s.likedIds);
   const unlikeIdea = useIdeasStore((s) => s.unlikeIdea);
   const likedIdeas = React.useMemo(() => ideas.filter((i) => likedIds.includes(i.id)), [ideas, likedIds]);
+  const [unstacked, setUnstacked] = React.useState(false);
 
   return (
     <section style={{ marginBottom: 60 }}>
-      <SectionHeader
-        title="Liked ideas"
-        count={likedIdeas.length}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+        <SectionHeader
+          title="Liked ideas"
+          count={likedIdeas.length}
+        />
+        <UnstackToggleButton unstacked={unstacked} onClick={() => setUnstacked((v) => !v)} />
+      </div>
       <StackedIdeaCards
         ideas={likedIdeas}
         renderContent={(idea) => (
@@ -41,6 +46,7 @@ export default function LikedIdeasSection() {
             showDate={true}
           />
         )}
+        unstacked={unstacked}
       />
     </section>
   );
