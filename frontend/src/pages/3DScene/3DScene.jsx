@@ -248,7 +248,7 @@ const Scene = () => {
           makeDefault
         />
         {/* Bloom must be inside Canvas, not in a fragment or outside */}
-  {/* Removed Bloom and EffectComposer */}
+        {/* Removed Bloom and EffectComposer */}
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
