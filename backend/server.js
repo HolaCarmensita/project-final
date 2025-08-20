@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import ideaRoutes from './routes/ideas.js';
 import userRoutes from './routes/users.js';
+import docsRoutes from './routes/docs.js';
 
 // Load environment variables
 dotenv.config();
@@ -46,3 +47,4 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/ideas', ideaRoutes);
 app.use('/users', userRoutes);
+app.use('/api-docs', docsRoutes);
