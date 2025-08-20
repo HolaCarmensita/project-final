@@ -23,16 +23,16 @@
 
 ## 4. API Routes
 
-- [ ] Set up idea CRUD routes (Create, Read, Update, Delete)
-- [ ] Implement proper route structure
-- [ ] Add route protection where needed
+- [x] Set up idea CRUD routes (Create, Read, Update, Delete)
+- [x] Implement proper route structure
+- [x] Add route protection where needed
 
 ## 5. Validation & Error Handling
 
-- [ x] Implement express-validator for input validation (only done in auth routes)
-- [ ] Create custom error handling middleware
-- [ ] Add proper HTTP status codes
-- [ ] Implement validation error responses
+- [x] Implement express-validator for input validation
+- [x] Create custom error handling middleware
+- [x] Add proper HTTP status codes
+- [x] Implement validation error responses
 
 ## 6. API Documentation
 

@@ -85,12 +85,12 @@ userSchema.virtual('fullName').get(function () {
 
 // Virtual field to get like count
 userSchema.virtual('likeCount').get(function () {
-  return this.likedIdeas.length;
+  return this.likedIdeas ? this.likedIdeas.length : 0;
 });
 
 // Virtual field to get connection count
 userSchema.virtual('connectionCount').get(function () {
-  return this.connectedIdeas.length;
+  return this.connectedIdeas ? this.connectedIdeas.length : 0;
 });
 
 // Virtual field to check if user has description

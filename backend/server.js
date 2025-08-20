@@ -1,7 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import ideaRoutes from './routes/ideas.js';
+
+// Load environment variables
+dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project';
 const port = process.env.PORT || 8080;
@@ -38,3 +43,4 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/ideas', ideaRoutes);
