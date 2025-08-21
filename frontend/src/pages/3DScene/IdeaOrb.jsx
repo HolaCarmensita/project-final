@@ -1,12 +1,54 @@
 // component for idea/ post
-import { Sparkles } from "@react-three/drei";
-import { useThree, useFrame } from "@react-three/fiber";
+import { Sparkles, shaderMaterial } from "@react-three/drei";
+import { useThree, useFrame, extend } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 
 // Removed complementary color utility
 import { useMemo } from "react";
-import { MeshDistortMaterial } from '@react-three/drei';
+// Custom gradient glow material
+const GradientOrbMaterial = shaderMaterial(
+  {
+    colorA: new THREE.Color('#ffa0e5'),
+    colorB: new THREE.Color('#7ed7ff'),
+    rimColor: new THREE.Color('#ffffff'),
+    rimPower: 2.0,
+    emissiveIntensity: 0.8,
+  },
+  // vertex shader
+  `
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  void main() {
+    vNormal = normalize(normalMatrix * normal);
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    vViewDir = cameraPosition - worldPosition.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+  }
+  `,
+  // fragment shader
+  `
+  uniform vec3 colorA;
+  uniform vec3 colorB;
+  uniform vec3 rimColor;
+  uniform float rimPower;
+  uniform float emissiveIntensity;
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  void main() {
+    vec3 n = normalize(vNormal);
+    vec3 v = normalize(vViewDir);
+    float ndotv = clamp(dot(n, v), 0.0, 1.0);
+    // center bright, edge darker gradient
+    vec3 base = mix(colorB, colorA, pow(ndotv, 1.5));
+    // soft fresnel rim
+    float fres = pow(1.0 - ndotv, rimPower);
+    vec3 col = base + rimColor * fres * emissiveIntensity;
+    gl_FragColor = vec4(col, 1.0);
+  }
+  `
+);
+extend({ GradientOrbMaterial });
 
 const IdeaOrb = ({
   position = [0, 2, 0],
@@ -57,7 +99,13 @@ const IdeaOrb = ({
         onPointerOver={() => { document.body.style.cursor = "pointer"; }}
         onPointerOut={() => { document.body.style.cursor = "default"; }}
       >
-        <MeshDistortMaterial color={orbColor} speed={2} distort={0.2} emissive={orbColor} emissiveIntensity={0.8} />
+        <gradientOrbMaterial
+          colorA={orbColor}
+          colorB={auraColor}
+          rimColor={"#ffffff"}
+          rimPower={2.0}
+          emissiveIntensity={0.9}
+        />
       </mesh>
       {/* Aura shell */}
       <mesh scale={1.25}>
