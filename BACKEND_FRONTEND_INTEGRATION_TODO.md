@@ -53,9 +53,9 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 2.1 Create Authentication Store
 
-- [ ] Create `frontend/src/store/useAuthStore.js`
-  - [ ] State: `user`, `token`, `isAuthenticated`, `isLoading`, `error`
-  - [ ] Actions: `login`, `logout`, `register`, `setUser`, `clearError`
+- [x] Create `frontend/src/store/useAuthStore.js`
+  - [x] State: `user`, `token`, `isAuthenticated`, `isLoading`, `error`
+  - [x] Actions: `login`, `logout`, `register`, `setUser`, `clearError`
   - [ ] Persist authentication state to localStorage
   - [ ] Add automatic token validation on app start
 
