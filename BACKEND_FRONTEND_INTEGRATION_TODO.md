@@ -90,12 +90,12 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 3.1 Update Authentication Pages
 
-- [ ] Update `frontend/src/pages/Auth/LoginPage.jsx`
+- [x] Update `frontend/src/pages/Auth/LoginPage.jsx`
 
-  - [ ] Replace mock login with `authService.login()`
-  - [ ] Add proper error handling and user feedback
-  - [ ] Redirect to main app on successful login
-  - [ ] Add loading states
+  - [x] Replace mock login with `authService.login()`
+  - [x] Add proper error handling and user feedback
+  - [x] Redirect to main app on successful login
+  - [x] Add loading states
 
 - [ ] Update `frontend/src/pages/Auth/RegisterPage.jsx`
   - [ ] Replace mock registration with `authService.register()`

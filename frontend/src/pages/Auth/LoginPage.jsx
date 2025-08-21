@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const LoginContainer = styled.div`
   align-items: center;
@@ -90,10 +91,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [generalError, setGeneralError] = useState('');
+
+  // Use AuthStore state instead of local state
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const error = useAuthStore((state) => state.error);
+  const clearError = useAuthStore((state) => state.clearError);
+  const login = useAuthStore((state) => state.login);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,7 +106,7 @@ const LoginPage = () => {
     // Clear previous errors
     setEmailError('');
     setPasswordError('');
-    setGeneralError('');
+    clearError(); // Clear AuthStore error
 
     let hasErrors = false;
 
@@ -128,22 +133,17 @@ const LoginPage = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    // Login API call
+    // Login using AuthStore
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+      const result = await login(email, password);
 
-      if (email === 'test@test.com' && password === 'test') {
+      if (result.success) {
         console.log('Login Success');
         navigate('/');
-      } else {
-        setGeneralError('Invalid email or password');
       }
+      // If login fails, error is already set in AuthStore
     } catch (error) {
-      setGeneralError('Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      console.error('Login error:', error);
     }
   };
 
@@ -219,7 +219,7 @@ const LoginPage = () => {
           {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
         </InputContainer>
 
-        {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <ForgotPasswordLink to='/forgot-password'>
           Forgot password?
