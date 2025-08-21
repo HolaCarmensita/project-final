@@ -247,31 +247,31 @@ const Scene = () => {
           target={[0, 0, 0]}
           makeDefault
         />
-        {/* Global ambient sparkles field (denser and closer for visibility) */}
+        {/* Global ambient sparkles field (less dense and further out) */}
         <Sparkles
-          count={800}
-          scale={[60, 45, 60]}
-          size={80}
-          speed={1}
-          opacity={0.55}
+          count={250}
+          scale={[100, 80, 100]}
+          size={60}
+          speed={0.8}
+          opacity={0.35}
           color="#84c7ff"
         />
         {/* Mid-distance layer for wider coverage */}
         <Sparkles
-          count={400}
-          scale={[140, 100, 140]}
-          size={60}
-          speed={0.6}
-          opacity={0.45}
+          count={120}
+          scale={[200, 160, 200]}
+          size={150}
+          speed={0.4}
+          opacity={0.25}
           color="#84c7ff"
         />
         {/* Far layer to fill deep background */}
         <Sparkles
-          count={600}
-          scale={[240, 180, 240]}
-          size={40}
-          speed={0.3}
-          opacity={0.35}
+          count={180}
+          scale={[320, 260, 320]}
+          size={150}
+          speed={0.2}
+          opacity={0.18}
           color="#84c7ff"
         />
         {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}

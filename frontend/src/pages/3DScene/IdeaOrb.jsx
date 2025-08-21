@@ -102,7 +102,7 @@ const IdeaOrb = ({
         <meshBasicMaterial color={auraColor} transparent opacity={0.15} blending={THREE.AdditiveBlending} />
       </mesh> */}
       {/* Subtle per-orb sparkles */}
-      <Sparkles count={10} scale={2.2} size={10} speed={0.4} color="#fff" />
+      <Sparkles count={10} scale={2.2} size={20} speed={0.4} color="#fff" />
     </group>
   );
 };
