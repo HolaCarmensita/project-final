@@ -29,21 +29,21 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 1.3 Create Ideas Service
 
-- [ ] Create `frontend/src/services/ideasService.js`
-  - [ ] Implement `getAllIdeas()` function
-  - [ ] Implement `getIdeaById(id)` function
-  - [ ] Implement `createIdea(ideaData)` function
-  - [ ] Implement `updateIdea(id, ideaData)` function
-  - [ ] Implement `deleteIdea(id)` function
-  - [ ] Implement `likeIdea(id)` function
-  - [ ] Implement `unlikeIdea(id)` function
+- [x] Create `frontend/src/services/ideasService.js`
+  - [x] Implement `getAllIdeas()` function
+  - [x] Implement `getIdeaById(id)` function
+  - [x] Implement `createIdea(ideaData)` function
+  - [x] Implement `updateIdea(id, ideaData)` function
+  - [x] Implement `deleteIdea(id)` function
+  - [x] Implement `likeIdea(id)` function
+  - [x] Implement `unlikeIdea(id)` function
 
 ### 1.4 Create Users Service (Optional for Phase 1)
 
-- [ ] Create `frontend/src/services/usersService.js`
-  - [ ] Implement `getUserProfile()` function
-  - [ ] Implement `updateUserProfile(userData)` function
-  - [ ] Implement `getUserConnections()` function
+- [x] Create `frontend/src/services/usersService.js`
+  - [x] Implement `getUserProfile()` function
+  - [x] Implement `updateUserProfile(userData)` function
+  - [x] Implement `getUserConnections()` function
 
 ---
 

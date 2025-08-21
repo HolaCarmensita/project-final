@@ -104,23 +104,6 @@ api.interceptors.response.use(
   }
 );
 
-export const apiService = {
-  // GET request
-  get: (url, config = {}) => api.get(url, config),
-
-  // POST request
-  post: (url, data = {}, config = {}) => api.post(url, data, config),
-
-  // PUT request
-  put: (url, data = {}, config = {}) => api.put(url, data, config),
-
-  // DELETE request
-  delete: (url, config = {}) => api.delete(url, config),
-
-  // PATCH request
-  patch: (url, data = {}, config = {}) => api.patch(url, data, config),
-};
-
 // Export the configured axios instance
 export default api;
 
