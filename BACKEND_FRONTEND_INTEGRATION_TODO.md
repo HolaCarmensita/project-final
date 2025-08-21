@@ -12,20 +12,20 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 1.1 Create API Configuration
 
-- [ ] Create `frontend/src/services/api.js`
-  - [ ] Set up base URL configuration (use environment variables)
-  - [ ] Create axios instance with default headers
-  - [ ] Add request/response interceptors for JWT token handling
-  - [ ] Add error handling for network issues
+- [x] Create `frontend/src/services/api.js`
+  - [x] Set up base URL configuration (use environment variables)
+  - [x] Create axios instance with default headers
+  - [x] Add request/response interceptors for JWT token handling
+  - [x] Add error handling for network issues
 
 ### 1.2 Create Authentication Service
 
-- [ ] Create `frontend/src/services/authService.js`
-  - [ ] Implement `login(email, password)` function
-  - [ ] Implement `register(userData)` function
-  - [ ] Implement `logout()` function
-  - [ ] Add token storage/retrieval functions
-  - [ ] Add token refresh logic (if needed)
+- [x] Create `frontend/src/services/authService.js`
+  - [x] Implement `login(email, password)` function
+  - [x] Implement `register(userData)` function
+  - [x] Implement `logout()` function
+  - [x] Add token storage/retrieval functions
+  - [x] Add token refresh logic (if needed)
 
 ### 1.3 Create Ideas Service
 
