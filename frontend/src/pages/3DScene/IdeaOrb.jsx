@@ -9,43 +9,32 @@ import { useMemo } from "react";
 // Custom gradient glow material
 const GradientOrbMaterial = shaderMaterial(
   {
-    colorA: new THREE.Color('#ffa0e5'),
-    colorB: new THREE.Color('#7ed7ff'),
-    rimColor: new THREE.Color('#ffffff'),
-    rimPower: 2.0,
-    emissiveIntensity: 0.8,
+    colorA: new THREE.Color('#ffa0e5'), // e.g. pink
+    colorB: new THREE.Color('#ffd700'), // e.g. yellow
+    colorC: new THREE.Color('#ff69b4'), // e.g. magenta
   },
   // vertex shader
   `
-  varying vec3 vNormal;
-  varying vec3 vViewDir;
+  varying vec3 vPosition;
   void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vViewDir = cameraPosition - worldPosition.xyz;
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    vPosition = position;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
   `,
   // fragment shader
   `
   uniform vec3 colorA;
   uniform vec3 colorB;
-  uniform vec3 rimColor;
-  uniform float rimPower;
-  uniform float emissiveIntensity;
-  varying vec3 vNormal;
-  varying vec3 vViewDir;
+  uniform vec3 colorC;
+  varying vec3 vPosition;
   void main() {
-    vec3 n = normalize(vNormal);
-    vec3 v = normalize(vViewDir);
-    float ndotv = clamp(dot(n, v), 0.0, 1.0);
-    // center bright, edge darker gradient
-  float grad = clamp(pow(ndotv, 1.5), 0.25, 1.0); // clamp to avoid fading out
-  vec3 base = mix(colorB, colorA, grad);
-  // soft fresnel rim
-  float fres = pow(1.0 - ndotv, rimPower);
-  vec3 col = base + rimColor * fres * emissiveIntensity;
-  gl_FragColor = vec4(col, 1.0);
+    float r = length(vPosition);
+    float gradA = smoothstep(0.0, 1.2, r); // center to edge
+    float gradB = smoothstep(0.0, 1.2, abs(vPosition.x)); // left-right
+    float gradC = smoothstep(0.0, 1.2, abs(vPosition.y)); // top-bottom
+    vec3 col = mix(colorA, colorB, gradA);
+    col = mix(col, colorC, 0.5 * gradB + 0.5 * gradC);
+    gl_FragColor = vec4(col, 1.0);
   }
   `
 );
@@ -53,8 +42,9 @@ extend({ GradientOrbMaterial });
 
 const IdeaOrb = ({
   position = [0, 2, 0],
-  orbColor = "#b3e0ff",
-  auraColor = "#e0f7fa",
+  orbColor = "#ffa0e5",
+  auraColor = "#ffd700",
+  orbColorC = "#ff69b4",
   onClick,
 }) => {
   const groupRef = useRef();
@@ -103,9 +93,7 @@ const IdeaOrb = ({
         <gradientOrbMaterial
           colorA={orbColor}
           colorB={auraColor}
-          rimColor={"#ffffff"}
-          rimPower={2.0}
-          emissiveIntensity={0.9}
+          colorC={orbColorC}
         />
       </mesh>
       {/* Aura shell */}
