@@ -40,11 +40,12 @@ const GradientOrbMaterial = shaderMaterial(
     vec3 v = normalize(vViewDir);
     float ndotv = clamp(dot(n, v), 0.0, 1.0);
     // center bright, edge darker gradient
-    vec3 base = mix(colorB, colorA, pow(ndotv, 1.5));
-    // soft fresnel rim
-    float fres = pow(1.0 - ndotv, rimPower);
-    vec3 col = base + rimColor * fres * emissiveIntensity;
-    gl_FragColor = vec4(col, 1.0);
+  float grad = clamp(pow(ndotv, 1.5), 0.25, 1.0); // clamp to avoid fading out
+  vec3 base = mix(colorB, colorA, grad);
+  // soft fresnel rim
+  float fres = pow(1.0 - ndotv, rimPower);
+  vec3 col = base + rimColor * fres * emissiveIntensity;
+  gl_FragColor = vec4(col, 1.0);
   }
   `
 );
@@ -108,10 +109,10 @@ const IdeaOrb = ({
         />
       </mesh>
       {/* Aura shell */}
-      <mesh scale={1.25}>
+      {/* <mesh scale={1.25}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial color={auraColor} transparent opacity={0.15} blending={THREE.AdditiveBlending} />
-      </mesh>
+      </mesh> */}
       {/* Subtle per-orb sparkles */}
       <Sparkles count={10} scale={2.2} size={10} speed={0.4} color="#fff" />
     </group>
