@@ -9,9 +9,8 @@ import { useMemo } from "react";
 // Custom gradient glow material
 const GradientOrbMaterial = shaderMaterial(
   {
-    colorA: new THREE.Color('#ffa0e5'), // e.g. pink
-    colorB: new THREE.Color('#ffd700'), // e.g. yellow
-    colorC: new THREE.Color('#ff69b4'), // e.g. magenta
+    colorCenter: new THREE.Color('#ffa0e5'), // center color
+    colorEdge: new THREE.Color('#ffd700'), // edge color
   },
   // vertex shader
   `
@@ -23,17 +22,13 @@ const GradientOrbMaterial = shaderMaterial(
   `,
   // fragment shader
   `
-  uniform vec3 colorA;
-  uniform vec3 colorB;
-  uniform vec3 colorC;
+  uniform vec3 colorCenter;
+  uniform vec3 colorEdge;
   varying vec3 vPosition;
   void main() {
     float r = length(vPosition);
-    float gradA = smoothstep(0.0, 1.2, r); // center to edge
-    float gradB = smoothstep(0.0, 1.2, abs(vPosition.x)); // left-right
-    float gradC = smoothstep(0.0, 1.2, abs(vPosition.y)); // top-bottom
-    vec3 col = mix(colorA, colorB, gradA);
-    col = mix(col, colorC, 0.5 * gradB + 0.5 * gradC);
+    float grad = smoothstep(0.0, 1.2, r); // 1.2 is sphere radius
+    vec3 col = mix(colorCenter, colorEdge, grad);
     gl_FragColor = vec4(col, 1.0);
   }
   `
@@ -44,7 +39,6 @@ const IdeaOrb = ({
   position = [0, 2, 0],
   orbColor = "#ffa0e5",
   auraColor = "#ffd700",
-  orbColorC = "#ff69b4",
   onClick,
 }) => {
   const groupRef = useRef();
@@ -91,9 +85,8 @@ const IdeaOrb = ({
         onPointerOut={() => { document.body.style.cursor = "default"; }}
       >
         <gradientOrbMaterial
-          colorA={orbColor}
-          colorB={auraColor}
-          colorC={orbColorC}
+          colorCenter={orbColor}
+          colorEdge={auraColor}
         />
       </mesh>
       {/* Aura shell */}

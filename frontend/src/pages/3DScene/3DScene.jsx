@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // Removed Bloom imports
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Sparkles } from '@react-three/drei';
+import { OrbitControls, Sparkles, Environment } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { useIdeasStore } from '../../store/useIdeasStore';
 import { gsap } from 'gsap';
@@ -212,13 +212,25 @@ const Scene = () => {
     const z = Math.sin(phi) * r;
     const pos = [x * sphereRadius, y * sphereRadius, z * sphereRadius];
 
+    // Assign visually distinct color pairs for each orb
+    const colorPairs = [
+      { center: '#ffa0e5', edge: '#ffd700' }, // pink/yellow
+      { center: '#7ed7ff', edge: '#ff69b4' }, // blue/magenta
+      { center: '#b3e0ff', edge: '#e47c6a' }, // light blue/orange
+      { center: '#d46a8c', edge: '#84c7ff' }, // rose/blue
+      { center: '#e6f7ff', edge: '#d6ff8a' }, // pale blue/lime
+      { center: '#e47c6a', edge: '#a6b8ff' }, // orange/purple
+      { center: '#ff69b4', edge: '#7ed7ff' }, // magenta/blue
+      { center: '#ffd700', edge: '#ffa0e5' }, // yellow/pink
+    ];
+    const pair = colorPairs[i % colorPairs.length];
     return (
       <IdeaOrb
         key={idea.id ?? i}
         position={pos}
         text={idea.title || idea.text}
-        orbColor={idea.orbColor}
-        auraColor={idea.auraColor}
+        orbColor={pair.center}
+        auraColor={pair.edge}
         onClick={() => {
           handleOrbClick(pos);
           if (idea.id) {
@@ -233,9 +245,22 @@ const Scene = () => {
   });
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
-      <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        <color attach='background' args={['#FFFFFF']} />
+    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+      {/* Radial gradient background */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+          background: 'radial-gradient(circle at 60% 40%, #ffe6e6 0%, #fff7d6 60%, #e6f7ff 100%)',
+        }}
+      />
+      <Canvas camera={{ position: [0, 0, 50], fov: 75 }} style={{ position: 'relative', zIndex: 1 }}>
+        <fog attach="fog" args={["#f7f7fa", 20, 70]} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         <CameraController joystickVecRef={joystickVecRef} />
@@ -252,27 +277,30 @@ const Scene = () => {
           count={250}
           scale={[100, 80, 100]}
           size={60}
-          speed={0.8}
+          speed={2.2}
           opacity={0.35}
           color="#84c7ff"
+          noise={2}
         />
         {/* Mid-distance layer for wider coverage */}
         <Sparkles
           count={120}
           scale={[200, 160, 200]}
           size={150}
-          speed={1}
+          speed={2.5}
           opacity={0.25}
           color="#84c7ff"
+          noise={2.5}
         />
         {/* Far layer to fill deep background */}
         <Sparkles
           count={180}
           scale={[320, 260, 320]}
           size={150}
-          speed={1}
+          speed={2.8}
           opacity={0.18}
           color="#84c7ff"
+          noise={3}
         />
         {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}
       </Canvas>
