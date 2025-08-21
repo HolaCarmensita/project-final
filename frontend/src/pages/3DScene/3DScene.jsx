@@ -261,7 +261,7 @@ const Scene = () => {
           count={120}
           scale={[200, 160, 200]}
           size={150}
-          speed={0.4}
+          speed={1}
           opacity={0.25}
           color="#84c7ff"
         />
@@ -270,7 +270,7 @@ const Scene = () => {
           count={180}
           scale={[320, 260, 320]}
           size={150}
-          speed={0.2}
+          speed={1}
           opacity={0.18}
           color="#84c7ff"
         />
