@@ -28,10 +28,12 @@ const App = () => {
   const openConnect = useUIStore((state) => state.openConnectModal);
 
   // Data state from ideas store
-  const submitIdea = useIdeasStore((state) => state.submitIdea);
+  const submitIdea = useIdeasStore((state) => state.createIdea);
   const ideas = useIdeasStore((state) => state.ideas);
-  const handleLeftStore = useIdeasStore((state) => state.handleLeft);
-  const handleRightStore = useIdeasStore((state) => state.handleRight);
+
+  // Navigation from UI store
+  const handleLeftStore = useUIStore((state) => state.handleLeft);
+  const handleRightStore = useUIStore((state) => state.handleRight);
 
   const isModalActive = location.pathname !== '/';
 

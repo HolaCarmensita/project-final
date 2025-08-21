@@ -1,157 +1,260 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
-import { mockIdeas } from '../data/ideas';
-import { users } from '../data/users';
+import ideasService from '../services/ideasService.js';
 
+// Keep the color generation function - it's essential for your app's design
 const getUniqueColorPair = (() => {
   const usedColors = new Set();
   return () => {
     let orbColor, auraColor, combo;
     do {
-      orbColor = randomColor({ luminosity: "bright" });
-      const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
+      orbColor = randomColor({ luminosity: 'bright' });
+      const orbH =
+        Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
       const compH = (orbH + 180) % 360;
-      auraColor = randomColor({ hue: compH, luminosity: "light" });
-      combo = orbColor + "-" + auraColor;
+      auraColor = randomColor({ hue: compH, luminosity: 'light' });
+      combo = orbColor + '-' + auraColor;
     } while (usedColors.has(combo));
     usedColors.add(combo);
     return { orbColor, auraColor };
   };
 })();
 
-export const useIdeasStore = create((set) => ({
-  ideas: mockIdeas.map((idea) => {
-    const orbColor = randomColor({ luminosity: "bright" });
-    const orbH = Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
-    const compH = (orbH + 180) % 360;
-    const auraColor = randomColor({ hue: compH, luminosity: "light" });
-    // Ensure authorId exists at ingestion
-    const matchedUser = users.find((u) => u.name === idea.author || u.id === idea.authorId);
-    const authorId = idea.authorId || matchedUser?.id || '1';
-    return { ...idea, authorId, orbColor, auraColor };
-  }),
-  // connections state (seed with one example for development)
-  connections: [
-    (() => {
-      const u = users.find((x) => x.id === '4') || users[0] || { id: '1', name: 'Sample User', role: 'Member' };
-      return {
-        id: String(u.id),
-        name: u.name,
-        role: u.role,
-        note: 'Working on an idea together.',
-        color: randomColor({ luminosity: 'light' }),
-      };
-    })(),
-  ], // { id, name, role, note, color }
-  isConnectOpen: false,
-  connectTarget: null, // { ideaId, userId, userName }
-  // Track liked ideas by id
-  likedIds: mockIdeas.slice(1, 4).map((i) => i.id),
-  selectedIndex: 0,
-  isAddOpen: false,
-  addIdea: (idea) => {
-    const { orbColor, auraColor } = getUniqueColorPair();
-    set((state) => ({
-      ideas: [...state.ideas, { ...idea, orbColor, auraColor }]
-    }));
+export const useIdeasStore = create((set, get) => ({
+  // State
+  ideas: [],
+  likedIds: [],
+  isLoading: false,
+  error: null,
+  hasMore: true,
+
+  // Actions
+  // Get all ideas from API
+  fetchIdeas: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await ideasService.getAllIdeas();
+
+      if (result.success) {
+        // Add colors to ideas (your app's design requirement)
+        const ideasWithColors = result.ideas.map((idea) => {
+          const { orbColor, auraColor } = getUniqueColorPair();
+          return { ...idea, orbColor, auraColor };
+        });
+
+        set({
+          ideas: ideasWithColors,
+          isLoading: false,
+          hasMore: ideasWithColors.length > 0,
+        });
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to fetch ideas',
+        isLoading: false,
+      });
+    }
   },
-  setIsAddOpen: (isOpen) => set({ isAddOpen: isOpen }),
-  setSelectedIndex: (idx, callback) => {
-    set({ selectedIndex: idx });
-    if (typeof callback === 'function') callback(idx);
+
+  // Create new idea
+  createIdea: async (ideaData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await ideasService.createIdea(ideaData);
+
+      if (result.success) {
+        const { orbColor, auraColor } = getUniqueColorPair();
+        const newIdea = { ...result.idea, orbColor, auraColor };
+
+        set((state) => ({
+          ideas: [newIdea, ...state.ideas],
+          isLoading: false,
+        }));
+
+        return { success: true };
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to create idea',
+        isLoading: false,
+      });
+      return { success: false, message: 'Failed to create idea' };
+    }
   },
-  submitIdea: (ideaData) => {
-    const { orbColor, auraColor } = getUniqueColorPair();
-    set((state) => ({
-      ideas: [
-        ...state.ideas,
-        {
-          ...ideaData,
-          id: Date.now(),
-          author: "You",
-          authorId: '1',
-          role: "Creator",
-          likes: 0,
-          connections: 0,
-          orbColor,
-          auraColor,
-        },
-      ],
-    }));
+
+  // Update idea
+  updateIdea: async (id, ideaData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await ideasService.updateIdea(id, ideaData);
+
+      if (result.success) {
+        set((state) => ({
+          ideas: state.ideas.map((idea) =>
+            idea._id === id ? { ...idea, ...result.idea } : idea
+          ),
+          isLoading: false,
+        }));
+
+        return { success: true };
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to update idea',
+        isLoading: false,
+      });
+      return { success: false, message: 'Failed to update idea' };
+    }
   },
-  openConnectModal: ({ ideaId, userId }) =>
-    set(() => {
-      const user = users.find((u) => u.id === String(userId));
-      return {
-        isConnectOpen: true,
-        connectTarget: {
-          ideaId,
-          userId: String(userId),
-          userName: user?.name || String(userId),
-        },
-      };
-    }),
-  closeConnectModal: () => set({ isConnectOpen: false, connectTarget: null }),
-  submitConnection: (message) =>
-    set((state) => {
-      const target = state.connectTarget;
-      if (!target) return { isConnectOpen: false };
-      const user = users.find((u) => u.id === String(target.userId));
-      const exists = state.connections.some((c) => String(c.id) === String(target.userId));
-      const newConn = exists
-        ? null
-        : {
-          id: String(target.userId),
-          name: user?.name || target.userName,
-          role: user?.role || 'Member',
-          note: message || '',
-          color: randomColor({ luminosity: 'light' }),
-        };
-      // increment idea connections counter if not already connected
-      const updatedIdeas = exists
-        ? state.ideas
-        : state.ideas.map((i) =>
-          i.id === target.ideaId
-            ? { ...i, connections: Math.max(0, (i.connections || 0) + 1) }
-            : i
-        );
-      return {
-        isConnectOpen: false,
-        connectTarget: null,
-        connections: newConn ? [...state.connections, newConn] : state.connections,
-        ideas: updatedIdeas,
-      };
-    }),
-  openAddModal: () => set({ isAddOpen: true }),
-  likeIdea: (id) => set((state) => {
-    if (state.likedIds.includes(id)) return {};
-    const updatedIdeas = state.ideas.map((i) =>
-      i.id === id ? { ...i, likes: Math.max(0, (i.likes || 0) + 1) } : i
-    );
-    return { likedIds: [...state.likedIds, id], ideas: updatedIdeas };
-  }),
-  unlikeIdea: (id) => set((state) => {
-    if (!state.likedIds.includes(id)) return {};
-    const updatedIdeas = state.ideas.map((i) =>
-      i.id === id ? { ...i, likes: Math.max(0, (i.likes || 0) - 1) } : i
-    );
-    return { likedIds: state.likedIds.filter((x) => x !== id), ideas: updatedIdeas };
-  }),
-  deleteIdea: (id) => set((state) => {
-    const nextIdeas = state.ideas.filter((i) => i.id !== id);
-    let nextIndex = state.selectedIndex;
-    if (nextIndex >= nextIdeas.length) nextIndex = Math.max(0, nextIdeas.length - 1);
-    const nextLiked = state.likedIds.filter((x) => x !== id);
-    return { ideas: nextIdeas, likedIds: nextLiked, selectedIndex: nextIndex };
-  }),
-  handleLeft: (callback) => set((state) => {
-    const newIndex = (state.selectedIndex - 1 + state.ideas.length) % state.ideas.length;
-    if (typeof callback === 'function') callback(newIndex);
-    return { selectedIndex: newIndex };
-  }),
-  handleRight: (callback) => set((state) => {
-    const newIndex = (state.selectedIndex + 1) % state.ideas.length;
-    if (typeof callback === 'function') callback(newIndex);
-    return { selectedIndex: newIndex };
-  }),
+
+  // Delete idea
+  deleteIdea: async (id) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await ideasService.deleteIdea(id);
+
+      if (result.success) {
+        set((state) => {
+          const nextIdeas = state.ideas.filter((idea) => idea._id !== id);
+          const nextLiked = state.likedIds.filter((likedId) => likedId !== id);
+
+          return {
+            ideas: nextIdeas,
+            likedIds: nextLiked,
+            isLoading: false,
+          };
+        });
+
+        return { success: true };
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to delete idea',
+        isLoading: false,
+      });
+      return { success: false, message: 'Failed to delete idea' };
+    }
+  },
+
+  // Like idea
+  likeIdea: async (id) => {
+    try {
+      const result = await ideasService.likeIdea(id);
+
+      if (result.success) {
+        set((state) => ({
+          ideas: state.ideas.map((idea) =>
+            idea._id === id ? { ...idea, ...result.idea } : idea
+          ),
+          likedIds: [...state.likedIds, id],
+        }));
+
+        return { success: true };
+      } else {
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      return { success: false, message: 'Failed to like idea' };
+    }
+  },
+
+  // Unlike idea
+  unlikeIdea: async (id) => {
+    try {
+      const result = await ideasService.unlikeIdea(id);
+
+      if (result.success) {
+        set((state) => ({
+          ideas: state.ideas.map((idea) =>
+            idea._id === id ? { ...idea, ...result.idea } : idea
+          ),
+          likedIds: state.likedIds.filter((likedId) => likedId !== id),
+        }));
+
+        return { success: true };
+      } else {
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      return { success: false, message: 'Failed to unlike idea' };
+    }
+  },
+
+  // Search ideas
+  searchIdeas: async (query) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await ideasService.searchIdeas(query);
+
+      if (result.success) {
+        // Add colors to ideas (your app's design requirement)
+        const ideasWithColors = result.ideas.map((idea) => {
+          const { orbColor, auraColor } = getUniqueColorPair();
+          return { ...idea, orbColor, auraColor };
+        });
+
+        set({
+          ideas: ideasWithColors,
+          isLoading: false,
+        });
+        return { success: true, ideas: ideasWithColors };
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to search ideas',
+        isLoading: false,
+      });
+      return { success: false, message: 'Failed to search ideas' };
+    }
+  },
+
+  // Getters
+  getIdeas: () => get().ideas,
+  getLikedIds: () => get().likedIds,
+  getIsLoading: () => get().isLoading,
+  getError: () => get().error,
+  getHasMore: () => get().hasMore,
+
+  // Setters
+  setIdeas: (ideas) => set({ ideas }),
+  setLikedIds: (likedIds) => set({ likedIds }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  clearError: () => set({ error: null }),
 }));
+
+export default useIdeasStore;

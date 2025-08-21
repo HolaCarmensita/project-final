@@ -64,10 +64,10 @@ This TODO breaks down the integration of your backend API with the frontend into
 - [x] Update `frontend/src/store/useIdeasStore.js`
   - [x] Remove authentication-related state
   - [x] Remove UI state (modals, navigation)
-  - [ ] Keep: `ideas`, `selectedIndex`, `likedIds`
-  - [ ] Add: `isLoading`, `error`, `hasMore`
-  - [ ] Actions: `fetchIdeas`, `fetchIdea`, `createIdea`, `updateIdea`, `deleteIdea`, `likeIdea`, `unlikeIdea`
-  - [ ] Add pagination support for large datasets
+  - [x] Keep: `ideas`, `selectedIndex`, `likedIds`
+  - [x] Add: `isLoading`, `error`, `hasMore`
+  - [x] Actions: `fetchIdeas`, `fetchIdea`, `createIdea`, `updateIdea`, `deleteIdea`, `likeIdea`, `unlikeIdea`, `searchIdeas`
+  - [x] Add pagination support for large datasets
 
 ### 2.3 Create UI Store
 
@@ -76,11 +76,11 @@ This TODO breaks down the integration of your backend API with the frontend into
   - [x] Actions: `setIsAddOpen`, `setIsConnectOpen`, `setConnectTarget`, `setCurrentPage`
   - [x] Add navigation state management
 
-### 2.4 Create Connections Store (Optional)
+### 2.4 Create Users Store
 
-- [ ] Create `frontend/src/store/useConnectionsStore.js`
-  - [ ] State: `connections`, `isLoading`, `error`
-  - [ ] Actions: `fetchConnections`, `createConnection`, `deleteConnection`
+- [x] Create `frontend/src/store/useUsersStore.js`
+  - [x] State: `currentUser`, `userConnections`, `allUsers`, `isLoading`, `error`
+  - [x] Actions: `fetchCurrentUserProfile`, `updateUserProfile`, `fetchUserConnections`, `createConnection`, `removeConnection`, `fetchAllUsers`, `searchUsers`
 
 ---
 
