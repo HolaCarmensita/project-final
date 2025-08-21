@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/Button';
-import { useIdeasStore } from '../store/useIdeasStore';
+import { useUIStore } from '../store/useUIStore';
 
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   display: ${(p) => (p.open ? 'block' : 'none')};
   z-index: 5000;
 `;
@@ -19,7 +19,7 @@ const Sheet = styled.div`
   width: min(560px, 95%);
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
   padding: 20px 18px 16px;
   z-index: 5001;
 `;
@@ -54,10 +54,11 @@ const Row = styled.div`
 `;
 
 export default function ConnectModal() {
-  const isOpen = useIdeasStore((s) => s.isConnectOpen);
-  const target = useIdeasStore((s) => s.connectTarget);
-  const close = useIdeasStore((s) => s.closeConnectModal);
-  const submit = useIdeasStore((s) => s.submitConnection);
+  const isOpen = useUIStore((s) => s.isConnectOpen);
+  const target = useUIStore((s) => s.connectTarget);
+  const close = useUIStore((s) => s.closeConnectModal);
+  // Note: submitConnection will need to be moved to a connections store later
+  const submit = () => {}; // Temporary - we'll implement this later
   const [message, setMessage] = useState('');
 
   const onSubmit = (e) => {
@@ -72,13 +73,17 @@ export default function ConnectModal() {
     <>
       <Overlay open={isOpen} onClick={close} />
       {isOpen && (
-        <Sheet role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <Sheet
+          role='dialog'
+          aria-modal='true'
+          onClick={(e) => e.stopPropagation()}
+        >
           <form onSubmit={onSubmit}>
             <Title>{`Connect to ${userName}'s Idea`}</Title>
-            <Label htmlFor="connect-msg">Write a personal message</Label>
+            <Label htmlFor='connect-msg'>Write a personal message</Label>
             <TextArea
-              id="connect-msg"
-              placeholder="Hi! I like your thought...."
+              id='connect-msg'
+              placeholder='Hi! I like your thought....'
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
@@ -86,8 +91,12 @@ export default function ConnectModal() {
               {`Write a personal message to ${userName}`}
             </div>
             <Row>
-              <Button type="button" onClick={close}>CANCEL</Button>
-              <Button type="submit" primary>CONNECT</Button>
+              <Button type='button' onClick={close}>
+                CANCEL
+              </Button>
+              <Button type='submit' primary>
+                CONNECT
+              </Button>
             </Row>
           </form>
         </Sheet>
@@ -95,5 +104,3 @@ export default function ConnectModal() {
     </>
   );
 }
-
-

@@ -6,6 +6,7 @@ import AddIdeaModal from './modals/AddIdeaModal';
 import ConnectModal from './modals/ConnectModal';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 import { useIdeasStore } from './store/useIdeasStore';
+import { useUIStore } from './store/useUIStore';
 import Header from './components/Header1';
 
 // Profile pages
@@ -20,15 +21,19 @@ import RegisterPage from './pages/Auth/RegisterPage';
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
-  const isAddOpen = useIdeasStore((state) => state.isAddOpen);
-  const setIsAddOpen = useIdeasStore((state) => state.setIsAddOpen);
+  // UI state from UI store
+  const isAddOpen = useUIStore((state) => state.isAddOpen);
+  const setIsAddOpen = useUIStore((state) => state.setIsAddOpen);
+  const openAddModal = useUIStore((state) => state.openAddModal);
+  const openConnect = useUIStore((state) => state.openConnectModal);
+
+  // Data state from ideas store
   const submitIdea = useIdeasStore((state) => state.submitIdea);
   const ideas = useIdeasStore((state) => state.ideas);
-  const openAddModal = useIdeasStore((state) => state.openAddModal);
   const handleLeftStore = useIdeasStore((state) => state.handleLeft);
   const handleRightStore = useIdeasStore((state) => state.handleRight);
+
   const isModalActive = location.pathname !== '/';
-  const openConnect = useIdeasStore((s) => s.openConnectModal);
 
   // Check if current route is an auth page (login/register)
   const isAuthPage = ['/login', '/register'].includes(location.pathname);
@@ -86,8 +91,9 @@ const App = () => {
         />
         <ConnectModal />
         <div
-          className={`scene-container ${isModalActive ? 'hidden-on-mobile' : ''
-            }`}
+          className={`scene-container ${
+            isModalActive ? 'hidden-on-mobile' : ''
+          }`}
         >
           <Header onThemeToggle={handleThemeToggle} />
           <Scene ideas={ideas} />
@@ -95,8 +101,9 @@ const App = () => {
 
         {/* Modal - full screen on mobile when active */}
         <div
-          className={`modal-container ${isModalActive ? 'active' : ''} ${isAuthPage ? 'auth-modal' : ''
-            }`}
+          className={`modal-container ${isModalActive ? 'active' : ''} ${
+            isAuthPage ? 'auth-modal' : ''
+          }`}
         >
           <Routes>
             <Route path='/' element={null} />

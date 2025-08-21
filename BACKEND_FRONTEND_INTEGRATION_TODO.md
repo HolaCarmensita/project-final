@@ -61,9 +61,9 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 2.2 Refactor Ideas Store
 
-- [ ] Update `frontend/src/store/useIdeasStore.js`
-  - [ ] Remove authentication-related state
-  - [ ] Remove UI state (modals, navigation)
+- [x] Update `frontend/src/store/useIdeasStore.js`
+  - [x] Remove authentication-related state
+  - [x] Remove UI state (modals, navigation)
   - [ ] Keep: `ideas`, `selectedIndex`, `likedIds`
   - [ ] Add: `isLoading`, `error`, `hasMore`
   - [ ] Actions: `fetchIdeas`, `fetchIdea`, `createIdea`, `updateIdea`, `deleteIdea`, `likeIdea`, `unlikeIdea`
@@ -71,10 +71,10 @@ This TODO breaks down the integration of your backend API with the frontend into
 
 ### 2.3 Create UI Store
 
-- [ ] Create `frontend/src/store/useUIStore.js`
-  - [ ] State: `isAddOpen`, `isConnectOpen`, `connectTarget`, `currentPage`
-  - [ ] Actions: `setIsAddOpen`, `setIsConnectOpen`, `setConnectTarget`, `setCurrentPage`
-  - [ ] Add navigation state management
+- [x] Create `frontend/src/store/useUIStore.js`
+  - [x] State: `isAddOpen`, `isConnectOpen`, `connectTarget`, `currentPage`
+  - [x] Actions: `setIsAddOpen`, `setIsConnectOpen`, `setConnectTarget`, `setCurrentPage`
+  - [x] Add navigation state management
 
 ### 2.4 Create Connections Store (Optional)
 
