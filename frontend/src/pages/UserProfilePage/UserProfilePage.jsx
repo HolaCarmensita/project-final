@@ -86,6 +86,7 @@ export default function UserProfilePage() {
   return (
     <Page>
       <TopBar>
+        {/* this is the back button */}
         <BackBtn aria-label="Back" onClick={() => navigate(-1)}>
           &#x2039; Back
         </BackBtn>

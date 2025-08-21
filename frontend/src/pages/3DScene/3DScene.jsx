@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // Removed Bloom imports
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Sparkles } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { useIdeasStore } from '../../store/useIdeasStore';
 import { gsap } from 'gsap';
@@ -246,6 +246,15 @@ const Scene = () => {
           enablePan={false}
           target={[0, 0, 0]}
           makeDefault
+        />
+        {/* Global ambient sparkles field (denser and closer for visibility) */}
+        <Sparkles
+          count={800}
+          scale={[60, 45, 60]}
+          size={8}
+          speed={0.1}
+          opacity={0.55}
+          color="#84c7ff"
         />
         {/* Bloom must be inside Canvas, not in a fragment or outside */}
         {/* Removed Bloom and EffectComposer */}

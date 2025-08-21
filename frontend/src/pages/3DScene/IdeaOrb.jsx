@@ -6,10 +6,10 @@ import * as THREE from "three";
 
 // Removed complementary color utility
 import { useMemo } from "react";
+import { MeshDistortMaterial } from '@react-three/drei';
 
 const IdeaOrb = ({
   position = [0, 2, 0],
-  text = "Placeholder",
   orbColor = "#b3e0ff",
   auraColor = "#e0f7fa",
   onClick,
@@ -57,16 +57,15 @@ const IdeaOrb = ({
         onPointerOver={() => { document.body.style.cursor = "pointer"; }}
         onPointerOut={() => { document.body.style.cursor = "default"; }}
       >
-        <meshStandardMaterial
-          color={orbColor}
-          transparent
-          opacity={1}
-          emissive={orbColor}
-          emissiveIntensity={2.5}
-        />
+        <MeshDistortMaterial color={orbColor} speed={2} distort={0.2} emissive={orbColor} emissiveIntensity={0.8} />
       </mesh>
-      {/* Sparkles */}
-      <Sparkles count={40} scale={3.5} size={40} color="#fff" />
+      {/* Aura shell */}
+      <mesh scale={1.25}>
+        <sphereGeometry args={[1.2, 64, 64]} />
+        <meshBasicMaterial color={auraColor} transparent opacity={0.15} blending={THREE.AdditiveBlending} />
+      </mesh>
+      {/* Subtle per-orb sparkles */}
+      <Sparkles count={10} scale={2.2} size={10} speed={0.4} color="#fff" />
     </group>
   );
 };

@@ -1,3 +1,4 @@
+// this is the profile page for the user!!
 import React from 'react';
 import styled from 'styled-components';
 import MyIdeasSection from './components/MyIdeasSection';
