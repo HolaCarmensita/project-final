@@ -4,6 +4,7 @@ import IdeaCard from '../ideaCard/IdeaCard';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIdeasStore } from '../../../store/useIdeasStore';
+import { useUIStore } from '../../../store/useUIStore';
 
 const IdeaPageContainer = styled.div`
   background-color: white;
@@ -18,8 +19,8 @@ const IdeaPageContainer = styled.div`
 const IdeaPage = () => {
   const { id } = useParams();
   const ideas = useIdeasStore((state) => state.ideas);
-  const selectedIndex = useIdeasStore((state) => state.selectedIndex);
-  const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
+  const selectedIndex = useUIStore((state) => state.selectedIndex);
+  const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
 
   useEffect(() => {
     if (ideas.length && id) {
@@ -27,14 +28,6 @@ const IdeaPage = () => {
       if (idx >= 0) setSelectedIndex(idx);
     }
   }, [ideas, id, setSelectedIndex]);
-
-  const goToNext = () => {
-    setSelectedIndex((selectedIndex + 1) % ideas.length);
-  };
-
-  const goToPrevious = () => {
-    setSelectedIndex((selectedIndex - 1 + ideas.length) % ideas.length);
-  };
 
   return (
     <IdeaPageContainer>

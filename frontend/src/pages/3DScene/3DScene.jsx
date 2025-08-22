@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { useIdeasStore } from '../../store/useIdeasStore';
+import { useUIStore } from '../../store/useUIStore';
 import { gsap } from 'gsap';
 import IdeaOrb from './IdeaOrb';
 import CameraController from './CameraController';
@@ -19,14 +20,15 @@ const isTypingIntoField = () => {
     tag === 'INPUT' ||
     tag === 'TEXTAREA' ||
     el.isContentEditable === true ||
-    (typeof el.getAttribute === 'function' && el.getAttribute('role') === 'textbox')
+    (typeof el.getAttribute === 'function' &&
+      el.getAttribute('role') === 'textbox')
   );
 };
 
 const Scene = () => {
   const ideas = useIdeasStore((state) => state.ideas);
-  const selectedIndex = useIdeasStore((state) => state.selectedIndex);
-  const setSelectedIndex = useIdeasStore((state) => state.setSelectedIndex);
+  const selectedIndex = useUIStore((state) => state.selectedIndex);
+  const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
   const navigate = useNavigate();
   const controlsRef = useRef();
   // ...existing code...

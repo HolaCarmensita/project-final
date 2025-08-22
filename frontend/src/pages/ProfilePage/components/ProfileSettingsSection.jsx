@@ -169,7 +169,7 @@ export default function ProfileSettingsSection() {
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
       <ActionsRow>
-        <ActionButton primary onClick={handleLogout}>
+        <ActionButton $primary onClick={handleLogout}>
           Log out
         </ActionButton>
         <ActionButton

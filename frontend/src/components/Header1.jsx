@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import HeadIcon from '../assets/icons/headIcon.svg';
 
 const HeaderWrapper = styled.header`
@@ -58,6 +58,23 @@ const IconButton = styled.button`
   }
 `;
 
+const ProfileButton = styled.button`
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+`;
+
 const ProfileLink = styled(Link)`
   width: 32px;
   height: 32px;
@@ -86,6 +103,21 @@ const IconSVG = styled.svg`
 `;
 
 const Header = ({ onThemeToggle }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isOnProfilePage = location.pathname === '/profile';
+
+  const handleProfileClick = () => {
+    if (isOnProfilePage) {
+      // If on profile page, go back to previous page
+      navigate(-1);
+    } else {
+      // If not on profile page, go to profile
+      navigate('/profile');
+    }
+  };
+
   return (
     <HeaderWrapper>
       <Logo>OurLogo</Logo>
@@ -101,9 +133,9 @@ const Header = ({ onThemeToggle }) => {
             />
           </IconSVG>
         </IconButton>
-        <ProfileLink to='/profile' aria-label='Go to profile'>
+        <ProfileButton onClick={handleProfileClick} aria-label='Toggle profile'>
           <LogoIcon src={HeadIcon} alt='Profile Logo' />
-        </ProfileLink>
+        </ProfileButton>
       </HeaderActions>
     </HeaderWrapper>
   );
