@@ -10,6 +10,25 @@ export const useAuthStore = create((set, get) => ({
   isLoading: false,
   error: null,
 
+  // Check if user is already logged in when app starts
+  initializeAuth: () => {
+    const token = authService.getToken();
+    const user = authService.getUser();
+
+    if (token && user) {
+      set({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+      console.log('AuthStore: Restored auth state from localStorage');
+    } else {
+      console.log('AuthStore: No valid auth data in localStorage');
+    }
+  },
+
   // Getter - gets the current user
   getUser: () => get().user,
 

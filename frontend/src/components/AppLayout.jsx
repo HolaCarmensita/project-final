@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Scene from '../pages/3DScene/3DScene';
 import NavBar from './NavBar';
 import AddIdeaModal from '../modals/AddIdeaModal';
@@ -10,6 +10,7 @@ import { useUIStore } from '../store/useUIStore';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // UI state from UI store
   const isAddOpen = useUIStore((state) => state.isAddOpen);
@@ -33,8 +34,29 @@ const AppLayout = ({ children }) => {
     window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
   };
 
-  const handleLeft = () => handleLeftStore(moveCameraToIndex);
-  const handleRight = () => handleRightStore(moveCameraToIndex);
+  // Navigation callback - navigate to idea page
+  const navigateToIdea = (idx) => {
+    if (ideas.length > 0 && ideas[idx]) {
+      const idea = ideas[idx];
+      if (idea.id) {
+        navigate(`/ideas/${idea.id}`);
+      } else {
+        navigate('/ideas');
+      }
+    }
+  };
+
+  const handleLeft = () =>
+    handleLeftStore((idx) => {
+      moveCameraToIndex(idx);
+      navigateToIdea(idx);
+    });
+
+  const handleRight = () =>
+    handleRightStore((idx) => {
+      moveCameraToIndex(idx);
+      navigateToIdea(idx);
+    });
 
   // Handler for AddIdeaModal submission
   const handleSubmitIdea = (ideaData) => {
