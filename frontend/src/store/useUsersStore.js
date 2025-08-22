@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import usersService from '../services/usersService.js';
+import authService from '../services/authService.js';
 
 export const useUsersStore = create((set, get) => ({
   // State
@@ -238,6 +239,40 @@ export const useUsersStore = create((set, get) => ({
         isLoading: false,
       });
       return { success: false, message: 'Failed to search users' };
+    }
+  },
+
+  // Delete user account
+  deleteAccount: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await usersService.deleteAccount();
+
+      if (result.success) {
+        // Account deleted successfully - clear all user and auth state
+        authService.logout();
+        set({
+          currentUser: null,
+          userConnections: [],
+          allUsers: [],
+          isLoading: false,
+          error: null,
+        });
+        return { success: true, message: 'Account deleted successfully' };
+      } else {
+        set({
+          error: result.message,
+          isLoading: false,
+        });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      set({
+        error: 'Failed to delete account',
+        isLoading: false,
+      });
+      return { success: false, message: 'Failed to delete account' };
     }
   },
 

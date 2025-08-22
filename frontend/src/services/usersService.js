@@ -175,6 +175,23 @@ const searchUsers = async (query) => {
   }
 };
 
+// Delete user account
+const deleteAccount = async () => {
+  try {
+    await api.delete('/users/account');
+    return {
+      success: true,
+      message: 'Account deleted successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      error,
+    };
+  }
+};
+
 // Export all functions
 export const usersService = {
   getCurrentUserProfile,
@@ -187,6 +204,7 @@ export const usersService = {
   getUserIdeas,
   getUserLikedIdeas,
   searchUsers,
+  deleteAccount,
 };
 
 export default usersService;

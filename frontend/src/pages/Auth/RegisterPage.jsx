@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import useAuthStore from '../../store/useAuthStore';
 
 const RegisterContainer = styled.div`
   align-items: center;
@@ -75,32 +76,61 @@ const ErrorMessage = styled.p`
   margin-top: 4px;
 `;
 
+const SuccessMessage = styled.div`
+  color: #28a745;
+  font-size: 14px;
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+`;
+
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const { register, isLoading, error, clearError } = useAuthStore();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [nameError, setNameError] = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [generalError, setGeneralError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Clear previous errors
-    setNameError('');
+    setFirstNameError('');
+    setLastNameError('');
     setEmailError('');
     setPasswordError('');
-    setGeneralError('');
+    clearError();
+    setIsSuccess(false);
 
     let hasErrors = false;
 
-    // Validate name
-    if (!name.trim()) {
-      setNameError('Name is required');
+    // Validate firstName
+    if (!firstName.trim()) {
+      setFirstNameError('First name is required');
+      hasErrors = true;
+    } else if (firstName.trim().length < 2) {
+      setFirstNameError('First name must be at least 2 characters');
+      hasErrors = true;
+    }
+
+    // Validate lastName
+    if (!lastName.trim()) {
+      setLastNameError('Last name is required');
+      hasErrors = true;
+    } else if (lastName.trim().length < 2) {
+      setLastNameError('Last name must be at least 2 characters');
       hasErrors = true;
     }
 
@@ -139,28 +169,33 @@ const RegisterPage = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    // Registration API call
+    // Real registration API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-
-      // Simulate successful registration
-      console.log('Registration successful!');
-      console.log('User data:', { name, email, password });
-
-      // Navigate to login page or dashboard
-      navigate('/login');
+      await register({ firstName, lastName, email, password });
+      // Show success message
+      setIsSuccess(true);
+      // Redirect to login page after 2 seconds
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (error) {
-      setGeneralError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      // Error is already handled by the store
+      console.error('Registration failed:', error);
     }
   };
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-    setNameError(''); // Clear name error when user types
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+    setFirstNameError(''); // Clear error when user types
+    clearError(); // Clear any general errors when user starts typing
+    setIsSuccess(false); // Clear success state when user starts typing
+  };
+
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
+    setLastNameError(''); // Clear error when user types
+    clearError(); // Clear any general errors when user starts typing
+    setIsSuccess(false); // Clear success state when user starts typing
   };
 
   const handleEmailChange = (e) => {
@@ -172,6 +207,8 @@ const RegisterPage = () => {
       setEmailError('');
       return;
     }
+    clearError(); // Clear any general errors when user starts typing
+    setIsSuccess(false); // Clear success state when user starts typing
   };
 
   const handleEmailBlur = (e) => {
@@ -194,6 +231,8 @@ const RegisterPage = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setPasswordError(''); // Clear password error when user types
+    clearError(); // Clear any general errors when user starts typing
+    setIsSuccess(false); // Clear success state when user starts typing
   };
 
   const handlePasswordConfirmation = (e) => {
@@ -208,6 +247,8 @@ const RegisterPage = () => {
     } else if (password && e.target.value && password === e.target.value) {
       setPasswordError(''); // Clear error when passwords match
     }
+    clearError(); // Clear any general errors when user starts typing
+    setIsSuccess(false); // Clear success state when user starts typing
   };
 
   return (
@@ -225,15 +266,27 @@ const RegisterPage = () => {
         <Title>Register</Title>
 
         <InputContainer>
-          <Label htmlFor='name'>Name</Label>
+          <Label htmlFor='firstName'>First Name</Label>
           <Input
-            id='name'
+            id='firstName'
             type='text'
-            placeholder='Enter your name'
-            value={name}
-            onChange={handleNameChange}
+            placeholder='Enter your first name'
+            value={firstName}
+            onChange={handleFirstNameChange}
           />
-          {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
+          {firstNameError && <ErrorMessage>{firstNameError}</ErrorMessage>}
+        </InputContainer>
+
+        <InputContainer>
+          <Label htmlFor='lastName'>Last Name</Label>
+          <Input
+            id='lastName'
+            type='text'
+            placeholder='Enter your last name'
+            value={lastName}
+            onChange={handleLastNameChange}
+          />
+          {lastNameError && <ErrorMessage>{lastNameError}</ErrorMessage>}
         </InputContainer>
 
         <InputContainer>
@@ -272,15 +325,22 @@ const RegisterPage = () => {
           />
           {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
         </InputContainer>
-        {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+
+        {isSuccess && (
+          <SuccessMessage>
+            Registration successful! Redirecting to login page...
+          </SuccessMessage>
+        )}
 
         <Button
           type='submit'
           primary
-          disabled={isLoading}
+          disabled={isLoading || isSuccess}
           style={{ width: '100%', marginTop: '16px' }}
         >
-          {isLoading ? 'REGISTER...' : 'REGISTER'}
+          {isLoading ? 'REGISTER...' : isSuccess ? 'SUCCESS!' : 'REGISTER'}
         </Button>
 
         <AlreadyAccountText>
