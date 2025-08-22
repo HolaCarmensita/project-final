@@ -33,6 +33,13 @@ const Logo = styled.h1`
   font-weight: 600;
   color: #000;
   margin: 0;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const HeaderActions = styled.div`
@@ -44,25 +51,26 @@ const HeaderActions = styled.div`
 const IconButton = styled.button`
   background: none;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
   }
 `;
 
 const ProfileButton = styled.button`
   background: none;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,8 +95,6 @@ const ProfileLink = styled(Link)`
 `;
 
 const LogoIcon = styled.img`
-  width: 26px;
-  height: 26px;
   transition: transform 0.2s ease;
 
   &:hover {
@@ -97,8 +103,6 @@ const LogoIcon = styled.img`
 `;
 
 const IconSVG = styled.svg`
-  width: 26px;
-  height: 26px;
   fill: #000;
 `;
 
@@ -120,7 +124,9 @@ const Header = ({ onThemeToggle }) => {
 
   return (
     <HeaderWrapper>
-      <Logo>OurLogo</Logo>
+      <Link to='/' style={{ textDecoration: 'none' }}>
+        <Logo>OurLogo</Logo>
+      </Link>
       <HeaderActions>
         <IconButton onClick={onThemeToggle} aria-label='Toggle theme'>
           <IconSVG viewBox='0 0 24 24' fill='none'>
