@@ -1,166 +1,36 @@
 /* ==========================================================================
-   Responsive Layout System
+   LAYOUT SYSTEM
    ========================================================================== */
 
-/* Main app container - full viewport with hidden overflow */
-.app-container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Content layout wrapper - flex container for scene and modal */
+/* Content layout */
 .content-layout {
   display: flex;
-  height: calc(100vh - 60px);
-  /* Adjust for header height on mobile */
+  flex-direction: column;
+  height: 100vh;
   width: 100vw;
 }
 
-/* 3D Scene container - takes remaining space */
+/* Header positioning */
+.scene-container > header {
+  width: 100vw;
+}
+
+/* Scene container */
 .scene-container {
-  flex: 1;
-  min-width: 0;
+  width: 100vw;
+  height: 100vh;
   position: relative;
+  border: 1px solid red;
 }
 
-/* Modal container - initially hidden, shown when active */
-.modal-container {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  position: relative;
+/* Modal container when on a spesific route*/
+.modal-container.active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
   background-color: white;
-}
-
-/* ==========================================================================
-   MOBILE LAYOUT (≤767px)
-   ========================================================================== */
-
-/* Mobile: Stacked layout with full-screen modal */
-@media (max-width: 767px) {
-
-  /* Stack scene and modal vertically */
-  .content-layout {
-    flex-direction: column;
-    height: calc(100vh - 60px);
-  }
-
-  /* Scene takes full width and height */
-  .scene-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Modal takes full width and height */
-  .modal-container {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  /* Hide 3D scene when modal is active, but keep header visible */
-  .scene-container.hidden-on-mobile {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    /* Only show header height */
-    z-index: 5;
-  }
-
-  /* Show modal full screen when active */
-  .modal-container.active {
-    position: absolute;
-    /* top: 60px; */
-    /* [TODO] to be fixed is not workig everywhere */
-    /* Start below header */
-    left: 0;
-    width: 100%;
-    /* height: calc(100vh - 60px); */
-    z-index: 10;
-  }
-
-  /* Auth modals (login/register) - full width but only 70% height on mobile */
-  .modal-container.active.auth-modal {
-    top: auto;
-    /* Override the top: 60px from regular modal */
-    bottom: 0px;
-    /* Position at bottom of screen */
-    width: 100%;
-    /* Full width */
-    height: fit-content;
-    max-height: 80vh;
-    border-radius: 24px 24px 0 0;
-    /* Rounded corners only on top - matching Add Idea modal */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    /* Enhanced shadow for modal effect */
-  }
-}
-
-/* ==========================================================================
-   TABLET & DESKTOP LAYOUT (≥768px)
-   ========================================================================== */
-
-/* iPad Mini and larger screens: Side-by-side layout */
-@media (min-width: 768px) {
-
-  /* Arrange scene and modal horizontally */
-  .content-layout {
-    flex-direction: row;
-    height: 100vh;
-    /* Full height since header is within 3D scene */
-  }
-
-  /* 3D scene takes remaining space on the left */
-  .scene-container {
-    flex: 1;
-    min-width: 0;
-    position: relative;
-    /* For header positioning within */
-  }
-
-  /* Modal appears as side panel on the right */
-  .modal-container {
-    flex: none;
-    /* Override base flex: 1 to use fixed width */
-    width: 40vw;
-    /* 40% of viewport width */
-    height: 100vh;
-    /* Full height */
-    overflow-y: auto;
-    position: relative;
-    z-index: 10;
-  }
-
-  /* Visual indicator when modal is active (for testing) */
-  .modal-container.active {
-    background-color: white;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Hide modal when not active */
-  .modal-container:not(.active) {
-    display: none;
-  }
-
-  /* 3D scene takes full width when no modal is active */
-  .scene-container:not(.hidden-on-mobile) {
-    width: 100vw;
-    /* Full viewport width when no modal */
-  }
-}
-
-/* ==========================================================================
-   LARGE SCREEN OPTIMIZATION (≥1024px)
-   ========================================================================== */
-
-/* Larger screens: Smaller modal width for better proportions */
-@media (min-width: 1024px) {
-  .modal-container.active {
-    width: 30vw;
-    /* 30% of viewport width on larger screens */
-  }
+  overflow-y: auto;
 }

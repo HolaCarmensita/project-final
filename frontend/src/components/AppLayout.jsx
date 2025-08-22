@@ -88,6 +88,7 @@ const AppLayout = ({ children }) => {
           onSubmit={handleSubmitIdea}
         />
         <ConnectModal />
+
         <div
           className={`scene-container ${
             isModalActive ? 'hidden-on-mobile' : ''
@@ -97,7 +98,7 @@ const AppLayout = ({ children }) => {
           <Scene ideas={ideas} />
         </div>
 
-        {/* Modal - full screen on mobile when active */}
+        {/* profile and idea page here*/}
         <div
           className={`modal-container ${isModalActive ? 'active' : ''} ${
             isAuthPage ? 'auth-modal' : ''

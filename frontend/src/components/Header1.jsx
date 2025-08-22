@@ -4,28 +4,18 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import HeadIcon from '../assets/icons/headIcon.svg';
 
 const HeaderWrapper = styled.header`
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 100; */
   background: white;
   padding: 12px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
-
-  /* iPad Mini and larger screens: Header within 3D scene area */
-  @media (min-width: 768px) {
-    position: absolute; /* Changed from fixed to absolute */
-    top: 0;
-    left: 0;
-    right: auto;
-    width: 100%; /* Full width of its container */
-    border-radius: 0;
-    background: transparent;
-  }
+  background: transparent;
 `;
 
 const Logo = styled.h1`
