@@ -9,7 +9,6 @@ const HeaderWrapper = styled.header`
   left: 0;
   right: 0;
   z-index: 100;
-  background: white;
   padding: 12px 20px;
   display: flex;
   justify-content: space-between;
