@@ -177,13 +177,11 @@ const LoginPage = () => {
 
   const handleOverlayClick = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
-      setShowModal(false);
       navigate(-1); // Go back to previous page
     }
   };
 
   const handleClose = () => {
-    setShowModal(false);
     navigate(-1);
   };
 

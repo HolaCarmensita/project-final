@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import HeadIcon from '../assets/icons/headIcon.svg';
+import useAuthStore from '../store/useAuthStore';
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -82,14 +83,18 @@ const Header = ({ onThemeToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isOnProfilePage = location.pathname === '/profile';
 
   const handleProfileClick = () => {
-    if (isOnProfilePage) {
+    if (!isAuthenticated) {
+      // If not logged in, show login modal
+      navigate('/login', { state: { backgroundLocation: location } });
+    } else if (isOnProfilePage) {
       // If on profile page, go back to previous page
       navigate(-1);
     } else {
-      // If not on profile page, go to profile
+      // If logged in and not on profile, go to profile
       navigate('/profile');
     }
   };
