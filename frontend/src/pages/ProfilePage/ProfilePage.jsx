@@ -11,7 +11,6 @@ const Page = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 16px;
   overflow-y: auto;
 `;
 
@@ -21,7 +20,7 @@ const ProfilePage = () => {
   const connections = useIdeasStore((s) => s.connections);
 
   return (
-    <Page className="modal-container active">
+    <Page>
       <MyIdeasSection />
       <LikedIdeasSection />
       <ConnectionsSection connections={connections} />

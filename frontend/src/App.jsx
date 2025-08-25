@@ -16,23 +16,17 @@ import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 const App = () => {
   return (
-    <AppLayout>
+    <>
       <IdeasFetcher />
       <Routes>
-        <Route path='/' element={null} />
-        <Route path='/ideas/' element={<IdeaPage />} />
-        <Route path='/ideas/:id' element={<IdeaPage />} />
-
-        {/* Profile routes */}
-        <Route path='/profile' element={<ProfilePage />} />
-        <Route path='/profile/my-idea/:id' element={<MyIdeaCardEdit />} />
-        <Route path='/user/:userId' element={<UserProfilePage />} />
-
-        {/* Auth routes */}
+        {/* Auth routes - simple layout */}
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
+
+        {/* Main app routes - complex layout */}
+        <Route path='/*' element={<AppLayout />} />
       </Routes>
-    </AppLayout>
+    </>
   );
 };
 

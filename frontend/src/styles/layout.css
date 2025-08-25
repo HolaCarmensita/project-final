@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LAYOUT SYSTEM
+   LAYOUT SYSTEM MOBILE FIRST 
    ========================================================================== */
 
 /* Content layout */
@@ -10,27 +10,88 @@
   width: 100vw;
 }
 
-/* Header positioning */
-.scene-container > header {
-  width: 100vw;
-}
-
-/* Scene container */
 .scene-container {
   width: 100vw;
   height: 100vh;
-  position: relative;
-  border: 1px solid red;
+  background-color: aquamarine;
+}
+
+.scene-container > header {
+  padding: 16px;
+}
+
+/* Hide scene container on mobile when modal is active */
+.scene-container--hidden-mobile {
+  display: none;
 }
 
 /* Modal container when on a spesific route*/
-.modal-container.active {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 10;
+.modal-container {
+  width: 100vw;
   background-color: white;
   overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.modal-container > header {
+  display: flex;
+  width: 100%;
+  z-index: 100;
+  background-color: white;
+  transition: transform 0.3s ease;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES - IPAD
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .content-layout {
+    flex-direction: row;
+  }
+
+  .modal-container > header {
+    display: none;
+  }
+
+  .scene-container {
+    display: flex;
+    flex: 1;
+    height: 100vh;
+    position: relative;
+    background-color: aquamarine;
+  }
+
+  /* Header positioning */
+  .scene-container > header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: transparent;
+    transition: width 0.3s ease;
+    padding: 16px;
+  }
+
+  .modal-container {
+    width: 30vw;
+    height: 100vh;
+    z-index: 10;
+    background-color: white;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+  }
+
+  /* Override hidden state on desktop - scene container should always show */
+  .scene-container--hidden-mobile {
+    display: flex;
+  }
 }

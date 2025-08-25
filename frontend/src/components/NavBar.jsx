@@ -1,7 +1,7 @@
-import leftArrowIcon from "../assets/icons/arrow_back.svg";
-import rightArrowIcon from "../assets/icons/arrow_forward.svg";
-import plusIcon from "../assets/icons/plus_large.svg";
-import styled from "styled-components";
+import leftArrowIcon from '../assets/icons/arrow_back.svg';
+import rightArrowIcon from '../assets/icons/arrow_forward.svg';
+import plusIcon from '../assets/icons/plus_large.svg';
+import styled from 'styled-components';
 
 const NavBarWrapper = styled.div`
   position: absolute;
@@ -14,16 +14,15 @@ const NavBarWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15); */
   z-index: 20;
   width: min(420px, 300px);
   margin-left: auto;
   margin-right: auto;
-  
+
   /* Hide on mobile if requested */
   @media (max-width: 767px) {
-    display: 
-      ${(p) => (p.$hideOnMobile ? 'none' : 'flex')};
+    display: ${(p) => (p.$hideOnMobile ? 'none' : 'flex')};
   }
   @media (max-width: 600px) {
     position: fixed;
@@ -56,22 +55,30 @@ const NavButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
   }
 `;
 
 const NavBar = ({ onAdd, onLeft, onRight, hideOnMobile = false }) => (
   <NavBarWrapper $hideOnMobile={hideOnMobile}>
-    <NavButton onClick={onLeft} aria-label="Previous">
-      <img src={leftArrowIcon} alt="Left" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
+    <NavButton onClick={onLeft} aria-label='Previous'>
+      <img
+        src={leftArrowIcon}
+        alt='Left'
+        style={{ width: 32, height: 32, filter: 'invert(1)' }}
+      />
     </NavButton>
     <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-      <NavButton className="add" onClick={onAdd} aria-label="Add">
-        <img src={plusIcon} alt="Add" style={{ width: 28, height: 28 }} />
+      <NavButton className='add' onClick={onAdd} aria-label='Add'>
+        <img src={plusIcon} alt='Add' style={{ width: 28, height: 28 }} />
       </NavButton>
     </div>
-    <NavButton onClick={onRight} aria-label="Next">
-      <img src={rightArrowIcon} alt="Right" style={{ width: 32, height: 32, filter: 'invert(1)' }} />
+    <NavButton onClick={onRight} aria-label='Next'>
+      <img
+        src={rightArrowIcon}
+        alt='Right'
+        style={{ width: 32, height: 32, filter: 'invert(1)' }}
+      />
     </NavButton>
   </NavBarWrapper>
 );

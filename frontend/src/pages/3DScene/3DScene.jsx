@@ -237,7 +237,8 @@ const Scene = () => {
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        <color attach='background' args={['#FFFFFF']} />
+        {/* Removed background color to make it transparent */}
+        {/* <color attach='background' args={['white']} /> */}
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         <CameraController joystickVecRef={joystickVecRef} />

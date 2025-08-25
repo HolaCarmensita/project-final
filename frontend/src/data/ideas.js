@@ -3,7 +3,8 @@ export const mockIdeas = [
   {
     id: 1001,
     title: 'My First Example Idea',
-    bodyText: 'This is a temporary example idea for development. It has a cool image.',
+    bodyText:
+      'This is a temporary example idea for development. It has a cool image.',
     author: 'You',
     authorId: '1',
     role: 'Creator',
@@ -35,7 +36,11 @@ export const mockIdeas = [
     createdAt: '2024-01-15',
     likes: 42,
     connections: 8,
-    images: ['/mockImg/artpice1.png', '/mockImg/artpice2.png', '/mockImg/cells.png'],
+    images: [
+      '/mockImg/artpice1.png',
+      '/mockImg/artpice2.png',
+      '/mockImg/cells.png',
+    ],
   },
   {
     id: 2,
@@ -48,7 +53,11 @@ export const mockIdeas = [
     createdAt: '2024-01-14',
     likes: 67,
     connections: 12,
-    images: ['/mockImg/artpice2.png', '/mockImg/cells.png', '/mockImg/dots.png'],
+    images: [
+      '/mockImg/artpice2.png',
+      '/mockImg/cells.png',
+      '/mockImg/dots.png',
+    ],
   },
   {
     id: 3,
@@ -61,7 +70,11 @@ export const mockIdeas = [
     createdAt: '2024-01-13',
     likes: 89,
     connections: 15,
-    images: ['/mockImg/cells.png', '/mockImg/dots.png', '/mockImg/artpice1.png'],
+    images: [
+      '/mockImg/cells.png',
+      '/mockImg/dots.png',
+      '/mockImg/artpice1.png',
+    ],
   },
   {
     id: 4,
@@ -74,8 +87,10 @@ export const mockIdeas = [
     createdAt: '2024-01-12',
     likes: 34,
     connections: 6,
-    images: ['/mockImg/dots.png', '/mockImg/artpice1.png', '/mockImg/artpice2.png'],
+    images: [
+      '/mockImg/dots.png',
+      '/mockImg/artpice1.png',
+      '/mockImg/artpice2.png',
+    ],
   },
 ];
-
-

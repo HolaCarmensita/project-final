@@ -6,7 +6,6 @@ const IdeaTextContainer = styled.div`
   flex-direction: column;
   align-items: left;
   gap: 16px;
-  padding: 16px;
   border-radius: 8px;
   transition: all 0.3s ease;
 

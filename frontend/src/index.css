@@ -50,6 +50,7 @@ textarea,
 select {
   font: inherit;
   font-family: 'Questrial', sans-serif;
+  padding: 0px;
 }
 
 p,
@@ -60,6 +61,7 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
+  padding: 0px;
 }
 
 p {

@@ -10,7 +10,6 @@ const HeaderWrapper = styled.header`
   right: 0;
   z-index: 100; */
   background: white;
-  padding: 12px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,7 +23,6 @@ const Logo = styled.h1`
   color: #000;
   margin: 0;
   cursor: pointer;
-  padding: 8px;
   border-radius: 8px;
 
   &:hover {
@@ -39,10 +37,11 @@ const HeaderActions = styled.div`
 `;
 
 const IconButton = styled.button`
+  padding: 0px;
   background: none;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -57,10 +56,11 @@ const IconButton = styled.button`
 `;
 
 const ProfileButton = styled.button`
+  padding: 0px;
   background: none;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,17 +71,6 @@ const ProfileButton = styled.button`
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
-`;
-
-const ProfileLink = styled(Link)`
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-decoration: none;
 `;
 
 const LogoIcon = styled.img`

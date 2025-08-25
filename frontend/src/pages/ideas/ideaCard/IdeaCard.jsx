@@ -6,6 +6,9 @@ import IdeaSocialBar from '../IdeaSocialBar/IdeaSocialBar';
 import IdeaText from './components/IdeaText';
 
 const IdeaCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
   cursor: default;
   &:hover {
@@ -22,7 +25,11 @@ const IdeaCard = ({ idea = null }) => {
   }
   return (
     <IdeaCardContainer>
-      <ProfileButton author={idea?.author} role={idea?.role} userId={idea?.authorId} />
+      <ProfileButton
+        author={idea?.author}
+        role={idea?.role}
+        userId={idea?.authorId}
+      />
       <ImageCarousel images={idea?.images} />
       <IdeaSocialBar
         ideaId={idea?.id}

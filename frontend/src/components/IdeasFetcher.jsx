@@ -14,15 +14,14 @@ const IdeasFetcher = () => {
     initializeAuth();
   }, [initializeAuth]);
 
-  // Fetch ideas when user is authenticated
+  // Fetch ideas when user is authenticated (or always for development)
   useEffect(() => {
     console.log('IdeasFetcher: isAuthenticated changed to:', isAuthenticated);
     console.log('IdeasFetcher: current ideas count:', ideas.length);
 
-    if (isAuthenticated) {
-      console.log('IdeasFetcher: Fetching ideas...');
-      fetchIdeas();
-    }
+    // For development: always fetch ideas, even when not authenticated
+    console.log('IdeasFetcher: Fetching ideas...');
+    fetchIdeas();
   }, [isAuthenticated, fetchIdeas]);
 
   // Debug ideas changes

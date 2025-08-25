@@ -8,7 +8,6 @@ const ProfileContainer = styled.div`
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  padding: 16px 0px 16px 0px;
   border-radius: 8px;
   transition: background-color 0.2s ease;
 
@@ -43,7 +42,7 @@ const Name = styled.h3`
   line-height: 1.2;
 `;
 
-const Role = styled.h4` 
+const Role = styled.h4`
   font-weight: 400;
   color: #666;
   line-height: 1.2;
@@ -58,7 +57,8 @@ const ProfileButton = ({
 
   const handleClick = () => {
     // Prefer explicit userId; otherwise resolve by matching author's name in mock users
-    const resolvedId = userId || (users.find((u) => u.name === author)?.id) || (author || 'user');
+    const resolvedId =
+      userId || users.find((u) => u.name === author)?.id || author || 'user';
     navigate(`/user/${encodeURIComponent(resolvedId)}`);
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import Scene from '../pages/3DScene/3DScene';
 import NavBar from './NavBar';
 import AddIdeaModal from '../modals/AddIdeaModal';
@@ -8,64 +8,64 @@ import Header from './Header1';
 import { useIdeasStore } from '../store/useIdeasStore';
 import { useUIStore } from '../store/useUIStore';
 
-const AppLayout = ({ children }) => {
+import IdeaPage from '../pages/ideas/IdeaPage/IdeaPage';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
+import MyIdeaCardEdit from '../pages/MyIdeaPage/MyIdeaCardEdit';
+import UserProfilePage from '../pages/UserProfilePage/UserProfilePage';
+
+const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // UI state from UI store
+  // Route detection
+  const isModalActive = location.pathname !== '/';
+  const isProfileRoute = location.pathname.startsWith('/profile');
+  const isIdeasRoute = location.pathname.startsWith('/ideas');
+  const shouldShowModal = isIdeasRoute || isProfileRoute;
+
+  // UI state
   const isAddOpen = useUIStore((state) => state.isAddOpen);
   const setIsAddOpen = useUIStore((state) => state.setIsAddOpen);
   const openAddModal = useUIStore((state) => state.openAddModal);
   const openConnect = useUIStore((state) => state.openConnectModal);
 
-  // Data state from ideas store
+  // Ideas data
   const ideas = useIdeasStore((state) => state.ideas);
 
-  // Navigation from UI store
+  // Navigation handlers
   const handleLeftStore = useUIStore((state) => state.handleLeft);
   const handleRightStore = useUIStore((state) => state.handleRight);
 
-  const isModalActive = location.pathname !== '/';
-  const isAuthPage = ['/login', '/register'].includes(location.pathname);
-  const isProfileRoute = location.pathname.startsWith('/profile');
-
-  // Camera move callback for 3DScene
-  const moveCameraToIndex = (idx) => {
-    window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
-  };
-
-  // Navigation callback - navigate to idea page
-  const navigateToIdea = (idx) => {
-    if (ideas.length > 0 && ideas[idx]) {
-      const idea = ideas[idx];
-      if (idea.id) {
-        navigate(`/ideas/${idea.id}`);
-      } else {
-        navigate('/ideas');
-      }
-    }
-  };
-
+  // Navigation handlers
   const handleLeft = () =>
     handleLeftStore((idx) => {
-      moveCameraToIndex(idx);
-      navigateToIdea(idx);
+      window.dispatchEvent(
+        new CustomEvent('moveCameraToIndex', { detail: idx })
+      );
+      if (ideas.length > 0 && ideas[idx]) {
+        const idea = ideas[idx];
+        navigate(idea.id ? `/ideas/${idea.id}` : '/ideas');
+      }
     });
 
   const handleRight = () =>
     handleRightStore((idx) => {
-      moveCameraToIndex(idx);
-      navigateToIdea(idx);
+      window.dispatchEvent(
+        new CustomEvent('moveCameraToIndex', { detail: idx })
+      );
+      if (ideas.length > 0 && ideas[idx]) {
+        const idea = ideas[idx];
+        navigate(idea.id ? `/ideas/${idea.id}` : '/ideas');
+      }
     });
 
-  // Handler for AddIdeaModal submission
+  // Add idea handler
   const handleSubmitIdea = (ideaData) => {
-    const createIdea = useIdeasStore.getState().createIdea;
-    createIdea(ideaData);
+    useIdeasStore.getState().createIdea(ideaData);
     setIsAddOpen(false);
   };
 
-  // Bridge window event from ConnectButton to store action
+  // Connect modal event listener
   useEffect(() => {
     const handler = (e) => openConnect(e.detail || {});
     window.addEventListener('openConnectModal', handler);
@@ -75,7 +75,6 @@ const AppLayout = ({ children }) => {
   return (
     <div className='app-container'>
       <div className='content-layout'>
-        {/* 3D Scene - hidden on mobile when modal active */}
         <NavBar
           onAdd={openAddModal}
           onLeft={handleLeft}
@@ -91,21 +90,30 @@ const AppLayout = ({ children }) => {
 
         <div
           className={`scene-container ${
-            isModalActive ? 'hidden-on-mobile' : ''
+            shouldShowModal ? 'scene-container--hidden-mobile' : ''
           }`}
         >
           <Header />
           <Scene ideas={ideas} />
         </div>
 
-        {/* profile and idea page here*/}
-        <div
-          className={`modal-container ${isModalActive ? 'active' : ''} ${
-            isAuthPage ? 'auth-modal' : ''
-          }`}
-        >
-          {children}
-        </div>
+        {shouldShowModal && (
+          <div className='modal-container'>
+            <Header />
+            <div className='modal-content'>
+              <Routes>
+                <Route path='/ideas/' element={<IdeaPage />} />
+                <Route path='/ideas/:id' element={<IdeaPage />} />
+                <Route path='/profile' element={<ProfilePage />} />
+                <Route
+                  path='/profile/my-idea/:id'
+                  element={<MyIdeaCardEdit />}
+                />
+                <Route path='/user/:userId' element={<UserProfilePage />} />
+              </Routes>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
