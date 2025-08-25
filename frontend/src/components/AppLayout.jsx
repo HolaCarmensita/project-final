@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
+import useAuthStore from '../store/useAuthStore';
 import Scene from '../pages/3DScene/3DScene';
 import NavBar from './NavBar';
 import AddIdeaModal from '../modals/AddIdeaModal';
@@ -16,6 +17,18 @@ import UserProfilePage from '../pages/UserProfilePage/UserProfilePage';
 const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  // Auth state
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Show login modal after 3 minutes if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const timer = setTimeout(() => {
+        navigate('/login', { state: { backgroundLocation: location } });
+      }, 5000); // 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, navigate, location]);
 
   // Route detection
   const isModalActive = location.pathname !== '/';
@@ -89,9 +102,8 @@ const AppLayout = () => {
         <ConnectModal />
 
         <div
-          className={`scene-container ${
-            shouldShowModal ? 'scene-container--hidden-mobile' : ''
-          }`}
+          className={`scene-container ${shouldShowModal ? 'scene-container--hidden-mobile' : ''
+            }`}
         >
           <Header />
           <Scene ideas={ideas} />

@@ -1,10 +1,50 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import useAuthStore from '../../store/useAuthStore';
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 40px 32px 32px 32px;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover {
+    color: #333;
+  }
+`;
 const RegisterContainer = styled.div`
   align-items: center;
   padding: 48px 24px;
@@ -88,21 +128,65 @@ const SuccessMessage = styled.div`
   font-weight: 500;
 `;
 
+
 const RegisterPage = () => {
-  const navigate = useNavigate();
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+    setFirstNameError('');
+    clearError();
+    setIsSuccess(false);
+  };
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatedPassword, setRepeatedPassword] = useState('');
-  const [firstNameError, setFirstNameError] = useState('');
-  const [lastNameError, setLastNameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
+    setLastNameError('');
+    clearError();
+    setIsSuccess(false);
+  };
 
+  const handleEmailChange = (e) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    if (emailValue === '') {
+      setEmailError('');
+      return;
+    }
+    clearError();
+    setIsSuccess(false);
+  };
+
+  const handleEmailBlur = (e) => {
+    const emailValue = e.target.value;
+    if (emailValue === '') {
+      setEmailError('');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+      setEmailError('Please enter a valid email address');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    setPasswordError('');
+    clearError();
+    setIsSuccess(false);
+  };
+
+  const handlePasswordConfirmation = (e) => {
+    setRepeatedPassword(e.target.value);
+    setPasswordError('');
+    if (password && e.target.value && password !== e.target.value) {
+      setPasswordError('Passwords do not match');
+    } else if (password && e.target.value && password === e.target.value) {
+      setPasswordError('');
+    }
+    clearError();
+    setIsSuccess(false);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -183,171 +267,120 @@ const RegisterPage = () => {
       console.error('Registration failed:', error);
     }
   };
+  const navigate = useNavigate();
+  const { register, isLoading, error, clearError } = useAuthStore();
 
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-    setFirstNameError(''); // Clear error when user types
-    clearError(); // Clear any general errors when user starts typing
-    setIsSuccess(false); // Clear success state when user starts typing
-  };
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatedPassword, setRepeatedPassword] = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+  const modalRef = useRef(null);
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-    setLastNameError(''); // Clear error when user types
-    clearError(); // Clear any general errors when user starts typing
-    setIsSuccess(false); // Clear success state when user starts typing
-  };
-
-  const handleEmailChange = (e) => {
-    const emailValue = e.target.value;
-    setEmail(emailValue);
-
-    // Clear email error when user starts typing
-    if (emailValue === '') {
-      setEmailError('');
-      return;
-    }
-    clearError(); // Clear any general errors when user starts typing
-    setIsSuccess(false); // Clear success state when user starts typing
-  };
-
-  const handleEmailBlur = (e) => {
-    const emailValue = e.target.value;
-
-    if (emailValue === '') {
-      setEmailError('');
-      return;
-    }
-
-    // Validate email when user leaves the field
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailValue)) {
-      setEmailError('Please enter a valid email address');
-    } else {
-      setEmailError(''); // Clear error when email is valid
+  const handleOverlayClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      setShowModal(false);
+      navigate(-1); // Go back to previous page
     }
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setPasswordError(''); // Clear password error when user types
-    clearError(); // Clear any general errors when user starts typing
-    setIsSuccess(false); // Clear success state when user starts typing
+  const handleClose = () => {
+    setShowModal(false);
+    navigate(-1);
   };
 
-  const handlePasswordConfirmation = (e) => {
-    setRepeatedPassword(e.target.value);
+  // ...existing code...
 
-    // Clear password error when user types
-    setPasswordError('');
-
-    // Check if passwords match when both fields have values
-    if (password && e.target.value && password !== e.target.value) {
-      setPasswordError('Passwords do not match');
-    } else if (password && e.target.value && password === e.target.value) {
-      setPasswordError(''); // Clear error when passwords match
-    }
-    clearError(); // Clear any general errors when user starts typing
-    setIsSuccess(false); // Clear success state when user starts typing
-  };
+  if (!showModal) return null;
 
   return (
-    <RegisterContainer>
-      {/* <WelcomeText>
-        <h2>
-          Welcome to Penive, a place to explore, share and connect with creative
-          ideas and minds.
-        </h2>
-
-        <h2> Please login or register to get started.</h2>
-      </WelcomeText> */}
-
-      <RegisterForm onSubmit={handleSubmit}>
-        <Title>Register</Title>
-
-        <InputContainer>
-          <Label htmlFor='firstName'>First Name</Label>
-          <Input
-            id='firstName'
-            type='text'
-            placeholder='Enter your first name'
-            value={firstName}
-            onChange={handleFirstNameChange}
-          />
-          {firstNameError && <ErrorMessage>{firstNameError}</ErrorMessage>}
-        </InputContainer>
-
-        <InputContainer>
-          <Label htmlFor='lastName'>Last Name</Label>
-          <Input
-            id='lastName'
-            type='text'
-            placeholder='Enter your last name'
-            value={lastName}
-            onChange={handleLastNameChange}
-          />
-          {lastNameError && <ErrorMessage>{lastNameError}</ErrorMessage>}
-        </InputContainer>
-
-        <InputContainer>
-          <Label htmlFor='email'>Email</Label>
-          <Input
-            id='email'
-            type='text'
-            placeholder='Enter your email'
-            value={email}
-            onChange={handleEmailChange}
-            onBlur={handleEmailBlur}
-          />
-          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
-        </InputContainer>
-
-        <InputContainer>
-          <Label htmlFor='password'>Password</Label>
-          <Input
-            id='password'
-            type='password'
-            placeholder='Enter your password'
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          {passwordError && <ErrorMessage> {passwordError} </ErrorMessage>}
-        </InputContainer>
-
-        <InputContainer>
-          <Label htmlFor='password-repeat'>Repeat Password</Label>
-          <Input
-            id='password-repeat'
-            type='password'
-            placeholder='Repeat password'
-            value={repeatedPassword}
-            onChange={handlePasswordConfirmation}
-          />
-          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
-        </InputContainer>
-
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-
-        {isSuccess && (
-          <SuccessMessage>
-            Registration successful! Redirecting to login page...
-          </SuccessMessage>
-        )}
-
-        <Button
-          type='submit'
-          primary
-          disabled={isLoading || isSuccess}
-          style={{ width: '100%', marginTop: '16px' }}
-        >
-          {isLoading ? 'REGISTER...' : isSuccess ? 'SUCCESS!' : 'REGISTER'}
-        </Button>
-
-        <AlreadyAccountText>
-          Already have an account? <Link to='/login'>Login</Link>
-        </AlreadyAccountText>
-      </RegisterForm>
-    </RegisterContainer>
+    <ModalOverlay onClick={handleOverlayClick}>
+      <ModalContent ref={modalRef} onClick={e => e.stopPropagation()}>
+        <CloseButton aria-label="Close" onClick={handleClose}>&times;</CloseButton>
+        <RegisterForm onSubmit={handleSubmit}>
+          <Title>Register</Title>
+          <InputContainer>
+            <Label htmlFor='firstName'>First Name</Label>
+            <Input
+              id='firstName'
+              type='text'
+              placeholder='Enter your first name'
+              value={firstName}
+              onChange={handleFirstNameChange}
+            />
+            {firstNameError && <ErrorMessage>{firstNameError}</ErrorMessage>}
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor='lastName'>Last Name</Label>
+            <Input
+              id='lastName'
+              type='text'
+              placeholder='Enter your last name'
+              value={lastName}
+              onChange={handleLastNameChange}
+            />
+            {lastNameError && <ErrorMessage>{lastNameError}</ErrorMessage>}
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor='email'>Email</Label>
+            <Input
+              id='email'
+              type='text'
+              placeholder='Enter your email'
+              value={email}
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
+            />
+            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor='password'>Password</Label>
+            <Input
+              id='password'
+              type='password'
+              placeholder='Enter your password'
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            {passwordError && <ErrorMessage> {passwordError} </ErrorMessage>}
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor='password-repeat'>Repeat Password</Label>
+            <Input
+              id='password-repeat'
+              type='password'
+              placeholder='Repeat password'
+              value={repeatedPassword}
+              onChange={handlePasswordConfirmation}
+            />
+            {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          </InputContainer>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {isSuccess && (
+            <SuccessMessage>
+              Registration successful! Redirecting to login page...
+            </SuccessMessage>
+          )}
+          <Button
+            type='submit'
+            primary
+            disabled={isLoading || isSuccess}
+            style={{ width: '100%', marginTop: '16px' }}
+          >
+            {isLoading ? 'REGISTER...' : isSuccess ? 'SUCCESS!' : 'REGISTER'}
+          </Button>
+          <AlreadyAccountText>
+            Already have an account? <Link to='/login'>Login</Link>
+          </AlreadyAccountText>
+        </RegisterForm>
+      </ModalContent>
+    </ModalOverlay>
   );
 };
 
