@@ -55,7 +55,7 @@
   }
 
   .modal-container > header {
-    /* display: none; */
+    display: none;
   }
 
   .scene-container {
