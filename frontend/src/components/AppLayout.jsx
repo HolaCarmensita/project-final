@@ -102,6 +102,7 @@ const AppLayout = () => {
             <Header />
             <div className='modal-content'>
               <Routes>
+                <Route path='/ideas' element={<IdeaPage />} />
                 <Route path='/ideas/' element={<IdeaPage />} />
                 <Route path='/ideas/:id' element={<IdeaPage />} />
                 <Route path='/profile' element={<ProfilePage />} />

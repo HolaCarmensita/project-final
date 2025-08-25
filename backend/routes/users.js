@@ -59,6 +59,22 @@ router.put(
   }
 );
 
+// Get user's connections
+router.get('/connections', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .populate('connectedIdeas.idea', 'title description creator')
+      .select('-password');
+
+    res.json({
+      message: 'Connections retrieved successfully',
+      connections: user.connectedIdeas || [],
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Unlike a liked idea
 router.delete('/liked-ideas/:ideaId', async (req, res) => {
   try {

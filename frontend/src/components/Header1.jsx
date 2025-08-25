@@ -4,17 +4,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import HeadIcon from '../assets/icons/headIcon.svg';
 
 const HeaderWrapper = styled.header`
-  /* position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100; */
-  background: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
-  background: transparent;
 `;
 
 const Logo = styled.h1`

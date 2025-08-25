@@ -166,11 +166,6 @@ This TODO breaks down the integration of your backend API with the frontend into
   - [ ] Reusable loading component
   - [ ] Different sizes and styles
 
-- [ ] Add loading states to all async operations
-  - [ ] Page loads
-  - [ ] Form submissions
-  - [ ] Data fetching
-
 ### 4.3 Form Validation
 
 - [x] Update all forms to match backend validation

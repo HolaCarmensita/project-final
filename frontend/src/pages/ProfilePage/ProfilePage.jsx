@@ -12,7 +12,7 @@ const Page = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  /* Remove overflow-y: auto to prevent double scrollbars */
 `;
 
 // The content sections below are now split into dedicated components.
