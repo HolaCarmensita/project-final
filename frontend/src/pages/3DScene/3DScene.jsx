@@ -213,25 +213,13 @@ const Scene = () => {
     const z = Math.sin(phi) * r;
     const pos = [x * sphereRadius, y * sphereRadius, z * sphereRadius];
 
-    // Assign visually distinct color pairs for each orb
-    const colorPairs = [
-      { center: '#ffa0e5', edge: '#ffd700' }, // pink/yellow
-      { center: '#7ed7ff', edge: '#ff69b4' }, // blue/magenta
-      { center: '#b3e0ff', edge: '#e47c6a' }, // light blue/orange
-      { center: '#d46a8c', edge: '#84c7ff' }, // rose/blue
-      { center: '#e6f7ff', edge: '#d6ff8a' }, // pale blue/lime
-      { center: '#e47c6a', edge: '#a6b8ff' }, // orange/purple
-      { center: '#ff69b4', edge: '#7ed7ff' }, // magenta/blue
-      { center: '#ffd700', edge: '#ffa0e5' }, // yellow/pink
-    ];
-    const pair = colorPairs[i % colorPairs.length];
+    // Use the idea's own orbColor and auraColor for color consistency
     return (
       <IdeaOrb
         key={idea.id ?? i}
         position={pos}
         text={idea.title || idea.text}
-        orbColor={pair.center}
-        auraColor={pair.edge}
+        orbColor={idea.orbColor}
         onClick={() => {
           handleOrbClick(pos);
           if (idea.id) {
