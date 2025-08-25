@@ -10,6 +10,7 @@ export const useAuthStore = create((set, get) => ({
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  isInitializing: false, // Add flag to prevent multiple initializations
 
   // Validate token with backend
   validateToken: async () => {
@@ -23,6 +24,14 @@ export const useAuthStore = create((set, get) => ({
 
   // Check if user is already logged in when app starts
   initializeAuth: async () => {
+    // Prevent multiple simultaneous initializations
+    if (get().isInitializing) {
+      console.log('AuthStore: Already initializing, skipping...');
+      return;
+    }
+
+    set({ isInitializing: true });
+
     const token = authService.getToken();
     const user = authService.getUser();
 
@@ -40,11 +49,12 @@ export const useAuthStore = create((set, get) => ({
       const validation = await get().validateToken();
 
       if (validation.valid) {
-        // Token is valid - update user data from backend
+        // Token is valid - only update user data, keep isAuthenticated as true
         set({
           user: validation.user,
           isLoading: false,
           error: null,
+          isInitializing: false,
         });
         console.log('AuthStore: Token validated successfully');
       } else {
@@ -56,10 +66,12 @@ export const useAuthStore = create((set, get) => ({
           isAuthenticated: false,
           isLoading: false,
           error: null,
+          isInitializing: false,
         });
         console.log('AuthStore: Token validation failed, logged out');
       }
     } else {
+      set({ isInitializing: false });
       console.log('AuthStore: No valid auth data in localStorage');
     }
   },

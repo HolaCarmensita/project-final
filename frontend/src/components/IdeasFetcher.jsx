@@ -1,33 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useIdeasStore } from '../store/useIdeasStore';
 
 const IdeasFetcher = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
   const fetchIdeas = useIdeasStore((state) => state.fetchIdeas);
   const ideas = useIdeasStore((state) => state.ideas);
-
-  // Initialize auth state on component mount
-  useEffect(() => {
-    console.log('IdeasFetcher: Initializing auth state...');
-    initializeAuth();
-  }, [initializeAuth]);
+  const isLoading = useIdeasStore((state) => state.isLoading);
+  const hasInitialized = useRef(false);
+  const lastAuthState = useRef(null);
 
   // Fetch ideas when user is authenticated (or always for development)
   useEffect(() => {
-    console.log('IdeasFetcher: isAuthenticated changed to:', isAuthenticated);
-    console.log('IdeasFetcher: current ideas count:', ideas.length);
+    // Only log when auth state actually changes
+    if (lastAuthState.current !== isAuthenticated) {
+      console.log('IdeasFetcher: isAuthenticated changed to:', isAuthenticated);
+      lastAuthState.current = isAuthenticated;
+    }
 
-    // For development: always fetch ideas, even when not authenticated
-    console.log('IdeasFetcher: Fetching ideas...');
-    fetchIdeas();
-  }, [isAuthenticated, fetchIdeas]);
-
-  // Debug ideas changes
-  useEffect(() => {
-    console.log('IdeasFetcher: Ideas changed, count:', ideas.length);
-  }, [ideas]);
+    // Only fetch if we haven't initialized yet, ideas are empty, and not currently loading
+    if (!hasInitialized.current && ideas.length === 0 && !isLoading) {
+      console.log('IdeasFetcher: Fetching ideas...');
+      fetchIdeas();
+      hasInitialized.current = true;
+    }
+  }, [isAuthenticated, ideas.length, isLoading, fetchIdeas]);
 
   // This component doesn't render anything
   return null;

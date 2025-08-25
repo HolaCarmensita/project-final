@@ -33,6 +33,12 @@ export const useIdeasStore = create((set, get) => ({
   // Actions
   // Get all ideas from API
   fetchIdeas: async () => {
+    // Prevent multiple simultaneous fetches
+    if (get().isLoading) {
+      console.log('IdeasStore: Already loading ideas, skipping...');
+      return;
+    }
+
     set({ isLoading: true, error: null });
 
     try {

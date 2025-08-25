@@ -20,9 +20,9 @@ const App = () => {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
 
   useEffect(() => {
-    // Restore auth state from localStorage when app starts / yiu stay logged in after a refresh
+    // Restore auth state from localStorage when app starts / you stay logged in after a refresh
     initializeAuth();
-  }, [initializeAuth]);
+  }, []); // Remove initializeAuth dependency to prevent re-renders
 
   return (
     <>

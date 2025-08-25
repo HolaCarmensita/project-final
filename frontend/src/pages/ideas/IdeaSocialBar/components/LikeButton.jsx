@@ -61,20 +61,25 @@ export const LikeButton = ({ ideaId, initialLikes = 0 }) => {
   const likedIds = useIdeasStore((s) => s.likedIds);
   const likeIdea = useIdeasStore((s) => s.likeIdea);
   const unlikeIdea = useIdeasStore((s) => s.unlikeIdea);
+  const ideas = useIdeasStore((s) => s.ideas);
 
   const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
-  const likes = useIdeasStore((s) => {
-    const idea = s.ideas.find((i) => i._id === ideaId || i.id === ideaId);
-    console.log(
-      'LikeButton - ideaId:',
-      ideaId,
-      'idea:',
-      idea,
-      'likeCount:',
-      idea?.likeCount
-    );
+
+  const likes = useMemo(() => {
+    const idea = ideas.find((i) => i._id === ideaId || i.id === ideaId);
+    // Only log when the idea data actually changes
+    if (idea) {
+      console.log(
+        'LikeButton - ideaId:',
+        ideaId,
+        'idea:',
+        idea,
+        'likeCount:',
+        idea?.likeCount
+      );
+    }
     return idea?.likeCount ?? initialLikes;
-  });
+  }, [ideas, ideaId, initialLikes]);
 
   const handleClick = () => {
     if (!ideaId) return;
