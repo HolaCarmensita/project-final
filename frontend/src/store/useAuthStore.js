@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import authService from '../services/authService.js';
+import api from '../services/api.js';
 
 // Create the authentication store
 export const useAuthStore = create((set, get) => ({
@@ -10,20 +11,54 @@ export const useAuthStore = create((set, get) => ({
   isLoading: false,
   error: null,
 
+  // Validate token with backend
+  validateToken: async () => {
+    try {
+      const response = await api.get('/auth/validate');
+      return { valid: true, user: response.data.user };
+    } catch (error) {
+      return { valid: false, error: error.message };
+    }
+  },
+
   // Check if user is already logged in when app starts
-  initializeAuth: () => {
+  initializeAuth: async () => {
     const token = authService.getToken();
     const user = authService.getUser();
 
     if (token && user) {
+      // Set initial state from localStorage
       set({
         user,
         token,
         isAuthenticated: true,
-        isLoading: false,
+        isLoading: true,
         error: null,
       });
-      console.log('AuthStore: Restored auth state from localStorage');
+
+      // Validate token with backend
+      const validation = await get().validateToken();
+
+      if (validation.valid) {
+        // Token is valid - update user data from backend
+        set({
+          user: validation.user,
+          isLoading: false,
+          error: null,
+        });
+        console.log('AuthStore: Token validated successfully');
+      } else {
+        // Token is invalid - clear auth state
+        authService.logout();
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+        });
+        console.log('AuthStore: Token validation failed, logged out');
+      }
     } else {
       console.log('AuthStore: No valid auth data in localStorage');
     }

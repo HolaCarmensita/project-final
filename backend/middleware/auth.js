@@ -30,3 +30,7 @@ export const authenticateToken = async (req, res, next) => {
     return res.status(403).json({ message: 'Invalid token' });
   }
 };
+
+// Default export for convenience
+const auth = authenticateToken;
+export default auth;

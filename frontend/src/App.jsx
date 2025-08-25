@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import AppLayout from './components/AppLayout';
 import IdeasFetcher from './components/IdeasFetcher';
+import useAuthStore from './store/useAuthStore';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
@@ -15,6 +17,13 @@ import RegisterPage from './pages/Auth/RegisterPage';
 import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 const App = () => {
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    // Restore auth state from localStorage when app starts / yiu stay logged in after a refresh
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <>
       <IdeasFetcher />

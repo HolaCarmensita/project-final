@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import { useUIStore } from '../store/useUIStore';
+import { useUsersStore } from '../store/useUsersStore';
 
 const Overlay = styled.div`
   position: fixed;
@@ -53,25 +54,107 @@ const Row = styled.div`
   margin-top: 18px;
 `;
 
+const ErrorMessage = styled.div`
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+`;
+
+const SuccessMessage = styled.div`
+  color: #28a745;
+  font-size: 14px;
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+`;
+
 export default function ConnectModal() {
   const isOpen = useUIStore((s) => s.isConnectOpen);
   const target = useUIStore((s) => s.connectTarget);
-  const close = useUIStore((s) => s.closeConnectModal);
-  // Note: submitConnection will need to be moved to a connections store later
-  const submit = () => {}; // Temporary - we'll implement this later
+  const close = useUIStore((s) => s.setIsConnectOpen);
   const [message, setMessage] = useState('');
+  const [messageError, setMessageError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const onSubmit = (e) => {
+  // Get store functions
+  const createConnection = useUsersStore((state) => state.createConnection);
+  const isLoading = useUsersStore((state) => state.isLoading);
+  const error = useUsersStore((state) => state.error);
+  const clearError = useUsersStore((state) => state.clearError);
+
+  const validateForm = () => {
+    let isValid = true;
+
+    // Clear previous errors
+    setMessageError('');
+    clearError();
+
+    // Validate message
+    if (!message.trim()) {
+      setMessageError('Message is required');
+      isValid = false;
+    } else if (message.trim().length < 5) {
+      setMessageError('Message must be at least 5 characters');
+      isValid = false;
+    } else if (message.trim().length > 500) {
+      setMessageError('Message must be less than 500 characters');
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    submit(message);
-    setMessage('');
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const result = await createConnection(target?.userId, message.trim());
+
+      if (result.success) {
+        setIsSuccess(true);
+        setMessage('');
+
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          close(false);
+          setIsSuccess(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Failed to create connection:', error);
+    }
+  };
+
+  const handleClose = () => {
+    if (!isLoading) {
+      setMessage('');
+      setMessageError('');
+      clearError();
+      setIsSuccess(false);
+      close(false);
+    }
+  };
+
+  const handleMessageChange = (e) => {
+    setMessage(e.target.value);
+    setMessageError('');
+    clearError();
+    setIsSuccess(false);
   };
 
   const userName = target?.userName || 'this user';
 
   return (
     <>
-      <Overlay open={isOpen} onClick={close} />
+      <Overlay open={isOpen} onClick={handleClose} />
       {isOpen && (
         <Sheet
           role='dialog'
@@ -85,17 +168,32 @@ export default function ConnectModal() {
               id='connect-msg'
               placeholder='Hi! I like your thought....'
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleMessageChange}
+              disabled={isLoading || isSuccess}
             />
+            {messageError && <ErrorMessage>{messageError}</ErrorMessage>}
             <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
               {`Write a personal message to ${userName}`}
             </div>
+
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+
+            {isSuccess && (
+              <SuccessMessage>
+                Connection request sent successfully! Closing modal...
+              </SuccessMessage>
+            )}
+
             <Row>
-              <Button type='button' onClick={close}>
+              <Button
+                type='button'
+                onClick={handleClose}
+                disabled={isLoading || isSuccess}
+              >
                 CANCEL
               </Button>
-              <Button type='submit' primary>
-                CONNECT
+              <Button type='submit' primary disabled={isLoading || isSuccess}>
+                {isLoading ? 'SENDING...' : isSuccess ? 'SENT!' : 'CONNECT'}
               </Button>
             </Row>
           </form>

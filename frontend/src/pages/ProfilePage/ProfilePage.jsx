@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import MyIdeasSection from './components/MyIdeasSection';
 import LikedIdeasSection from './components/LikedIdeasSection';
 import ConnectionsSection from './components/ConnectionsSection';
-import { useIdeasStore } from '../../store/useIdeasStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import ProfileSettingsSection from './components/ProfileSettingsSection';
 
 // Container pinned to the right using global overlay rules
@@ -17,13 +17,13 @@ const Page = styled.div`
 // The content sections below are now split into dedicated components.
 
 const ProfilePage = () => {
-  const connections = useIdeasStore((s) => s.connections);
+  const user = useAuthStore((state) => state.user);
 
   return (
     <Page>
       <MyIdeasSection />
       <LikedIdeasSection />
-      <ConnectionsSection connections={connections} />
+      <ConnectionsSection />
       <ProfileSettingsSection />
     </Page>
   );

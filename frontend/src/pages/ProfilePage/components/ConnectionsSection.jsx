@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useUsersStore } from '../../../store/useUsersStore';
 
 const Section = styled.section`
   margin-bottom: 60px;
@@ -50,30 +51,97 @@ const Note = styled.div`
   top: 0 !important;
 `;
 
-export default function ConnectionsSection({ connections = [] }) {
+const LoadingMessage = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 20px;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  color: #d32f2f;
+  padding: 20px;
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 20px;
+`;
+
+export default function ConnectionsSection() {
   const navigate = useNavigate();
+
+  // Get state from UsersStore
+  const userConnections = useUsersStore((state) => state.userConnections);
+  const isLoading = useUsersStore((state) => state.isLoading);
+  const error = useUsersStore((state) => state.error);
+  const fetchUserConnections = useUsersStore(
+    (state) => state.fetchUserConnections
+  );
+
+  // Fetch connections when component mounts
+  useEffect(() => {
+    fetchUserConnections();
+  }, [fetchUserConnections]);
+
+  if (isLoading) {
+    return (
+      <Section>
+        <SectionHeader>
+          <h3>My Connections</h3>
+        </SectionHeader>
+        <LoadingMessage>Loading connections...</LoadingMessage>
+      </Section>
+    );
+  }
+
+  if (error) {
+    return (
+      <Section>
+        <SectionHeader>
+          <h3>My Connections</h3>
+        </SectionHeader>
+        <ErrorMessage>Error loading connections: {error}</ErrorMessage>
+      </Section>
+    );
+  }
+
   return (
     <Section>
       <SectionHeader>
         <h3>
-          My Connections <span className='count'>({connections.length})</span>
+          My Connections{' '}
+          <span className='count'>({userConnections.length})</span>
         </h3>
       </SectionHeader>
       <ConnectionsList>
-        {connections.map((c, i) => (
-          <Person
-            key={i}
-            style={{ cursor: 'pointer' }}
-            onClick={() => navigate(`/user/${c.id || c.name}`)}
-          >
-            <Avatar style={{ background: c.color }} />
-            <div>
-              <Name>{c.name}</Name>
-              <Role>{c.role}</Role>
-              <Note>{c.note}</Note>
-            </div>
-          </Person>
-        ))}
+        {userConnections.length > 0 ? (
+          userConnections.map((connection, i) => (
+            <Person
+              key={connection._id || i}
+              style={{ cursor: 'pointer' }}
+              onClick={() =>
+                navigate(`/user/${connection.user?._id || connection.userId}`)
+              }
+            >
+              <Avatar style={{ background: connection.color || '#ddd' }} />
+              <div>
+                <Name>
+                  {connection.user?.fullName ||
+                    connection.userName ||
+                    'Unknown User'}
+                </Name>
+                <Role>{connection.user?.role || 'User'}</Role>
+                <Note>{connection.message || 'Connected'}</Note>
+              </div>
+            </Person>
+          ))
+        ) : (
+          <EmptyMessage>
+            No connections yet. Start connecting with other users!
+          </EmptyMessage>
+        )}
       </ConnectionsList>
     </Section>
   );

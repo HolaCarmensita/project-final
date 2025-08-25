@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -10,6 +11,28 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const generateToken = (userId) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '24h' });
 };
+
+// Validate token route - requires auth middleware
+router.get('/validate', auth, async (req, res) => {
+  try {
+    // The auth middleware already verified the token and added user to req
+    const user = req.user;
+
+    res.json({
+      message: 'Token is valid',
+      user: {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        fullName: user.fullName,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 // Registration route with validation with express-validator
 router.post(
