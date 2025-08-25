@@ -1,39 +1,40 @@
 // component for idea/ post
 import { Sparkles, shaderMaterial } from "@react-three/drei";
+// Rim lighting shader material
+const RimGlowMaterial = shaderMaterial(
+  {
+    color: new THREE.Color('#ffa0e5'),
+    rimColor: new THREE.Color('#fff'),
+    rimStrength: 1.5,
+  },
+  // vertex shader
+  `
+  varying vec3 vNormal;
+  void main() {
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+  `,
+  // fragment shader
+  `
+  uniform vec3 color;
+  uniform vec3 rimColor;
+  uniform float rimStrength;
+  varying vec3 vNormal;
+  void main() {
+    float rim = pow(1.0 - abs(vNormal.z), rimStrength);
+    vec3 col = mix(color, rimColor, rim * 0.6);
+    gl_FragColor = vec4(col, 1.0);
+  }
+  `
+);
+extend({ RimGlowMaterial });
 import { useThree, useFrame, extend } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 
 // Removed complementary color utility
 import { useMemo } from "react";
-// Custom gradient glow material
-const GradientOrbMaterial = shaderMaterial(
-  {
-    colorCenter: new THREE.Color('#ffa0e5'), // center color
-    colorEdge: new THREE.Color('#ffd700'), // edge color
-  },
-  // vertex shader
-  `
-  varying vec3 vPosition;
-  void main() {
-    vPosition = position;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-  `,
-  // fragment shader
-  `
-  uniform vec3 colorCenter;
-  uniform vec3 colorEdge;
-  varying vec3 vPosition;
-  void main() {
-    float r = length(vPosition);
-    float grad = smoothstep(0.0, 1.2, r); // 1.2 is sphere radius
-    vec3 col = mix(colorCenter, colorEdge, grad);
-    gl_FragColor = vec4(col, 1.0);
-  }
-  `
-);
-extend({ GradientOrbMaterial });
 
 const IdeaOrb = ({
   position = [0, 2, 0],
@@ -84,9 +85,10 @@ const IdeaOrb = ({
         onPointerOver={() => { document.body.style.cursor = "pointer"; }}
         onPointerOut={() => { document.body.style.cursor = "default"; }}
       >
-        <gradientOrbMaterial
-          colorCenter={orbColor}
-          colorEdge={auraColor}
+        <rimGlowMaterial
+          color={orbColor}
+          rimColor="#fff"
+          rimStrength={1.5}
         />
       </mesh>
       {/* Aura shell */}
