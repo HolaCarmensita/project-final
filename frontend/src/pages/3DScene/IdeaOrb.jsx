@@ -6,16 +6,21 @@ const RimGlowMaterial = shaderMaterial(
     color: new THREE.Color('#ffa0e5'),
     rimColor: new THREE.Color('#fff'),
     rimStrength: 1.5,
+    time: 0,
   },
-  // vertex shader
+  // vertex shader with wobble
   `
+  uniform float time;
   varying vec3 vNormal;
   void main() {
     vNormal = normalize(normalMatrix * normal);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    // Wobble: displace along normal with time-based sine
+    float wobble = 0.07 * sin(time * 2.0 + position.x * 3.0 + position.y * 3.0 + position.z * 3.0);
+    vec3 newPosition = position + normal * wobble;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
   }
   `,
-  // fragment shader
+  // fragment shader (unchanged)
   `
   uniform vec3 color;
   uniform vec3 rimColor;
@@ -76,6 +81,15 @@ const IdeaOrb = ({
   // [FIX] make geometries woobly,  
   const geometry = useMemo(() => getWooblyGeometry(1.2, 32, 0.03), []);
 
+  // Ref for material to update time uniform
+  const materialRef = useRef();
+
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
+    }
+  });
+
   return (
     <group ref={groupRef} position={position}>
       {/* Glowing orb (no outer aura) */}
@@ -86,9 +100,11 @@ const IdeaOrb = ({
         onPointerOut={() => { document.body.style.cursor = "default"; }}
       >
         <rimGlowMaterial
+          ref={materialRef}
           color={orbColor}
           rimColor="#fff"
           rimStrength={1.5}
+          time={0}
         />
       </mesh>
       {/* Aura shell */}

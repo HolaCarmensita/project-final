@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 // Removed Bloom imports
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Sparkles, Environment } from '@react-three/drei';
+import { OrbitControls, Sparkles } from '@react-three/drei';
+import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import { useIdeasStore } from '../../store/useIdeasStore';
 import { gsap } from 'gsap';
