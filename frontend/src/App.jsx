@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Scene from './pages/3DScene/3DScene';
 import NavBar from './components/NavBar';
@@ -50,8 +50,23 @@ const App = () => {
     window.dispatchEvent(new CustomEvent('moveCameraToIndex', { detail: idx }));
   };
 
-  const handleLeft = () => handleLeftStore(moveCameraToIndex);
-  const handleRight = () => handleRightStore(moveCameraToIndex);
+  const navigate = useNavigate();
+  const handleLeft = () => {
+    handleLeftStore((newIndex) => {
+      moveCameraToIndex(newIndex);
+      if (ideas[newIndex]?.id) {
+        navigate(`/ideas/${ideas[newIndex].id}`);
+      }
+    });
+  };
+  const handleRight = () => {
+    handleRightStore((newIndex) => {
+      moveCameraToIndex(newIndex);
+      if (ideas[newIndex]?.id) {
+        navigate(`/ideas/${ideas[newIndex].id}`);
+      }
+    });
+  };
 
   // Handler for AddIdeaModal submission
   const handleSubmitIdea = (ideaData) => {
