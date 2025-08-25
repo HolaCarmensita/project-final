@@ -64,8 +64,16 @@ export const LikeButton = ({ ideaId, initialLikes = 0 }) => {
 
   const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
   const likes = useIdeasStore((s) => {
-    const idea = s.ideas.find((i) => i.id === ideaId);
-    return idea?.likes ?? initialLikes;
+    const idea = s.ideas.find((i) => i._id === ideaId || i.id === ideaId);
+    console.log(
+      'LikeButton - ideaId:',
+      ideaId,
+      'idea:',
+      idea,
+      'likeCount:',
+      idea?.likeCount
+    );
+    return idea?.likeCount ?? initialLikes;
   });
 
   const handleClick = () => {
@@ -80,8 +88,9 @@ export const LikeButton = ({ ideaId, initialLikes = 0 }) => {
         <StyledButton
           onClick={handleClick}
           tabIndex={4}
-          aria-label={`${isLiked ? 'Unlike' : 'Like'
-            } this idea. ${likes} likes`}
+          aria-label={`${
+            isLiked ? 'Unlike' : 'Like'
+          } this idea. ${likes} likes`}
         >
           <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
         </StyledButton>

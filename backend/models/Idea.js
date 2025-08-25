@@ -44,6 +44,11 @@ ideaSchema.virtual('likeCount').get(function () {
   return this.likedBy.length;
 });
 
+// Virtual field to get connections count
+ideaSchema.virtual('connectionCount').get(function () {
+  return 0; // For now, return 0 since connections are stored in User model
+});
+
 // Virtual field to get image count
 ideaSchema.virtual('imageCount').get(function () {
   return this.images.length;

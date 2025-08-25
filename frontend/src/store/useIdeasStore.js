@@ -25,6 +25,7 @@ export const useIdeasStore = create((set, get) => ({
   // State
   ideas: [],
   likedIds: [],
+  connectedIds: [],
   isLoading: false,
   error: null,
   hasMore: true,
@@ -184,14 +185,18 @@ export const useIdeasStore = create((set, get) => ({
   likeIdea: async (id) => {
     try {
       const result = await ideasService.likeIdea(id);
+      console.log('likeIdea - API result:', result);
 
       if (result.success) {
-        set((state) => ({
-          ideas: state.ideas.map((idea) =>
-            idea._id === id ? { ...idea, ...result.idea } : idea
-          ),
-          likedIds: [...state.likedIds, id],
-        }));
+        set((state) => {
+          console.log('likeIdea - updating store with:', result.idea);
+          return {
+            ideas: state.ideas.map((idea) =>
+              idea._id === id ? { ...idea, ...result.idea } : idea
+            ),
+            likedIds: [...state.likedIds, id],
+          };
+        });
 
         return { success: true };
       } else {
@@ -221,6 +226,52 @@ export const useIdeasStore = create((set, get) => ({
       }
     } catch (error) {
       return { success: false, message: 'Failed to unlike idea' };
+    }
+  },
+
+  // Connect to idea
+  connectToIdea: async (id) => {
+    try {
+      const result = await ideasService.connectToIdea(id);
+
+      if (result.success) {
+        set((state) => ({
+          ideas: state.ideas.map((idea) =>
+            idea._id === id ? { ...idea, ...result.idea } : idea
+          ),
+          connectedIds: [...state.connectedIds, id],
+        }));
+
+        return { success: true };
+      } else {
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      return { success: false, message: 'Failed to connect to idea' };
+    }
+  },
+
+  // Disconnect from idea
+  disconnectFromIdea: async (id) => {
+    try {
+      const result = await ideasService.disconnectFromIdea(id);
+
+      if (result.success) {
+        set((state) => ({
+          ideas: state.ideas.map((idea) =>
+            idea._id === id ? { ...idea, ...result.idea } : idea
+          ),
+          connectedIds: state.connectedIds.filter(
+            (connectedId) => connectedId !== id
+          ),
+        }));
+
+        return { success: true };
+      } else {
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      return { success: false, message: 'Failed to disconnect from idea' };
     }
   },
 
@@ -262,6 +313,7 @@ export const useIdeasStore = create((set, get) => ({
   // Getters
   getIdeas: () => get().ideas,
   getLikedIds: () => get().likedIds,
+  getConnectedIds: () => get().connectedIds,
   getIsLoading: () => get().isLoading,
   getError: () => get().error,
   getHasMore: () => get().hasMore,
@@ -269,6 +321,7 @@ export const useIdeasStore = create((set, get) => ({
   // Setters
   setIdeas: (ideas) => set({ ideas }),
   setLikedIds: (likedIds) => set({ likedIds }),
+  setConnectedIds: (connectedIds) => set({ connectedIds }),
   setIsLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),

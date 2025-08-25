@@ -32,11 +32,11 @@ const IdeaCard = ({ idea = null }) => {
       />
       <ImageCarousel images={idea?.images} />
       <IdeaSocialBar
-        ideaId={idea?.id}
+        ideaId={idea?._id}
         authorId={idea?.authorId}
         authorName={idea?.author}
-        likes={idea?.likes}
-        connections={idea?.connections}
+        likes={idea?.likeCount}
+        connections={idea?.connectionCount}
       />
       <IdeaText title={idea?.title} bodyText={idea?.bodyText} />
     </IdeaCardContainer>

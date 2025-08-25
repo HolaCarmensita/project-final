@@ -18,6 +18,11 @@
 
 .scene-container > header {
   padding: 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
 }
 
 /* Hide scene container on mobile when modal is active */

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import at from '../../../../assets/icons/at.svg';
 import atBold from '../../../../assets/icons/at_bold.svg';
+import { useIdeasStore } from '../../../../store/useIdeasStore';
 
 const ConnectButtonContainer = styled.div`
   display: flex;
@@ -57,13 +58,29 @@ const ConnectCount = styled.p`
   font-weight: 400;
 `;
 
-export const ConnectButton = ({ ideaId, authorId, authorName, initialConnections = 0 }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [connections, setConnections] = useState(initialConnections);
+export const ConnectButton = ({
+  ideaId,
+  authorId,
+  authorName,
+  initialConnections = 0,
+}) => {
+  // Get connection data from store
+  const connectedIds = useIdeasStore((s) => s.connectedIds || []);
+
+  const isConnected = useMemo(
+    () => connectedIds.includes(ideaId),
+    [connectedIds, ideaId]
+  );
+  const connections = useIdeasStore((s) => {
+    const idea = s.ideas.find((i) => i._id === ideaId || i.id === ideaId);
+    return idea?.connectionCount ?? initialConnections;
+  });
 
   const handleClick = () => {
     // Open connect modal via custom event to keep component decoupled
-    const event = new CustomEvent('openConnectModal', { detail: { ideaId, userId: authorId, userName: authorName } });
+    const event = new CustomEvent('openConnectModal', {
+      detail: { ideaId, userId: authorId, userName: authorName },
+    });
     window.dispatchEvent(event);
   };
 
@@ -73,8 +90,9 @@ export const ConnectButton = ({ ideaId, authorId, authorName, initialConnections
         <ConnectBtn
           onClick={handleClick}
           tabIndex={5}
-          aria-label={`${isConnected ? 'Disconnect from' : 'Connect with'
-            } this idea. ${connections} connections`}
+          aria-label={`${
+            isConnected ? 'Disconnect from' : 'Connect with'
+          } this idea. ${connections} connections`}
         >
           <ConnectIcon
             src={isConnected ? atBold : at}
