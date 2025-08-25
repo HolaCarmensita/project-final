@@ -121,11 +121,13 @@ const Scene = () => {
         orbColor={idea.orbColor}
         onClick={() => {
           handleOrbClick(pos);
-          if (idea.id) {
-            navigate(`/ideas/${idea.id}`);
-          } else {
-            navigate(`/ideas`);
-          }
+          setTimeout(() => {
+            if (idea.id) {
+              navigate(`/ideas/${idea.id}`);
+            } else {
+              navigate(`/ideas`);
+            }
+          }, 900); // Slightly before camera animation ends
           setSelectedIndex(i);
         }}
       />

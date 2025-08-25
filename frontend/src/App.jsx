@@ -54,17 +54,21 @@ const App = () => {
   const handleLeft = () => {
     handleLeftStore((newIndex) => {
       moveCameraToIndex(newIndex);
-      if (ideas[newIndex]?.id) {
-        navigate(`/ideas/${ideas[newIndex].id}`);
-      }
+      setTimeout(() => {
+        if (ideas[newIndex]?.id) {
+          navigate(`/ideas/${ideas[newIndex].id}`);
+        }
+      }, 900); // Slightly before camera animation ends
     });
   };
   const handleRight = () => {
     handleRightStore((newIndex) => {
       moveCameraToIndex(newIndex);
-      if (ideas[newIndex]?.id) {
-        navigate(`/ideas/${ideas[newIndex].id}`);
-      }
+      setTimeout(() => {
+        if (ideas[newIndex]?.id) {
+          navigate(`/ideas/${ideas[newIndex].id}`);
+        }
+      }, 900); // open idea card slightly before camera animation ends
     });
   };
 
