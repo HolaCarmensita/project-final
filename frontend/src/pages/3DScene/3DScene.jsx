@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-// Removed Bloom imports
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Sparkles } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { useIdeasStore } from '../../store/useIdeasStore';
 import { useUIStore } from '../../store/useUIStore';
@@ -9,6 +8,9 @@ import { gsap } from 'gsap';
 import IdeaOrb from './IdeaOrb';
 import CameraController from './CameraController';
 import Joystick from '../../components/Joystick';
+import { getSpherePosition } from './sphereLayout';
+import { useShowJoystick } from './useShowJoystick';
+import { useSceneNavigation } from './useSceneNavigation';
 
 // Helper to detect when user is typing in an input/textarea/contentEditable field
 const isTypingIntoField = () => {
@@ -70,42 +72,16 @@ const Scene = () => {
       });
     }
   };
-  // Listen for camera move events from NavBar
-  useEffect(() => {
-    const handler = (e) => {
-      const idx = e.detail;
-      if (ideas.length > 0 && typeof idx === 'number') {
-        const offset = 2 / ideas.length;
-        const increment = Math.PI * (3 - Math.sqrt(5));
-        const y = idx * offset - 1 + offset / 2;
-        const r = Math.sqrt(1 - y * y);
-        const phi = idx * increment;
-        const x = Math.cos(phi) * r;
-        const z = Math.sin(phi) * r;
-        handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
-      }
-    };
-    window.addEventListener('moveCameraToIndex', handler);
-    return () => window.removeEventListener('moveCameraToIndex', handler);
-  }, [ideas.length, handleOrbClick]);
-  // Keyboard navigation for left/right arrows (attach only once)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (isTypingIntoField()) return; // ignore navigation when typing
-      let newIndex = selectedIndex;
-      if (e.key === 'ArrowLeft') {
-        newIndex = (newIndex - 1 + ideas.length) % ideas.length;
-        setSelectedIndex(newIndex);
-      } else if (e.key === 'ArrowRight') {
-        newIndex = (newIndex + 1) % ideas.length;
-        setSelectedIndex(newIndex);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedIndex, ideas.length, setSelectedIndex]);
+  // ...existing code...
+  const sphereRadius = 20;
+  // Use custom hook for keyboard and camera navigation
+  useSceneNavigation({
+    ideas,
+    selectedIndex,
+    setSelectedIndex,
+    handleOrbClick,
+    sphereRadius,
+  });
 
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
   const handleJoystickMove = (data) => {
@@ -118,68 +94,7 @@ const Scene = () => {
     joystickVecRef.current = { x, y, force };
   };
 
-  const [showJoystick, setShowJoystick] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) {
-      setShowJoystick(false);
-      return;
-    }
-    const compute = () => {
-      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-      const hasTouch =
-        'ontouchstart' in window ||
-        navigator.maxTouchPoints > 0 ||
-        navigator.msMaxTouchPoints > 0;
-      const isiPad =
-        /iPad/.test(ua) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      const isIPhone = /iPhone|iPod/.test(ua);
-      const isAndroid = /Android/.test(ua);
-      const isMobile = isiPad || isIPhone || isAndroid;
-      const sw = window.screen?.width || 0;
-      const sh = window.screen?.height || 0;
-      const vw = window.innerWidth || 0;
-      const vh = window.innerHeight || 0;
-      const approxEq = (a, b) => Math.abs(a - b) <= 2;
-      const isIpadProByScreen =
-        (approxEq(sw, 1024) && approxEq(sh, 1366)) ||
-        (approxEq(sw, 1366) && approxEq(sh, 1024));
-      const isIpadProByViewport =
-        (approxEq(vw, 1024) && approxEq(vh, 1366)) ||
-        (approxEq(vw, 1366) && approxEq(vh, 1024));
-      const isIpadAirByScreen =
-        (approxEq(sw, 820) && approxEq(sh, 1180)) ||
-        (approxEq(sw, 1180) && approxEq(sh, 820));
-      const isIpadAirByViewport =
-        (approxEq(vw, 820) && approxEq(vh, 1180)) ||
-        (approxEq(vw, 1180) && approxEq(vh, 820));
-
-      if (isiPad) {
-        setShowJoystick(true);
-        return;
-      }
-      if (
-        hasTouch &&
-        (isIpadProByScreen ||
-          isIpadProByViewport ||
-          isIpadAirByScreen ||
-          isIpadAirByViewport)
-      ) {
-        setShowJoystick(true);
-        return;
-      }
-      setShowJoystick(Boolean(hasTouch && isMobile));
-    };
-
-    compute();
-    const handler = () => compute();
-    window.addEventListener('resize', handler);
-    window.addEventListener('orientationchange', handler);
-    return () => {
-      window.removeEventListener('resize', handler);
-      window.removeEventListener('orientationchange', handler);
-    };
-  }, []);
+  const showJoystick = useShowJoystick();
 
   // ...existing code...
 
@@ -201,26 +116,17 @@ const Scene = () => {
     handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
   };
 
-  const sphereRadius = 20;
+  // ...existing code...
   const orbCount = ideas.length;
 
   const orbs = ideas.map((idea, i) => {
-    const offset = 2 / orbCount;
-    const increment = Math.PI * (3 - Math.sqrt(5));
-    const y = i * offset - 1 + offset / 2;
-    const r = Math.sqrt(1 - y * y);
-    const phi = i * increment;
-    const x = Math.cos(phi) * r;
-    const z = Math.sin(phi) * r;
-    const pos = [x * sphereRadius, y * sphereRadius, z * sphereRadius];
-
+    const pos = getSpherePosition(i, orbCount, sphereRadius);
     return (
       <IdeaOrb
         key={idea.id ?? i}
         position={pos}
         text={idea.title || idea.text}
         orbColor={idea.orbColor}
-        auraColor={idea.auraColor}
         onClick={() => {
           handleOrbClick(pos);
           if (idea.id) {
@@ -235,10 +141,33 @@ const Scene = () => {
   });
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <Canvas camera={{ position: [0, 0, 50], fov: 75 }}>
-        {/* Removed background color to make it transparent */}
-        {/* <color attach='background' args={['white']} /> */}
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Radial gradient background */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+          background:
+            'radial-gradient(circle at 60% 40%, #ffe6e6 0%, #fff7d6 60%, #e6f7ff 100%)',
+        }}
+      />
+      <Canvas
+        camera={{ position: [0, 0, 50], fov: 75 }}
+        style={{ position: 'relative', zIndex: 1 }}
+      >
+        <fog attach='fog' args={['#f7f7fa', 20, 70]} />
         <ambientLight intensity={0.6} />
         <directionalLight intensity={0.4} position={[5, 5, 5]} />
         <CameraController joystickVecRef={joystickVecRef} />
@@ -250,8 +179,37 @@ const Scene = () => {
           target={[0, 0, 0]}
           makeDefault
         />
-        {/* Bloom must be inside Canvas, not in a fragment or outside */}
-        {/* Removed Bloom and EffectComposer */}
+        {/* Global ambient sparkles field (less dense and further out) */}
+        <Sparkles
+          count={250}
+          scale={[100, 80, 100]}
+          size={60}
+          speed={2.2}
+          opacity={0.35}
+          color='#84c7ff'
+          noise={2}
+        />
+        {/* Mid-distance layer for wider coverage */}
+        <Sparkles
+          count={120}
+          scale={[200, 160, 200]}
+          size={150}
+          speed={2.5}
+          opacity={0.25}
+          color='#84c7ff'
+          noise={2.5}
+        />
+        {/* Far layer to fill deep background */}
+        <Sparkles
+          count={180}
+          scale={[320, 260, 320]}
+          size={150}
+          speed={2.8}
+          opacity={0.18}
+          color='#84c7ff'
+          noise={3}
+        />
+        {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}
       </Canvas>
 
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
