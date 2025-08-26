@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import at from '../../../../assets/icons/at.svg';
 import atBold from '../../../../assets/icons/at_bold.svg';
 import { useIdeasStore } from '../../../../store/useIdeasStore';
+import { useAuthStore } from '../../../../store/useAuthStore';
 
 const ConnectButtonContainer = styled.div`
   display: flex;
@@ -29,18 +30,20 @@ const ConnectBtn = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: ${(props) => (props.disabled ? 'none' : 'scale(1.05)')};
   }
 
   &:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-    background-color: rgba(0, 123, 255, 0.05);
+    outline: none;
   }
 
   &:focus-visible {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
@@ -68,6 +71,9 @@ export const ConnectButton = ({ ideaId }) => {
   const connectToIdea = useIdeasStore((store) => store.connectToIdea);
   const disconnectFromIdea = useIdeasStore((store) => store.disconnectFromIdea);
 
+  // Get current user from auth store
+  const currentUser = useAuthStore((store) => store.user);
+
   const isConnected = useMemo(
     () => connectedIds.includes(ideaId),
     [connectedIds, ideaId]
@@ -77,7 +83,13 @@ export const ConnectButton = ({ ideaId }) => {
   const creatorName = idea?.creator?.fullName;
   const ideaTitle = idea?.title;
 
+  // Check if this is the user's own idea
+  const isOwnIdea = currentUser && idea?.creator?._id === currentUser._id;
+
   const handleClick = async () => {
+    // Don't allow interaction if it's the user's own idea
+    if (isOwnIdea) return;
+
     if (isConnected) {
       // Disconnect from idea
       const result = await disconnectFromIdea(ideaId);
@@ -103,9 +115,14 @@ export const ConnectButton = ({ ideaId }) => {
       <ButtonContainer>
         <ConnectBtn
           onClick={handleClick}
+          disabled={isOwnIdea}
           tabIndex={5}
           aria-label={`${
-            isConnected ? 'Disconnect from' : 'Connect with'
+            isOwnIdea
+              ? 'Cannot connect to your own idea'
+              : isConnected
+              ? 'Disconnect from'
+              : 'Connect with'
           } this idea. ${connections} connections`}
         >
           <ConnectIcon

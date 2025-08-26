@@ -10,14 +10,11 @@ const IdeaTextContainer = styled.div`
   transition: all 0.3s ease;
 
   &:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-    background-color: rgba(0, 123, 255, 0.05);
+    outline: none;
   }
 
   &:focus-visible {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
+    outline: none;
   }
 `;
 

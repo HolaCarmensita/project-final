@@ -3,6 +3,7 @@ import heart from '../../../../assets/icons/heart.svg';
 import heartFill from '../../../../assets/icons/heart_fill.svg';
 import styled from 'styled-components';
 import { useIdeasStore } from '../../../../store/useIdeasStore';
+import { useAuthStore } from '../../../../store/useAuthStore';
 
 const LikeButtonContainer = styled.div`
   display: flex;
@@ -27,18 +28,20 @@ const StyledButton = styled.button`
   padding-inline: 0px;
 
   &:hover {
-    transform: scale(1.05);
+    transform: ${(props) => (props.disabled ? 'none' : 'scale(1.05)')};
   }
 
   &:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-    background-color: rgba(0, 123, 255, 0.05);
+    outline: none;
   }
 
   &:focus-visible {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
@@ -67,12 +70,19 @@ export const LikeButton = ({ ideaId }) => {
   const likeIdea = useIdeasStore((store) => store.likeIdea);
   const unlikeIdea = useIdeasStore((store) => store.unlikeIdea);
 
+  // Get current user from auth store
+  const currentUser = useAuthStore((store) => store.user);
+
   const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
 
   const likes = idea?.likeCount ?? 0;
 
+  // Check if this is the user's own idea
+  const isOwnIdea = currentUser && idea?.creator?._id === currentUser._id;
+
   const handleClick = () => {
-    if (!ideaId) return;
+    // Don't allow interaction if it's the user's own idea
+    if (isOwnIdea || !ideaId) return;
     if (isLiked) unlikeIdea(ideaId);
     else likeIdea(ideaId);
   };
@@ -82,9 +92,14 @@ export const LikeButton = ({ ideaId }) => {
       <ButtonContainer>
         <StyledButton
           onClick={handleClick}
+          disabled={isOwnIdea}
           tabIndex={4}
           aria-label={`${
-            isLiked ? 'Unlike' : 'Like'
+            isOwnIdea
+              ? 'Cannot like your own idea'
+              : isLiked
+              ? 'Unlike'
+              : 'Like'
           } this idea. ${likes} likes`}
         >
           <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
