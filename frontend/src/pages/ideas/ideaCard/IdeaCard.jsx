@@ -33,9 +33,6 @@ const IdeaCard = ({ idea = null }) => {
       <ImageCarousel images={idea?.images} />
       <IdeaSocialBar
         ideaId={idea?._id}
-        creatorId={idea?.creator?._id}
-        creatorName={idea?.creator?.fullName}
-        ideaTitle={idea?.title}
         likes={idea?.likeCount}
         connections={idea?.connectionCount}
       />

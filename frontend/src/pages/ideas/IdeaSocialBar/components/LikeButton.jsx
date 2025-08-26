@@ -57,29 +57,19 @@ const LikeCount = styled.p`
   font-weight: 400;
 `;
 
-export const LikeButton = ({ ideaId, initialLikes = 0 }) => {
-  const likedIds = useIdeasStore((s) => s.likedIds);
-  const likeIdea = useIdeasStore((s) => s.likeIdea);
-  const unlikeIdea = useIdeasStore((s) => s.unlikeIdea);
-  const ideas = useIdeasStore((s) => s.ideas);
+export const LikeButton = ({ ideaId }) => {
+  // Get all data from store (updates automatically)
+  const idea = useIdeasStore((store) =>
+    store.ideas.find((i) => i._id === ideaId || i.id === ideaId)
+  );
+
+  const likedIds = useIdeasStore((store) => store.likedIds);
+  const likeIdea = useIdeasStore((store) => store.likeIdea);
+  const unlikeIdea = useIdeasStore((store) => store.unlikeIdea);
 
   const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
 
-  const likes = useMemo(() => {
-    const idea = ideas.find((i) => i._id === ideaId || i.id === ideaId);
-    // Only log when the idea data actually changes
-    if (idea) {
-      console.log(
-        'LikeButton - ideaId:',
-        ideaId,
-        'idea:',
-        idea,
-        'likeCount:',
-        idea?.likeCount
-      );
-    }
-    return idea?.likeCount ?? initialLikes;
-  }, [ideas, ideaId, initialLikes]);
+  const likes = idea?.likeCount ?? 0;
 
   const handleClick = () => {
     if (!ideaId) return;

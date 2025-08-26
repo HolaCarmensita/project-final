@@ -58,31 +58,44 @@ const ConnectCount = styled.p`
   font-weight: 400;
 `;
 
-export const ConnectButton = ({
-  ideaId,
-  creatorId,
-  creatorName,
-  ideaTitle,
-  initialConnections = 0,
-}) => {
-  // Get connection data from store
-  const connectedIds = useIdeasStore((s) => s.connectedIds || []);
+export const ConnectButton = ({ ideaId }) => {
+  // Get all data from store (updates automatically)
+  const idea = useIdeasStore((store) =>
+    store.ideas.find((i) => i._id === ideaId || i.id === ideaId)
+  );
+
+  const connectedIds = useIdeasStore((store) => store.connectedIds || []);
+  const connectToIdea = useIdeasStore((store) => store.connectToIdea);
+  const disconnectFromIdea = useIdeasStore((store) => store.disconnectFromIdea);
 
   const isConnected = useMemo(
     () => connectedIds.includes(ideaId),
     [connectedIds, ideaId]
   );
-  const connections = useIdeasStore((s) => {
-    const idea = s.ideas.find((i) => i._id === ideaId || i.id === ideaId);
-    return idea?.connectionCount ?? initialConnections;
-  });
 
-  const handleClick = () => {
-    // Open connect modal via custom event to keep component decoupled
-    const event = new CustomEvent('openConnectModal', {
-      detail: { ideaId, userId: creatorId, userName: creatorName, ideaTitle },
-    });
-    window.dispatchEvent(event);
+  const connections = idea?.connectionCount ?? 0;
+  const creatorName = idea?.creator?.fullName;
+  const ideaTitle = idea?.title;
+
+  const handleClick = async () => {
+    if (isConnected) {
+      // Disconnect from idea
+      const result = await disconnectFromIdea(ideaId);
+      if (!result.success) {
+        console.error('Failed to disconnect:', result.message);
+      }
+    } else {
+      // Open connect modal via custom event to keep component decoupled
+      const event = new CustomEvent('openConnectModal', {
+        detail: {
+          ideaId,
+          userId: idea?.creator?._id,
+          userName: creatorName,
+          ideaTitle,
+        },
+      });
+      window.dispatchEvent(event);
+    }
   };
 
   return (
