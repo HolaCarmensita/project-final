@@ -236,9 +236,9 @@ export const useIdeasStore = create((set, get) => ({
   },
 
   // Connect to idea
-  connectToIdea: async (id) => {
+  connectToIdea: async (id, message) => {
     try {
-      const result = await ideasService.connectToIdea(id);
+      const result = await ideasService.connectToIdea(id, message);
 
       if (result.success) {
         set((state) => ({

@@ -172,6 +172,40 @@ const searchIdeas = async (query) => {
   }
 };
 
+// Connect to idea
+const connectToIdea = async (id, message) => {
+  try {
+    const response = await api.post(`/ideas/${id}/connect`, { message });
+    return {
+      success: true,
+      idea: response.data.idea,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      error,
+    };
+  }
+};
+
+// Disconnect from idea
+const disconnectFromIdea = async (id) => {
+  try {
+    const response = await api.delete(`/ideas/${id}/connect`);
+    return {
+      success: true,
+      idea: response.data.idea,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      error,
+    };
+  }
+};
+
 // Export all functions
 export const ideasService = {
   getAllIdeas,
@@ -184,6 +218,8 @@ export const ideasService = {
   getIdeasByUser,
   getLikedIdeas,
   searchIdeas,
+  connectToIdea,
+  disconnectFromIdea,
 };
 
 export default ideasService;

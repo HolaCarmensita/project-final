@@ -22,10 +22,10 @@ export const useUIStore = create((set, get) => ({
 
   // Connect modal
   setIsConnectOpen: (isOpen) => set({ isConnectOpen: isOpen }),
-  openConnectModal: ({ ideaId, userId, userName }) =>
+  openConnectModal: ({ ideaId, userId, userName, ideaTitle }) =>
     set({
       isConnectOpen: true,
-      connectTarget: { ideaId, userId, userName },
+      connectTarget: { ideaId, userId, userName, ideaTitle },
     }),
   closeConnectModal: () =>
     set({

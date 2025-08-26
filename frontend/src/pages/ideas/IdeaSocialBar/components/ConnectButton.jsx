@@ -60,8 +60,9 @@ const ConnectCount = styled.p`
 
 export const ConnectButton = ({
   ideaId,
-  authorId,
-  authorName,
+  creatorId,
+  creatorName,
+  ideaTitle,
   initialConnections = 0,
 }) => {
   // Get connection data from store
@@ -79,7 +80,7 @@ export const ConnectButton = ({
   const handleClick = () => {
     // Open connect modal via custom event to keep component decoupled
     const event = new CustomEvent('openConnectModal', {
-      detail: { ideaId, userId: authorId, userName: authorName },
+      detail: { ideaId, userId: creatorId, userName: creatorName, ideaTitle },
     });
     window.dispatchEvent(event);
   };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import { useUIStore } from '../store/useUIStore';
-import { useUsersStore } from '../store/useUsersStore';
+import { useIdeasStore } from '../store/useIdeasStore';
 
 const Overlay = styled.div`
   position: fixed;
@@ -81,10 +81,10 @@ export default function ConnectModal() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Get store functions
-  const createConnection = useUsersStore((state) => state.createConnection);
-  const isLoading = useUsersStore((state) => state.isLoading);
-  const error = useUsersStore((state) => state.error);
-  const clearError = useUsersStore((state) => state.clearError);
+  const connectToIdea = useIdeasStore((state) => state.connectToIdea);
+  const isLoading = useIdeasStore((state) => state.isLoading);
+  const error = useIdeasStore((state) => state.error);
+  const clearError = useIdeasStore((state) => state.clearError);
 
   const validateForm = () => {
     let isValid = true;
@@ -116,7 +116,7 @@ export default function ConnectModal() {
     }
 
     try {
-      const result = await createConnection(target?.userId, message.trim());
+      const result = await connectToIdea(target?.ideaId, message.trim());
 
       if (result.success) {
         setIsSuccess(true);
@@ -129,7 +129,7 @@ export default function ConnectModal() {
         }, 2000);
       }
     } catch (error) {
-      console.error('Failed to create connection:', error);
+      console.error('Failed to connect to idea:', error);
     }
   };
 
@@ -151,6 +151,7 @@ export default function ConnectModal() {
   };
 
   const userName = target?.userName || 'this user';
+  const ideaTitle = target?.ideaTitle || 'this idea';
 
   return (
     <>
@@ -163,6 +164,7 @@ export default function ConnectModal() {
         >
           <form onSubmit={onSubmit}>
             <Title>{`Connect to ${userName}'s Idea`}</Title>
+            <h4>{`${ideaTitle}`}</h4>
             <Label htmlFor='connect-msg'>Write a personal message</Label>
             <TextArea
               id='connect-msg'

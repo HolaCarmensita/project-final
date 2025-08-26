@@ -13,8 +13,9 @@ const IdeaSocialBarContainer = styled.div`
 
 const IdeaSocialBar = ({
   ideaId,
-  authorId,
-  authorName,
+  creatorId,
+  creatorName,
+  ideaTitle,
   likes = 0,
   connections = 0,
 }) => {
@@ -23,8 +24,9 @@ const IdeaSocialBar = ({
       <LikeButton ideaId={ideaId} initialLikes={likes} />
       <ConnectButton
         ideaId={ideaId}
-        authorId={authorId}
-        authorName={authorName}
+        creatorId={creatorId}
+        creatorName={creatorName}
+        ideaTitle={ideaTitle}
         initialConnections={connections}
       />
     </IdeaSocialBarContainer>

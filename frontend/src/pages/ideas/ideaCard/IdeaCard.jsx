@@ -26,19 +26,20 @@ const IdeaCard = ({ idea = null }) => {
   return (
     <IdeaCardContainer>
       <ProfileButton
-        author={idea?.author}
-        role={idea?.role}
-        userId={idea?.authorId}
+        author={idea?.creator?.fullName}
+        role={idea?.creator?.role}
+        userId={idea?.creator?._id}
       />
       <ImageCarousel images={idea?.images} />
       <IdeaSocialBar
         ideaId={idea?._id}
-        authorId={idea?.authorId}
-        authorName={idea?.author}
+        creatorId={idea?.creator?._id}
+        creatorName={idea?.creator?.fullName}
+        ideaTitle={idea?.title}
         likes={idea?.likeCount}
         connections={idea?.connectionCount}
       />
-      <IdeaText title={idea?.title} bodyText={idea?.bodyText} />
+      <IdeaText title={idea?.title} bodyText={idea?.description} />
     </IdeaCardContainer>
   );
 };
