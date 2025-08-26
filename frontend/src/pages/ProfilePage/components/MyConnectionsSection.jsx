@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useIdeasStore } from '../../../store/useIdeasStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 
 const Section = styled.section`
@@ -52,61 +51,50 @@ const Note = styled.div`
   top: 0 !important;
 `;
 
-const LoadingMessage = styled.div`
-  text-align: center;
-  color: #666;
-  padding: 20px;
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  color: #d32f2f;
-  padding: 20px;
-`;
-
 const EmptyMessage = styled.div`
   text-align: center;
   color: #666;
   padding: 20px;
 `;
 
-export default function ConnectionsSection() {
+export default function MyConnectionsSection() {
   const navigate = useNavigate();
 
-  // Get state from AuthStore (user data with receivedConnections)
+  // Get state from AuthStore (user data with connectedIdeas)
   const currentUser = useAuthStore((store) => store.user);
 
-  // Get received connections from user data
-  const receivedConnections = currentUser?.receivedConnections || [];
-
-  // No loading/error states needed since we get data from store
+  // Get ideas I connected to from user data
+  const myConnections = currentUser?.connectedIdeas || [];
 
   return (
     <Section>
       <SectionHeader>
         <h3>
-          People Who Connected To My Ideas{' '}
-          <span className='count'>({receivedConnections.length})</span>
+          Ideas I Connected To{' '}
+          <span className='count'>({myConnections.length})</span>
         </h3>
       </SectionHeader>
       <ConnectionsList>
-        {receivedConnections.length > 0 ? (
-          receivedConnections.map((connection, i) => (
+        {myConnections.length > 0 ? (
+          myConnections.map((connection, i) => (
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/user/${connection.connectedBy}`)}
+              onClick={() => navigate(`/ideas/${connection.idea}`)}
             >
-              <Avatar style={{ background: connection.color || '#ddd' }} />
+              <Avatar style={{ background: '#ddd' }} />
               <div>
-                <Name>User ID: {connection.connectedBy}</Name>
-                <Role>Connected to: {connection.idea}</Role>
+                <Name>Idea ID: {connection.idea}</Name>
+                <Role>
+                  Connected on:{' '}
+                  {new Date(connection.connectedAt).toLocaleDateString()}
+                </Role>
                 <Note>{connection.message}</Note>
               </div>
             </Person>
           ))
         ) : (
-          <EmptyMessage>No one has connected to your ideas yet.</EmptyMessage>
+          <EmptyMessage>You haven't connected to any ideas yet.</EmptyMessage>
         )}
       </ConnectionsList>
     </Section>

@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Idea from '../models/Idea.js';
+import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -162,6 +163,14 @@ router.post('/:id/like', async (req, res) => {
     }
 
     const userId = req.user._id;
+
+    // Check if user is trying to like their own idea
+    if (idea.creator.toString() === userId.toString()) {
+      return res.status(400).json({
+        message: 'You cannot like your own idea',
+      });
+    }
+
     const isLiked = idea.likedBy.includes(userId);
 
     if (isLiked) {
@@ -224,7 +233,14 @@ router.post('/:id/connect', async (req, res) => {
       });
     }
 
-    // 6. Check if user already connected to this idea
+    // 6. Check if user is trying to connect to their own idea
+    if (idea.creator.toString() === userId.toString()) {
+      return res.status(400).json({
+        message: 'You cannot connect to your own idea',
+      });
+    }
+
+    // 7. Check if user already connected to this idea
     const alreadyConnected = idea.connectedBy.some(
       (connection) => connection.user.toString() === userId.toString()
     );
@@ -242,17 +258,40 @@ router.post('/:id/connect', async (req, res) => {
       connectedAt: new Date(),
     });
 
-    // 8. Save the updated idea
+    // 8. Add the connection to the user's connectedIdeas array
+    const user = await User.findById(userId);
+    if (user) {
+      user.connectedIdeas.push({
+        idea: ideaId,
+        message: message.trim(),
+        connectedAt: new Date(),
+      });
+      await user.save();
+    }
+
+    // 9. Add the connection to the idea creator's receivedConnections array
+    const ideaCreator = await User.findById(idea.creator);
+    if (ideaCreator) {
+      ideaCreator.receivedConnections.push({
+        idea: ideaId,
+        connectedBy: userId,
+        message: message.trim(),
+        connectedAt: new Date(),
+      });
+      await ideaCreator.save();
+    }
+
+    // 10. Save the updated idea
     await idea.save();
 
-    // 9. Populate the creator and connectedBy user information
+    // 11. Populate the creator and connectedBy user information
     await idea.populate('creator', 'firstName lastName email fullName');
     await idea.populate(
       'connectedBy.user',
       'firstName lastName email fullName'
     );
 
-    // 10. Return the updated idea
+    // 12. Return the updated idea
     res.json({
       message: 'Successfully connected to idea',
       idea: idea,
@@ -297,10 +336,32 @@ router.delete('/:id/connect', async (req, res) => {
     // 5. Remove the connection from the idea's connectedBy array
     idea.connectedBy.splice(connectionIndex, 1);
 
-    // 6. Save the updated idea
+    // 6. Remove the connection from the user's connectedIdeas array
+    const user = await User.findById(userId);
+    if (user) {
+      user.connectedIdeas = user.connectedIdeas.filter(
+        (connection) => connection.idea.toString() !== ideaId.toString()
+      );
+      await user.save();
+    }
+
+    // 7. Remove the connection from the idea creator's receivedConnections array
+    const ideaCreator = await User.findById(idea.creator);
+    if (ideaCreator) {
+      ideaCreator.receivedConnections = ideaCreator.receivedConnections.filter(
+        (connection) =>
+          !(
+            connection.idea.toString() === ideaId.toString() &&
+            connection.connectedBy.toString() === userId.toString()
+          )
+      );
+      await ideaCreator.save();
+    }
+
+    // 8. Save the updated idea
     await idea.save();
 
-    // 7. Populate the creator and connectedBy user information
+    // 9. Populate the creator and connectedBy user information
     await idea.populate('creator', 'firstName lastName email fullName');
     await idea.populate('likedBy', 'firstName lastName email fullName');
     await idea.populate(
@@ -308,7 +369,7 @@ router.delete('/:id/connect', async (req, res) => {
       'firstName lastName email fullName'
     );
 
-    // 8. Return the updated idea
+    // 10. Return the updated idea
     res.json({
       message: 'Successfully disconnected from idea',
       idea: idea,

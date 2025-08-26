@@ -72,6 +72,27 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    receivedConnections: [
+      {
+        idea: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Idea',
+        },
+        connectedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        message: {
+          type: String,
+          required: true,
+          maxlength: [500, 'Connection message cannot exceed 500 characters'],
+        },
+        connectedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -88,9 +109,14 @@ userSchema.virtual('likeCount').get(function () {
   return this.likedIdeas ? this.likedIdeas.length : 0;
 });
 
-// Virtual field to get connection count
+// Virtual field to get connection count (ideas I connected to)
 userSchema.virtual('connectionCount').get(function () {
   return this.connectedIdeas ? this.connectedIdeas.length : 0;
+});
+
+// Virtual field to get received connections count (people who connected to my ideas)
+userSchema.virtual('receivedConnectionCount').get(function () {
+  return this.receivedConnections ? this.receivedConnections.length : 0;
 });
 
 // Virtual field to check if user has description
