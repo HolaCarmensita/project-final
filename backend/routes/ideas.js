@@ -60,6 +60,8 @@ router.get('/', async (req, res) => {
     console.log('Fetching ideas...');
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName')
+      .populate('likedBy', 'firstName lastName email fullName') // Add this!
+      .populate('connectedBy.user', 'firstName lastName email fullName')
       .sort({ createdAt: -1 }); // Newest first
 
     console.log('Ideas found:', ideas.length);
@@ -78,10 +80,10 @@ router.get('/', async (req, res) => {
 // Get single idea by ID
 router.get('/:id', async (req, res) => {
   try {
-    const idea = await Idea.findById(req.params.id).populate(
-      'creator',
-      'firstName lastName email fullName'
-    );
+    const idea = await Idea.findById(req.params.id)
+      .populate('creator', 'firstName lastName email fullName')
+      .populate('likedBy', 'firstName lastName email fullName')
+      .populate('connectedBy.user', 'firstName lastName email fullName');
 
     if (!idea) {
       return res.status(404).json({ message: 'Idea not found' });
@@ -174,6 +176,11 @@ router.post('/:id/like', async (req, res) => {
 
     await idea.save();
     await idea.populate('creator', 'firstName lastName email fullName');
+    await idea.populate('likedBy', 'firstName lastName email fullName');
+    await idea.populate(
+      'connectedBy.user',
+      'firstName lastName email fullName'
+    );
 
     res.json({
       message: isLiked ? 'Idea unliked' : 'Idea liked',
@@ -181,6 +188,137 @@ router.post('/:id/like', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Connect to idea
+router.post('/:id/connect', async (req, res) => {
+  try {
+    // 1. Get the idea ID from the URL parameter
+    const ideaId = req.params.id;
+
+    // 2. Get the connection message from request body
+    const { message } = req.body;
+
+    // 3. Get the user ID from the authentication token (already available from middleware)
+    const userId = req.user._id;
+
+    // 4. Validate the message
+    if (!message || message.trim().length === 0) {
+      return res.status(400).json({
+        message: 'Connection message is required',
+      });
+    }
+
+    if (message.length > 500) {
+      return res.status(400).json({
+        message: 'Connection message cannot exceed 500 characters',
+      });
+    }
+
+    // 5. Find the idea and check if it exists
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        message: 'Idea not found',
+      });
+    }
+
+    // 6. Check if user already connected to this idea
+    const alreadyConnected = idea.connectedBy.some(
+      (connection) => connection.user.toString() === userId.toString()
+    );
+
+    if (alreadyConnected) {
+      return res.status(400).json({
+        message: 'You have already connected to this idea',
+      });
+    }
+
+    // 7. Add the connection to the idea's connectedBy array
+    idea.connectedBy.push({
+      user: userId,
+      message: message.trim(),
+      connectedAt: new Date(),
+    });
+
+    // 8. Save the updated idea
+    await idea.save();
+
+    // 9. Populate the creator and connectedBy user information
+    await idea.populate('creator', 'firstName lastName email fullName');
+    await idea.populate(
+      'connectedBy.user',
+      'firstName lastName email fullName'
+    );
+
+    // 10. Return the updated idea
+    res.json({
+      message: 'Successfully connected to idea',
+      idea: idea,
+    });
+  } catch (error) {
+    console.error('Error in POST /ideas/:id/connect:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+});
+
+// Disconnect from idea
+router.delete('/:id/connect', async (req, res) => {
+  try {
+    // 1. Get the idea ID from the URL parameter
+    const ideaId = req.params.id;
+
+    // 2. Get the user ID from the authentication token
+    const userId = req.user._id;
+
+    // 3. Find the idea and check if it exists
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        message: 'Idea not found',
+      });
+    }
+
+    // 4. Check if user has connected to this idea
+    const connectionIndex = idea.connectedBy.findIndex(
+      (connection) => connection.user.toString() === userId.toString()
+    );
+
+    if (connectionIndex === -1) {
+      return res.status(400).json({
+        message: 'You have not connected to this idea',
+      });
+    }
+
+    // 5. Remove the connection from the idea's connectedBy array
+    idea.connectedBy.splice(connectionIndex, 1);
+
+    // 6. Save the updated idea
+    await idea.save();
+
+    // 7. Populate the creator and connectedBy user information
+    await idea.populate('creator', 'firstName lastName email fullName');
+    await idea.populate('likedBy', 'firstName lastName email fullName');
+    await idea.populate(
+      'connectedBy.user',
+      'firstName lastName email fullName'
+    );
+
+    // 8. Return the updated idea
+    res.json({
+      message: 'Successfully disconnected from idea',
+      idea: idea,
+    });
+  } catch (error) {
+    console.error('Error in DELETE /ideas/:id/connect:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+    });
   }
 });
 

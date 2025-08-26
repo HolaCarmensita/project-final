@@ -33,6 +33,24 @@ const ideaSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    connectedBy: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        message: {
+          type: String,
+          required: true,
+          maxlength: [500, 'Connection message cannot exceed 500 characters'],
+        },
+        connectedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -46,7 +64,7 @@ ideaSchema.virtual('likeCount').get(function () {
 
 // Virtual field to get connections count
 ideaSchema.virtual('connectionCount').get(function () {
-  return 0; // For now, return 0 since connections are stored in User model
+  return this.connectedBy.length;
 });
 
 // Virtual field to get image count
