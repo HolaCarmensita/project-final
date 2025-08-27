@@ -26,8 +26,12 @@ const IdeaCard = ({ idea = null }) => {
   return (
     <IdeaCardContainer>
       <ProfileButton
-        author={idea?.creator?.fullName}
-        role={idea?.creator?.role}
+        author={
+          idea?.creator?.firstName && idea?.creator?.lastName
+            ? `${idea.creator.firstName} ${idea.creator.lastName}`
+            : 'Unknown User'
+        }
+        role={idea?.creator?.role || 'Unknown Role'}
         userId={idea?.creator?._id}
       />
       <ImageCarousel images={idea?.images} />

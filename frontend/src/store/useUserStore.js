@@ -14,6 +14,7 @@ export const useUserStore = create((set, get) => ({
 
     try {
       const response = await api.get('/users/profile');
+
       set({
         user: response.data.user,
         isLoading: false,

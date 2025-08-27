@@ -77,13 +77,28 @@ export const ConnectButton = ({ ideaId }) => {
   // Get current user from user store
   const currentUser = useUserStore((store) => store.user);
 
-  const isConnected = useMemo(
-    () =>
-      currentUser?.connectedIdeas?.some(
-        (connection) => connection.idea === ideaId
-      ),
-    [currentUser?.connectedIdeas, ideaId]
-  );
+  const isConnected = useMemo(() => {
+    // Wait for user data to be loaded
+    if (!currentUser) return false;
+
+    // If connectedIdeas is not loaded yet, return false (not connected)
+    if (!currentUser.connectedIdeas) return false;
+
+    if (!ideaId) {
+      console.error('Missing ideaId for connection check');
+      return false;
+    }
+
+    return currentUser.connectedIdeas.some((connection) => {
+      if (!connection.idea) {
+        console.error('Connection missing idea data:', connection);
+        return false;
+      }
+
+      const connectionId = connection.idea._id || connection.idea;
+      return connectionId === ideaId;
+    });
+  }, [currentUser?.connectedIdeas, ideaId]);
 
   const connections = idea?.connectionCount || 0;
   const creatorName = idea?.creator?.fullName;

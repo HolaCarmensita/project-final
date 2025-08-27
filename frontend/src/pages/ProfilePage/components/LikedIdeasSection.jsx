@@ -19,8 +19,10 @@ export default function LikedIdeasSection() {
   const likedIdeas = React.useMemo(() => {
     if (!user?.likedIdeas || !ideas.length) return [];
 
-    // Get the liked idea IDs from user data (now they're just strings)
-    const likedIds = user.likedIdeas;
+    // Get the liked idea IDs from user data - handle both strings and objects
+    const likedIds = user.likedIdeas.map((id) =>
+      typeof id === 'string' ? id : id._id || id
+    );
 
     // Filter ideas to only show the ones the user has liked
     return ideas.filter((idea) => likedIds.includes(idea._id));

@@ -14,7 +14,9 @@ export const useInteractionsStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
+      console.log('LikeIdea: Calling API for idea:', id);
       const result = await ideasService.likeIdea(id);
+      console.log('LikeIdea: API result:', result);
 
       if (result.success) {
         // Update the idea counter in ideas store
@@ -24,14 +26,25 @@ export const useInteractionsStore = create((set, get) => ({
             ? { ...idea, likeCount: (idea.likeCount || 0) + 1 }
             : idea
         );
+        console.log(
+          'LikeIdea: Updating ideas store, new likeCount for idea',
+          id,
+          ':',
+          updatedIdeas.find((idea) => idea._id === id)?.likeCount
+        );
         useIdeasStore.getState().setIdeas(updatedIdeas);
 
-        // Update the user's likedIdeas array in user store
-        const currentUser = useUserStore.getState().getUser();
-        if (currentUser) {
-          useUserStore
-            .getState()
-            .updateLikedIdeas([...currentUser.likedIdeas, id]);
+        // Update the user's likedIdeas array in user store using backend response
+        if (result.user) {
+          console.log(
+            'Updating user store with backend data:',
+            result.user.likedIdeas
+          );
+          useUserStore.getState().setUser(result.user);
+        } else {
+          console.error('Backend did not return user data for like operation');
+          set({ isLoading: false, error: 'Failed to update user data' });
+          return { success: false, message: 'Failed to update user data' };
         }
 
         set({ isLoading: false, error: null });
@@ -63,14 +76,19 @@ export const useInteractionsStore = create((set, get) => ({
         );
         useIdeasStore.getState().setIdeas(updatedIdeas);
 
-        // Update the user's likedIdeas array in user store
-        const currentUser = useUserStore.getState().getUser();
-        if (currentUser) {
-          useUserStore
-            .getState()
-            .updateLikedIdeas(
-              currentUser.likedIdeas.filter((ideaId) => ideaId !== id)
-            );
+        // Update the user's likedIdeas array in user store using backend response
+        if (result.user) {
+          console.log(
+            'Updating user store with backend data (unlike):',
+            result.user.likedIdeas
+          );
+          useUserStore.getState().setUser(result.user);
+        } else {
+          console.error(
+            'Backend did not return user data for unlike operation'
+          );
+          set({ isLoading: false, error: 'Failed to update user data' });
+          return { success: false, message: 'Failed to update user data' };
         }
 
         set({ isLoading: false, error: null });
@@ -145,16 +163,19 @@ export const useInteractionsStore = create((set, get) => ({
         );
         useIdeasStore.getState().setIdeas(updatedIdeas);
 
-        // Update the user's connectedIdeas array in user store
-        const currentUser = useUserStore.getState().getUser();
-        if (currentUser) {
-          useUserStore
-            .getState()
-            .updateConnections(
-              currentUser.connectedIdeas.filter(
-                (connection) => connection.idea !== id
-              )
-            );
+        // Update the user's connectedIdeas array in user store using backend response
+        if (result.user) {
+          console.log(
+            'Updating user store with backend data (disconnect):',
+            result.user.connectedIdeas
+          );
+          useUserStore.getState().setUser(result.user);
+        } else {
+          console.error(
+            'Backend did not return user data for disconnect operation'
+          );
+          set({ isLoading: false, error: 'Failed to update user data' });
+          return { success: false, message: 'Failed to update user data' };
         }
 
         set({ isLoading: false, error: null });

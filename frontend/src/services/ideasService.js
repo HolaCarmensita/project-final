@@ -92,6 +92,7 @@ const likeIdea = async (id) => {
     return {
       success: true,
       idea: response.data.idea,
+      user: response.data.user,
     };
   } catch (error) {
     return {
@@ -109,6 +110,7 @@ const unlikeIdea = async (id) => {
     return {
       success: true,
       idea: response.data.idea,
+      user: response.data.user,
     };
   } catch (error) {
     return {
@@ -177,6 +179,7 @@ const disconnectFromIdea = async (id) => {
     return {
       success: true,
       idea: response.data.idea,
+      user: response.data.user,
     };
   } catch (error) {
     return {

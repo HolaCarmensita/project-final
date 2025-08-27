@@ -47,7 +47,7 @@ router.post(
       await idea.save();
 
       // Populate the creator field before sending response
-      await idea.populate('creator', 'firstName lastName email fullName');
+      await idea.populate('creator', 'firstName lastName email fullName role');
 
       res.json({
         message: 'Idea object created and saved to database!',
@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
 
     // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
-      .populate('creator', 'firstName lastName email fullName')
+      .populate('creator', 'firstName lastName email fullName role')
       .sort({ createdAt: -1 })
       .lean();
 
@@ -89,7 +89,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const idea = await Idea.findById(req.params.id)
-      .populate('creator', 'firstName lastName email fullName')
+      .populate('creator', 'firstName lastName email fullName role')
       .populate('likedBy', 'firstName lastName email fullName')
       .populate('connectedBy.user', 'firstName lastName email fullName');
 
@@ -125,7 +125,7 @@ router.put('/:id', async (req, res) => {
     const updatedIdea = await Idea.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    }).populate('creator', 'firstName lastName email fullName');
+    }).populate('creator', 'firstName lastName email fullName role');
 
     res.json({
       message: 'Idea updated successfully',
@@ -195,11 +195,23 @@ router.post('/:id/like', async (req, res) => {
     }
 
     // Save both user and idea
-    await Promise.all([user.save(), idea.save()]);
+    console.log('About to save user and idea...');
+    const savedUser = await user.save();
+    const savedIdea = await idea.save();
+
+    console.log('Save operations completed');
+    console.log('Saved user likedIdeas:', savedUser.likedIdeas);
+    console.log('Saved idea likeCount:', savedIdea.likeCount);
+
+    // Verify the save worked by fetching the user again
+    const verifyUser = await User.findById(userId);
+    console.log('Verified user likedIdeas from DB:', verifyUser.likedIdeas);
 
     res.json({
       message: isLiked ? 'Idea unliked' : 'Idea liked',
       success: true,
+      user: savedUser,
+      idea: savedIdea,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -346,10 +358,12 @@ router.delete('/:id/connect', async (req, res) => {
     // 8. Save all updates
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 9. Return success
+    // 9. Return success with updated user data
     res.json({
       message: 'Successfully disconnected from idea',
       success: true,
+      user: user,
+      idea: idea,
     });
   } catch (error) {
     console.error('Error in DELETE /ideas/:id/connect:', error);
