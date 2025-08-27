@@ -1,5 +1,6 @@
 import React from 'react';
 import { useIdeasStore } from '../../../store/useIdeasStore';
+import { useAuthStore } from '../../../store/useAuthStore';
 import SectionHeader from '../../../components/SectionHeader';
 import StackedIdeaCards from '../../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../../components/ColorIdeaCard';
@@ -11,12 +12,19 @@ import heartBrokenIcon from '../../../assets/icons/heart_broken.svg';
 
 export default function LikedIdeasSection() {
   const ideas = useIdeasStore((store) => store.ideas);
-  const likedIds = useIdeasStore((store) => store.likedIds);
+  const user = useAuthStore((store) => store.user);
   const unlikeIdea = useIdeasStore((store) => store.unlikeIdea);
-  const likedIdeas = React.useMemo(
-    () => ideas.filter((idea) => likedIds.includes(idea._id)),
-    [ideas, likedIds]
-  );
+
+  const likedIdeas = React.useMemo(() => {
+    if (!user?.likedIdeas || !ideas.length) return [];
+
+    // Get the liked idea IDs from user data
+    const likedIds = user.likedIdeas.map((idea) => idea._id || idea);
+
+    // Filter ideas to only show the ones the user has liked
+    return ideas.filter((idea) => likedIds.includes(idea._id));
+  }, [ideas, user?.likedIdeas]);
+
   const [unstacked, setUnstacked] = React.useState(false);
 
   return (

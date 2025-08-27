@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
 import ideasService from '../services/ideasService.js';
-import { mockIdeas } from '../data/ideas.js';
 
 // Keep the color generation function - it's essential for your app's design
 const getUniqueColorPair = (() => {
@@ -57,31 +56,19 @@ export const useIdeasStore = create((set, get) => ({
           hasMore: ideasWithColors.length > 0,
         });
       } else {
-        // Fallback to mock data if API fails
-        console.log('API failed, loading mock data...');
-        const ideasWithColors = mockIdeas.map((idea) => {
-          const { orbColor, auraColor } = getUniqueColorPair();
-          return { ...idea, orbColor, auraColor };
-        });
-
+        // API failed - set error state
         set({
-          ideas: ideasWithColors,
+          error: result.message || 'Failed to fetch ideas',
           isLoading: false,
-          hasMore: ideasWithColors.length > 0,
+          hasMore: false,
         });
       }
     } catch (error) {
-      // Fallback to mock data if API fails
-      console.log('API failed, loading mock data...');
-      const ideasWithColors = mockIdeas.map((idea) => {
-        const { orbColor, auraColor } = getUniqueColorPair();
-        return { ...idea, orbColor, auraColor };
-      });
-
+      // API error - set error state
       set({
-        ideas: ideasWithColors,
+        error: 'Failed to fetch ideas',
         isLoading: false,
-        hasMore: ideasWithColors.length > 0,
+        hasMore: false,
       });
     }
   },

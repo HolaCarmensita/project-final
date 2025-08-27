@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { users } from '../../../../data/users';
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -53,9 +52,8 @@ const ProfileButton = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Prefer explicit userId; otherwise resolve by matching author's name in mock users
-    const resolvedId =
-      userId || users.find((u) => u.name === author)?.id || author || 'user';
+    // Use userId if provided, otherwise use author as fallback
+    const resolvedId = userId || author || 'user';
     navigate(`/user/${encodeURIComponent(resolvedId)}`);
   };
 

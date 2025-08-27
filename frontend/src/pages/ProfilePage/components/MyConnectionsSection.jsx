@@ -80,11 +80,13 @@ export default function MyConnectionsSection() {
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/ideas/${connection.idea}`)}
+              onClick={() =>
+                navigate(`/ideas/${connection.idea._id || connection.idea}`)
+              }
             >
               <Avatar style={{ background: '#ddd' }} />
               <div>
-                <Name>Idea ID: {connection.idea}</Name>
+                <Name>{connection.idea?.title || 'Unknown Idea'}</Name>
                 <Role>
                   Connected on:{' '}
                   {new Date(connection.connectedAt).toLocaleDateString()}

@@ -22,6 +22,16 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // Get current user profile with populated data
+  getCurrentUserProfile: async () => {
+    try {
+      const response = await api.get('/users/profile');
+      return { valid: true, user: response.data.user };
+    } catch (error) {
+      return { valid: false, error: error.message };
+    }
+  },
+
   // Check if user is already logged in when app starts
   initializeAuth: async () => {
     // Prevent multiple simultaneous initializations
@@ -49,14 +59,31 @@ export const useAuthStore = create((set, get) => ({
       const validation = await get().validateToken();
 
       if (validation.valid) {
-        // Token is valid - only update user data, keep isAuthenticated as true
-        set({
-          user: validation.user,
-          isLoading: false,
-          error: null,
-          isInitializing: false,
-        });
-        console.log('AuthStore: Token validated successfully');
+        // Token is valid - get fresh user data with populated likes and connections
+        const profileResult = await get().getCurrentUserProfile();
+
+        if (profileResult.valid) {
+          set({
+            user: profileResult.user,
+            isLoading: false,
+            error: null,
+            isInitializing: false,
+          });
+          console.log(
+            'AuthStore: Token validated and profile loaded successfully'
+          );
+        } else {
+          // Fallback to validation user data if profile fetch fails
+          set({
+            user: validation.user,
+            isLoading: false,
+            error: null,
+            isInitializing: false,
+          });
+          console.log(
+            'AuthStore: Token validated successfully (profile fetch failed)'
+          );
+        }
       } else {
         // Token is invalid - clear auth state
         authService.logout();

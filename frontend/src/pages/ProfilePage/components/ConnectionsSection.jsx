@@ -95,12 +95,26 @@ export default function ConnectionsSection() {
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/user/${connection.connectedBy}`)}
+              onClick={() =>
+                navigate(
+                  `/user/${
+                    connection.connectedBy._id || connection.connectedBy
+                  }`
+                )
+              }
             >
               <Avatar style={{ background: connection.color || '#ddd' }} />
               <div>
-                <Name>User ID: {connection.connectedBy}</Name>
-                <Role>Connected to: {connection.idea}</Role>
+                <Name>
+                  {connection.connectedBy?.fullName ||
+                    (connection.connectedBy?.firstName &&
+                    connection.connectedBy?.lastName
+                      ? `${connection.connectedBy.firstName} ${connection.connectedBy.lastName}`
+                      : 'Unknown User')}
+                </Name>
+                <Role>
+                  Connected to: {connection.idea?.title || 'Unknown Idea'}
+                </Role>
                 <Note>{connection.message}</Note>
               </div>
             </Person>

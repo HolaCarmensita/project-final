@@ -12,7 +12,12 @@ router.use(authenticateToken);
 // Get current user profile
 router.get('/profile', async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id)
+      .populate('likedIdeas', 'title description creator')
+      .populate('connectedIdeas.idea', 'title description creator')
+      .populate('receivedConnections.idea', 'title description creator')
+      .populate('receivedConnections.connectedBy', 'firstName lastName email fullName')
+      .select('-password');
 
     res.json({
       message: 'Profile retrieved successfully',

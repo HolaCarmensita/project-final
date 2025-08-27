@@ -10,7 +10,7 @@ const IdeasFetcher = () => {
   const hasInitialized = useRef(false);
   const lastAuthState = useRef(null);
 
-  // Fetch ideas when user is authenticated (or always for development)
+  // Fetch ideas only when user is authenticated
   useEffect(() => {
     // Only log when auth state actually changes
     if (lastAuthState.current !== isAuthenticated) {
@@ -18,8 +18,13 @@ const IdeasFetcher = () => {
       lastAuthState.current = isAuthenticated;
     }
 
-    // Only fetch if we haven't initialized yet, ideas are empty, and not currently loading
-    if (!hasInitialized.current && ideas.length === 0 && !isLoading) {
+    // Only fetch if user is authenticated, we haven't initialized yet, ideas are empty, and not currently loading
+    if (
+      isAuthenticated &&
+      !hasInitialized.current &&
+      ideas.length === 0 &&
+      !isLoading
+    ) {
       console.log('IdeasFetcher: Fetching ideas...');
       fetchIdeas();
       hasInitialized.current = true;
