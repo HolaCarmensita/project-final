@@ -225,6 +225,15 @@ export const useIdeasStore = create((set, get) => ({
           };
         });
 
+        // Update the user's likedIdeas array in auth store
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser) {
+          useAuthStore.getState().setUser({
+            ...currentUser,
+            likedIdeas: [...currentUser.likedIdeas, id],
+          });
+        }
+
         return { success: true };
       } else {
         return { success: false, message: result.message };
@@ -246,6 +255,17 @@ export const useIdeasStore = create((set, get) => ({
           ),
           likedIds: state.likedIds.filter((likedId) => likedId !== id),
         }));
+
+        // Update the user's likedIdeas array in auth store
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser) {
+          useAuthStore.getState().setUser({
+            ...currentUser,
+            likedIdeas: currentUser.likedIdeas.filter(
+              (ideaId) => ideaId !== id
+            ),
+          });
+        }
 
         return { success: true };
       } else {

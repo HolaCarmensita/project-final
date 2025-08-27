@@ -177,13 +177,29 @@ router.post('/:id/like', async (req, res) => {
     const isLiked = idea.likedBy.includes(userId);
 
     if (isLiked) {
-      // Unlike
+      // Unlike - remove from both arrays
       idea.likedBy = idea.likedBy.filter(
         (id) => id.toString() !== userId.toString()
       );
+
+      // Remove from user's likedIdeas array
+      const user = await User.findById(userId);
+      if (user) {
+        user.likedIdeas = user.likedIdeas.filter(
+          (ideaId) => ideaId.toString() !== idea._id.toString()
+        );
+        await user.save();
+      }
     } else {
-      // Like
+      // Like - add to both arrays
       idea.likedBy.push(userId);
+
+      // Add to user's likedIdeas array
+      const user = await User.findById(userId);
+      if (user) {
+        user.likedIdeas.push(idea._id);
+        await user.save();
+      }
     }
 
     await idea.save();

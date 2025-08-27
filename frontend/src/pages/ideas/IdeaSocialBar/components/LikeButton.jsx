@@ -76,7 +76,7 @@ export const LikeButton = ({ ideaId }) => {
 
   const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
 
-  const likes = idea?.likeCount ?? 0;
+  const likes = idea?.likedBy?.length ?? 0;
 
   // Check if this is the user's own idea
   const isOwnIdea = currentUser && idea?.creator?._id === currentUser._id;

@@ -80,7 +80,7 @@ export const ConnectButton = ({ ideaId }) => {
     [connectedIds, ideaId]
   );
 
-  const connections = idea?.connectionCount ?? 0;
+  const connections = idea?.connectedBy?.length ?? 0;
   const creatorName = idea?.creator?.fullName;
   const ideaTitle = idea?.title;
 
