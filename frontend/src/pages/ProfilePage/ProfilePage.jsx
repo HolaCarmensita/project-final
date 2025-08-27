@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import MyIdeasSection from './components/MyIdeasSection';
 import LikedIdeasSection from './components/LikedIdeasSection';
 import ConnectionsSection from './components/ConnectionsSection';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useUserStore } from '../../store/useUserStore';
 import ProfileSettingsSection from './components/ProfileSettingsSection';
 
 // Container pinned to the right using global overlay rules
@@ -38,7 +38,7 @@ const Username = styled.span`
 // The content sections below are now split into dedicated components.
 
 const ProfilePage = () => {
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
 
   return (
     <Page>
