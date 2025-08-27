@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import heart from '../../../../assets/icons/heart.svg';
 import heartFill from '../../../../assets/icons/heart_fill.svg';
 import styled from 'styled-components';
+import { useInteractionsStore } from '../../../../store/useInteractionsStore';
+import { useUserStore } from '../../../../store/useUserStore';
 import { useIdeasStore } from '../../../../store/useIdeasStore';
-import { useAuthStore } from '../../../../store/useAuthStore';
 
 const LikeButtonContainer = styled.div`
   display: flex;
@@ -67,16 +68,18 @@ export const LikeButton = ({ ideaId }) => {
     store.ideas.find((i) => i._id === ideaId)
   );
 
-  const likedIds = useIdeasStore((store) => store.likedIds);
-  const likeIdea = useIdeasStore((store) => store.likeIdea);
-  const unlikeIdea = useIdeasStore((store) => store.unlikeIdea);
+  const likeIdea = useInteractionsStore((store) => store.likeIdea);
+  const unlikeIdea = useInteractionsStore((store) => store.unlikeIdea);
 
-  // Get current user from auth store
-  const currentUser = useAuthStore((store) => store.user);
+  // Get current user from user store
+  const currentUser = useUserStore((store) => store.user);
 
-  const isLiked = useMemo(() => likedIds.includes(ideaId), [likedIds, ideaId]);
+  const isLiked = useMemo(
+    () => currentUser?.likedIdeas?.includes(ideaId),
+    [currentUser?.likedIdeas, ideaId]
+  );
 
-  const likes = idea?.likedBy?.length ?? 0;
+  const likes = idea?.likeCount || 0;
 
   // Check if this is the user's own idea
   const isOwnIdea = currentUser && idea?.creator?._id === currentUser._id;

@@ -21,34 +21,20 @@ const ideaSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Creator is required'],
     },
+    likeCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    connectionCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     images: [
       {
         type: String,
         trim: true,
-      },
-    ],
-    likedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    ],
-    connectedBy: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
-          required: true,
-        },
-        message: {
-          type: String,
-          required: true,
-          maxlength: [500, 'Connection message cannot exceed 500 characters'],
-        },
-        connectedAt: {
-          type: Date,
-          default: Date.now,
-        },
       },
     ],
   },
@@ -56,16 +42,6 @@ const ideaSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-// Virtual field to get like count
-ideaSchema.virtual('likeCount').get(function () {
-  return this.likedBy.length;
-});
-
-// Virtual field to get connections count
-ideaSchema.virtual('connectionCount').get(function () {
-  return this.connectedBy.length;
-});
 
 // Virtual field to get image count
 ideaSchema.virtual('imageCount').get(function () {

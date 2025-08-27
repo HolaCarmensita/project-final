@@ -29,7 +29,7 @@ const IdeasFetcher = () => {
       fetchIdeas();
       hasInitialized.current = true;
     }
-  }, [isAuthenticated, ideas.length, isLoading, fetchIdeas]);
+  }, [isAuthenticated, ideas.length, isLoading]); // Remove fetchIdeas dependency to prevent re-renders
 
   // This component doesn't render anything
   return null;

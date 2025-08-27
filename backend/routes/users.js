@@ -12,18 +12,53 @@ router.use(authenticateToken);
 // Get current user profile
 router.get('/profile', async (req, res) => {
   try {
-    const user = await User.findById(req.user._id)
-      .populate('likedIdeas', 'title description creator')
-      .populate('connectedIdeas.idea', 'title description creator')
-      .populate('receivedConnections.idea', 'title description creator')
-      .populate('receivedConnections.connectedBy', 'firstName lastName email fullName')
+    console.log('Fetching profile for user:', req.user._id);
+
+    // First get the user without populate to check if it exists
+    const user = await User.findById(req.user._id).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Then populate with error handling
+    const populatedUser = await User.findById(req.user._id)
+      .populate({
+        path: 'likedIdeas',
+        select: 'title description creator likeCount connectionCount',
+        options: { lean: true },
+      })
+      .populate({
+        path: 'connectedIdeas.idea',
+        select: 'title description creator likeCount connectionCount',
+        options: { lean: true },
+      })
+      .populate({
+        path: 'receivedConnections.idea',
+        select: 'title description creator likeCount connectionCount',
+        options: { lean: true },
+      })
+      .populate({
+        path: 'receivedConnections.connectedBy',
+        select: 'firstName lastName email fullName',
+        options: { lean: true },
+      })
       .select('-password');
+
+    console.log('User profile fetched successfully');
+    console.log('Connected ideas sample:', populatedUser.connectedIdeas?.[0]);
+    console.log(
+      'Received connections sample:',
+      populatedUser.receivedConnections?.[0]
+    );
 
     res.json({
       message: 'Profile retrieved successfully',
-      user: user,
+      user: populatedUser,
     });
   } catch (error) {
+    console.error('Error in GET /users/profile:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

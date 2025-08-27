@@ -12,6 +12,7 @@ import IdeaPage from '../pages/ideas/IdeaPage/IdeaPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import MyIdeaCardEdit from '../pages/MyIdeaPage/MyIdeaCardEdit';
 import UserProfilePage from '../pages/UserProfilePage/UserProfilePage';
+import ConnectionPage from '../pages/ConnectionPage/ConnectionPage';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -34,7 +35,8 @@ const AppLayout = () => {
   const isModalActive = location.pathname !== '/';
   const isProfileRoute = location.pathname.startsWith('/profile');
   const isIdeasRoute = location.pathname.startsWith('/ideas');
-  const shouldShowModal = isIdeasRoute || isProfileRoute;
+  const isConnectionsRoute = location.pathname.startsWith('/connections');
+  const shouldShowModal = isIdeasRoute || isProfileRoute || isConnectionsRoute;
 
   // Navigation handlers
   const handleLeft = () =>
@@ -111,6 +113,10 @@ const AppLayout = () => {
                   element={<MyIdeaCardEdit />}
                 />
                 <Route path='/user/:userId' element={<UserProfilePage />} />
+                <Route
+                  path='/connections/:connectionId'
+                  element={<ConnectionPage />}
+                />
               </Routes>
             </div>
           </div>

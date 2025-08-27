@@ -5,6 +5,7 @@ import IdeasFetcher from './components/IdeasFetcher';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import useAuthStore from './store/useAuthStore';
+import useUserStore from './store/useUserStore';
 
 // Profile pages
 import ProfilePage from './pages/ProfilePage/ProfilePage';
@@ -20,11 +21,20 @@ import IdeaPage from './pages/ideas/IdeaPage/IdeaPage';
 
 const App = () => {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
+  const fetchUserProfile = useUserStore((state) => state.fetchUserProfile);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
-    // Restore auth state from localStorage when app starts / you stay logged in after a refresh
+    // Restore auth state from localStorage when app starts
     initializeAuth();
   }, []); // Remove initializeAuth dependency to prevent re-renders
+
+  useEffect(() => {
+    // Fetch user profile when authenticated
+    if (isAuthenticated) {
+      fetchUserProfile();
+    }
+  }, [isAuthenticated]); // Remove fetchUserProfile dependency to prevent re-renders
 
   return (
     <>

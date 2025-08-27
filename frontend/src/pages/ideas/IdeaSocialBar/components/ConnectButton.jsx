@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import at from '../../../../assets/icons/at.svg';
 import atBold from '../../../../assets/icons/at_bold.svg';
+import { useInteractionsStore } from '../../../../store/useInteractionsStore';
+import { useUserStore } from '../../../../store/useUserStore';
 import { useIdeasStore } from '../../../../store/useIdeasStore';
-import { useAuthStore } from '../../../../store/useAuthStore';
 
 const ConnectButtonContainer = styled.div`
   display: flex;
@@ -68,19 +69,23 @@ export const ConnectButton = ({ ideaId }) => {
     store.ideas.find((i) => i._id === ideaId)
   );
 
-  const connectedIds = useIdeasStore((store) => store.connectedIds || []);
-  const connectToIdea = useIdeasStore((store) => store.connectToIdea);
-  const disconnectFromIdea = useIdeasStore((store) => store.disconnectFromIdea);
-
-  // Get current user from auth store
-  const currentUser = useAuthStore((store) => store.user);
-
-  const isConnected = useMemo(
-    () => connectedIds.includes(ideaId),
-    [connectedIds, ideaId]
+  const connectToIdea = useInteractionsStore((store) => store.connectToIdea);
+  const disconnectFromIdea = useInteractionsStore(
+    (store) => store.disconnectFromIdea
   );
 
-  const connections = idea?.connectedBy?.length ?? 0;
+  // Get current user from user store
+  const currentUser = useUserStore((store) => store.user);
+
+  const isConnected = useMemo(
+    () =>
+      currentUser?.connectedIdeas?.some(
+        (connection) => connection.idea === ideaId
+      ),
+    [currentUser?.connectedIdeas, ideaId]
+  );
+
+  const connections = idea?.connectionCount || 0;
   const creatorName = idea?.creator?.fullName;
   const ideaTitle = idea?.title;
 

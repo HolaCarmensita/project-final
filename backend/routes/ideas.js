@@ -1,5 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
+import mongoose from 'mongoose';
 import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
@@ -38,6 +39,8 @@ router.post(
         title,
         description,
         creator: req.user._id,
+        likeCount: 0,
+        connectionCount: 0,
       });
 
       // Save to database
@@ -62,11 +65,12 @@ router.post(
 router.get('/', async (req, res) => {
   try {
     console.log('Fetching ideas...');
+
+    // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName')
-      .populate('likedBy', 'firstName lastName email fullName') // Add this!
-      .populate('connectedBy.user', 'firstName lastName email fullName')
-      .sort({ createdAt: -1 }); // Newest first
+      .sort({ createdAt: -1 })
+      .lean();
 
     console.log('Ideas found:', ideas.length);
     console.log('First idea:', ideas[0]);
@@ -174,45 +178,28 @@ router.post('/:id/like', async (req, res) => {
       });
     }
 
-    const isLiked = idea.likedBy.includes(userId);
+    // Check if user already liked this idea
+    const user = await User.findById(userId);
+    const isLiked = user.likedIdeas.includes(req.params.id);
 
     if (isLiked) {
-      // Unlike - remove from both arrays
-      idea.likedBy = idea.likedBy.filter(
-        (id) => id.toString() !== userId.toString()
+      // Unlike - remove from user's likedIdeas and decrement counter
+      user.likedIdeas = user.likedIdeas.filter(
+        (ideaId) => ideaId.toString() !== req.params.id
       );
-
-      // Remove from user's likedIdeas array
-      const user = await User.findById(userId);
-      if (user) {
-        user.likedIdeas = user.likedIdeas.filter(
-          (ideaId) => ideaId.toString() !== idea._id.toString()
-        );
-        await user.save();
-      }
+      idea.likeCount = Math.max(0, idea.likeCount - 1);
     } else {
-      // Like - add to both arrays
-      idea.likedBy.push(userId);
-
-      // Add to user's likedIdeas array
-      const user = await User.findById(userId);
-      if (user) {
-        user.likedIdeas.push(idea._id);
-        await user.save();
-      }
+      // Like - add to user's likedIdeas and increment counter
+      user.likedIdeas.push(req.params.id);
+      idea.likeCount += 1;
     }
 
-    await idea.save();
-    await idea.populate('creator', 'firstName lastName email fullName');
-    await idea.populate('likedBy', 'firstName lastName email fullName');
-    await idea.populate(
-      'connectedBy.user',
-      'firstName lastName email fullName'
-    );
+    // Save both user and idea
+    await Promise.all([user.save(), idea.save()]);
 
     res.json({
       message: isLiked ? 'Idea unliked' : 'Idea liked',
-      idea: idea,
+      success: true,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -260,8 +247,9 @@ router.post('/:id/connect', async (req, res) => {
     }
 
     // 7. Check if user already connected to this idea
-    const alreadyConnected = idea.connectedBy.some(
-      (connection) => connection.user.toString() === userId.toString()
+    const user = await User.findById(userId);
+    const alreadyConnected = user.connectedIdeas.some(
+      (connection) => connection.idea.toString() === ideaId.toString()
     );
 
     if (alreadyConnected) {
@@ -270,23 +258,12 @@ router.post('/:id/connect', async (req, res) => {
       });
     }
 
-    // 7. Add the connection to the idea's connectedBy array
-    idea.connectedBy.push({
-      user: userId,
+    // 8. Add the connection to the user's connectedIdeas array
+    user.connectedIdeas.push({
+      idea: ideaId,
       message: message.trim(),
       connectedAt: new Date(),
     });
-
-    // 8. Add the connection to the user's connectedIdeas array
-    const user = await User.findById(userId);
-    if (user) {
-      user.connectedIdeas.push({
-        idea: ideaId,
-        message: message.trim(),
-        connectedAt: new Date(),
-      });
-      await user.save();
-    }
 
     // 9. Add the connection to the idea creator's receivedConnections array
     const ideaCreator = await User.findById(idea.creator);
@@ -297,23 +274,18 @@ router.post('/:id/connect', async (req, res) => {
         message: message.trim(),
         connectedAt: new Date(),
       });
-      await ideaCreator.save();
     }
 
-    // 10. Save the updated idea
-    await idea.save();
+    // 10. Increment the idea's connection counter
+    idea.connectionCount += 1;
 
-    // 11. Populate the creator and connectedBy user information
-    await idea.populate('creator', 'firstName lastName email fullName');
-    await idea.populate(
-      'connectedBy.user',
-      'firstName lastName email fullName'
-    );
+    // 11. Save all updates
+    await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 12. Return the updated idea
+    // 12. Return success
     res.json({
       message: 'Successfully connected to idea',
-      idea: idea,
+      success: true,
     });
   } catch (error) {
     console.error('Error in POST /ideas/:id/connect:', error);
@@ -342,8 +314,9 @@ router.delete('/:id/connect', async (req, res) => {
     }
 
     // 4. Check if user has connected to this idea
-    const connectionIndex = idea.connectedBy.findIndex(
-      (connection) => connection.user.toString() === userId.toString()
+    const user = await User.findById(userId);
+    const connectionIndex = user.connectedIdeas.findIndex(
+      (connection) => connection.idea.toString() === ideaId.toString()
     );
 
     if (connectionIndex === -1) {
@@ -352,19 +325,10 @@ router.delete('/:id/connect', async (req, res) => {
       });
     }
 
-    // 5. Remove the connection from the idea's connectedBy array
-    idea.connectedBy.splice(connectionIndex, 1);
+    // 5. Remove the connection from the user's connectedIdeas array
+    user.connectedIdeas.splice(connectionIndex, 1);
 
-    // 6. Remove the connection from the user's connectedIdeas array
-    const user = await User.findById(userId);
-    if (user) {
-      user.connectedIdeas = user.connectedIdeas.filter(
-        (connection) => connection.idea.toString() !== ideaId.toString()
-      );
-      await user.save();
-    }
-
-    // 7. Remove the connection from the idea creator's receivedConnections array
+    // 6. Remove the connection from the idea creator's receivedConnections array
     const ideaCreator = await User.findById(idea.creator);
     if (ideaCreator) {
       ideaCreator.receivedConnections = ideaCreator.receivedConnections.filter(
@@ -374,24 +338,18 @@ router.delete('/:id/connect', async (req, res) => {
             connection.connectedBy.toString() === userId.toString()
           )
       );
-      await ideaCreator.save();
     }
 
-    // 8. Save the updated idea
-    await idea.save();
+    // 7. Decrement the idea's connection counter
+    idea.connectionCount = Math.max(0, idea.connectionCount - 1);
 
-    // 9. Populate the creator and connectedBy user information
-    await idea.populate('creator', 'firstName lastName email fullName');
-    await idea.populate('likedBy', 'firstName lastName email fullName');
-    await idea.populate(
-      'connectedBy.user',
-      'firstName lastName email fullName'
-    );
+    // 8. Save all updates
+    await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 10. Return the updated idea
+    // 9. Return success
     res.json({
       message: 'Successfully disconnected from idea',
-      idea: idea,
+      success: true,
     });
   } catch (error) {
     console.error('Error in DELETE /ideas/:id/connect:', error);

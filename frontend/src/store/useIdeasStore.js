@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
 import ideasService from '../services/ideasService.js';
-import { useAuthStore } from './useAuthStore.js';
 
 // Keep the color generation function - it's essential for your app's design
 const getUniqueColorPair = (() => {
@@ -24,8 +23,6 @@ const getUniqueColorPair = (() => {
 export const useIdeasStore = create((set, get) => ({
   // State
   ideas: [],
-  likedIds: [],
-  connectedIds: [],
   isLoading: false,
   error: null,
   hasMore: true,
@@ -51,37 +48,8 @@ export const useIdeasStore = create((set, get) => ({
           return { ...idea, orbColor, auraColor };
         });
 
-        // Get current user from auth store to determine liked/connected status
-        const currentUser = useAuthStore.getState().user;
-
-        // Initialize likedIds and connectedIds based on current user's interactions
-        const likedIds = [];
-        const connectedIds = [];
-
-        if (currentUser) {
-          ideasWithColors.forEach((idea) => {
-            // Check if current user has liked this idea
-            const isLiked = idea.likedBy?.some(
-              (user) => user._id === currentUser._id
-            );
-            if (isLiked) {
-              likedIds.push(idea._id);
-            }
-
-            // Check if current user has connected to this idea
-            const isConnected = idea.connectedBy?.some(
-              (connection) => connection.user._id === currentUser._id
-            );
-            if (isConnected) {
-              connectedIds.push(idea._id);
-            }
-          });
-        }
-
         set({
           ideas: ideasWithColors,
-          likedIds,
-          connectedIds,
           isLoading: false,
           hasMore: ideasWithColors.length > 0,
         });
@@ -176,20 +144,10 @@ export const useIdeasStore = create((set, get) => ({
       const result = await ideasService.deleteIdea(id);
 
       if (result.success) {
-        set((state) => {
-          const nextIdeas = state.ideas.filter((idea) => idea._id !== id);
-          const nextLiked = state.likedIds.filter((likedId) => likedId !== id);
-          const nextConnected = state.connectedIds.filter(
-            (connectedId) => connectedId !== id
-          );
-
-          return {
-            ideas: nextIdeas,
-            likedIds: nextLiked,
-            connectedIds: nextConnected,
-            isLoading: false,
-          };
-        });
+        set((state) => ({
+          ideas: state.ideas.filter((idea) => idea._id !== id),
+          isLoading: false,
+        }));
 
         return { success: true };
       } else {
@@ -208,132 +166,14 @@ export const useIdeasStore = create((set, get) => ({
     }
   },
 
-  // Like idea
-  likeIdea: async (id) => {
-    try {
-      const result = await ideasService.likeIdea(id);
-      console.log('likeIdea - API result:', result);
-
-      if (result.success) {
-        set((state) => {
-          console.log('likeIdea - updating store with:', result.idea);
-          return {
-            ideas: state.ideas.map((idea) =>
-              idea._id === id ? { ...idea, ...result.idea } : idea
-            ),
-            likedIds: [...state.likedIds, id],
-          };
-        });
-
-        // Update the user's likedIdeas array in auth store
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          useAuthStore.getState().setUser({
-            ...currentUser,
-            likedIdeas: [...currentUser.likedIdeas, id],
-          });
-        }
-
-        return { success: true };
-      } else {
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Failed to like idea' };
-    }
-  },
-
-  // Unlike idea
-  unlikeIdea: async (id) => {
-    try {
-      const result = await ideasService.unlikeIdea(id);
-
-      if (result.success) {
-        set((state) => ({
-          ideas: state.ideas.map((idea) =>
-            idea._id === id ? { ...idea, ...result.idea } : idea
-          ),
-          likedIds: state.likedIds.filter((likedId) => likedId !== id),
-        }));
-
-        // Update the user's likedIdeas array in auth store
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          useAuthStore.getState().setUser({
-            ...currentUser,
-            likedIdeas: currentUser.likedIdeas.filter(
-              (ideaId) => ideaId !== id
-            ),
-          });
-        }
-
-        return { success: true };
-      } else {
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Failed to unlike idea' };
-    }
-  },
-
-  // Connect to idea
-  connectToIdea: async (id, message) => {
-    try {
-      const result = await ideasService.connectToIdea(id, message);
-
-      if (result.success) {
-        set((state) => ({
-          ideas: state.ideas.map((idea) =>
-            idea._id === id ? { ...idea, ...result.idea } : idea
-          ),
-          connectedIds: [...state.connectedIds, id],
-        }));
-
-        return { success: true };
-      } else {
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Failed to connect to idea' };
-    }
-  },
-
-  // Disconnect from idea
-  disconnectFromIdea: async (id) => {
-    try {
-      const result = await ideasService.disconnectFromIdea(id);
-
-      if (result.success) {
-        set((state) => ({
-          ideas: state.ideas.map((idea) =>
-            idea._id === id ? { ...idea, ...result.idea } : idea
-          ),
-          connectedIds: state.connectedIds.filter(
-            (connectedId) => connectedId !== id
-          ),
-        }));
-
-        return { success: true };
-      } else {
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Failed to disconnect from idea' };
-    }
-  },
-
   // Getters
   getIdeas: () => get().ideas,
-  getLikedIds: () => get().likedIds,
-  getConnectedIds: () => get().connectedIds,
   getIsLoading: () => get().isLoading,
   getError: () => get().error,
   getHasMore: () => get().hasMore,
 
   // Setters
   setIdeas: (ideas) => set({ ideas }),
-  setLikedIds: (likedIds) => set({ likedIds }),
-  setConnectedIds: (connectedIds) => set({ connectedIds }),
   setIsLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),

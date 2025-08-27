@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useAuthStore } from '../../../store/useAuthStore';
+import { useUserStore } from '../../../store/useUserStore';
 import SectionHeader from '../../../components/SectionHeader';
-import MyConnectionsSection from './MyConnectionsSection';
-import MyConnectionsSection2 from './MyConnectionsSection2';
+import MyConnections from './MyConnections';
 
 const Section = styled.section``;
 
-const SubSection = styled.div`
-  background-color: aliceblue;
+const SubSectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
 `;
 
 export default function ConnectionsSection() {
-  const currentUser = useAuthStore((store) => store.user);
+  const currentUser = useUserStore((store) => store.user);
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Get both types of connections
@@ -46,10 +44,12 @@ export default function ConnectionsSection() {
         onToggle={handleToggle}
       />
 
-      <SubSection>
-        <MyConnectionsSection connections={limitedMyConnections} />
-        <MyConnectionsSection2 connections={limitedReceivedConnections} />
-      </SubSection>
+      <SubSectionContainer>
+        <MyConnections
+          myConnections={limitedMyConnections}
+          receivedConnections={limitedReceivedConnections}
+        />
+      </SubSectionContainer>
     </Section>
   );
 }

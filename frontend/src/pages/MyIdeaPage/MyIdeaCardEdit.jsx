@@ -2,23 +2,17 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useIdeasStore } from '../../store/useIdeasStore';
+import TopBar from '../../components/TopBar';
 import IconButton from '../../components/IconButton';
 import editIcon from '../../assets/icons/edit_square_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg';
 import deleteIcon from '../../assets/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg';
 import aiIcon from '../../assets/icons/at_bold.svg';
-import arrowBackIcon from '../../assets/icons/arrow_back.svg';
 
 const Page = styled.div`
   padding: 24px 18px 32px 18px;
   position: relative;
 `;
-const TopBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-  width: 100%;
-`;
+
 const Title = styled.h2`
   font-size: 24px;
   font-weight: 600;
@@ -143,44 +137,11 @@ export default function MyIdeaCardEdit() {
 
   return (
     <Page>
-      <TopBar>
-        <button
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-          }}
-          aria-label='Back to ideas'
-          onClick={() => navigate(-1)}
-        >
-          <IconButton
-            iconSrc={arrowBackIcon}
-            ariaLabel='Back'
-            title='Back'
-            style={{ width: 28, height: 28, padding: 0 }}
-          />
-          <span style={{ fontSize: 18, fontWeight: 500, marginLeft: 2 }}>
-            My Profile
-          </span>
-        </button>
-        <button
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            fontSize: 18,
-            fontWeight: 400,
-          }}
-          onClick={() => setEditMode((v) => !v)}
-        >
-          Edit
-        </button>
-      </TopBar>
+      <TopBar
+        title='My Profile'
+        actionLabel={editMode ? 'Cancel' : 'Edit'}
+        onAction={() => setEditMode((v) => !v)}
+      />
       {editMode ? (
         <EditBar>
           <ActionBtn onClick={handleSave}>Save</ActionBtn>

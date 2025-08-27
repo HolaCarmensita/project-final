@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Button from '../components/Button';
 import { useUIStore } from '../store/useUIStore';
 import { useIdeasStore } from '../store/useIdeasStore';
+import { useInteractionsStore } from '../store/useInteractionsStore';
 
 const Overlay = styled.div`
   position: fixed;
@@ -81,10 +82,10 @@ export default function ConnectModal() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Get store functions
-  const connectToIdea = useIdeasStore((state) => state.connectToIdea);
-  const isLoading = useIdeasStore((state) => state.isLoading);
-  const error = useIdeasStore((state) => state.error);
-  const clearError = useIdeasStore((state) => state.clearError);
+  const connectToIdea = useInteractionsStore((state) => state.connectToIdea);
+  const isLoading = useInteractionsStore((state) => state.isLoading);
+  const error = useInteractionsStore((state) => state.error);
+  const clearError = useInteractionsStore((state) => state.clearError);
 
   const validateForm = () => {
     let isValid = true;

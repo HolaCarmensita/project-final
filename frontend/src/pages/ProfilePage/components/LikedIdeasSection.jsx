@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIdeasStore } from '../../../store/useIdeasStore';
-import { useAuthStore } from '../../../store/useAuthStore';
+import { useUserStore } from '../../../store/useUserStore';
+import { useInteractionsStore } from '../../../store/useInteractionsStore';
 import SectionHeader from '../../../components/SectionHeader';
 import StackedIdeaCards from '../../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../../components/ColorIdeaCard';
@@ -12,14 +13,14 @@ import heartBrokenIcon from '../../../assets/icons/heart_broken.svg';
 
 export default function LikedIdeasSection() {
   const ideas = useIdeasStore((store) => store.ideas);
-  const user = useAuthStore((store) => store.user);
-  const unlikeIdea = useIdeasStore((store) => store.unlikeIdea);
+  const user = useUserStore((store) => store.user);
+  const unlikeIdea = useInteractionsStore((store) => store.unlikeIdea);
 
   const likedIdeas = React.useMemo(() => {
     if (!user?.likedIdeas || !ideas.length) return [];
 
-    // Get the liked idea IDs from user data
-    const likedIds = user.likedIdeas.map((idea) => idea._id || idea);
+    // Get the liked idea IDs from user data (now they're just strings)
+    const likedIds = user.likedIdeas;
 
     // Filter ideas to only show the ones the user has liked
     return ideas.filter((idea) => likedIds.includes(idea._id));
