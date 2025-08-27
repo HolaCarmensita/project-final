@@ -44,6 +44,7 @@ router.post(
           const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
             file.filename
           }`;
+          console.log('File uploaded:', imageUrl);
           imageUrls.push(imageUrl);
         });
       }

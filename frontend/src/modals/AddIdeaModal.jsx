@@ -130,7 +130,8 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
   const setIsAddOpen = useUIStore((state) => state.setIsAddOpen);
 
   const handleFiles = (e) => {
-    setFiles(Array.from(e.target.files || []));
+    const newFiles = Array.from(e.target.files || []);
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   const removeFile = (index) => {
