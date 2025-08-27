@@ -41,7 +41,8 @@ const StyledButton = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
+    filter: grayscale(50%);
   }
 `;
 
@@ -52,7 +53,7 @@ const HeartIcon = styled.img`
 `;
 
 const LikeText = styled.h4`
-  color: #808080;
+  color: ${(props) => (props.disabled ? '#cccccc' : '#808080')};
   font-weight: 400;
 `;
 
@@ -106,7 +107,9 @@ export const LikeButton = ({ ideaId }) => {
         </StyledButton>
         <LikeCount>{likes}</LikeCount>
       </ButtonContainer>
-      <LikeText>{isLiked ? 'Liked' : 'Like'}</LikeText>
+      <LikeText disabled={isOwnIdea}>
+        {isOwnIdea ? 'Your Idea' : isLiked ? 'Liked' : 'Like'}
+      </LikeText>
     </LikeButtonContainer>
   );
 };

@@ -1,11 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  useLocation,
-  useNavigate,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
+import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import Scene from '../pages/3DScene/3DScene';
 import NavBar from './NavBar';
 import AddIdeaModal from '../modals/AddIdeaModal';
@@ -13,7 +7,6 @@ import ConnectModal from '../modals/ConnectModal';
 import Header from './Header1';
 import { useIdeasStore } from '../store/useIdeasStore';
 import { useUIStore } from '../store/useUIStore';
-import { useAuthStore } from '../store/useAuthStore';
 
 import IdeaPage from '../pages/ideas/IdeaPage/IdeaPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
@@ -23,19 +16,6 @@ import UserProfilePage from '../pages/UserProfilePage/UserProfilePage';
 const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isLoading = useAuthStore((state) => state.isLoading);
-
-  // Route detection
-  const isModalActive = location.pathname !== '/';
-  const isProfileRoute = location.pathname.startsWith('/profile');
-  const isIdeasRoute = location.pathname.startsWith('/ideas');
-  const shouldShowModal = isIdeasRoute || isProfileRoute;
-
-  // Redirect to login if not authenticated
-  if (!isLoading && !isAuthenticated) {
-    return <Navigate to='/login' replace />;
-  }
 
   // UI state
   const isAddOpen = useUIStore((state) => state.isAddOpen);
@@ -49,6 +29,12 @@ const AppLayout = () => {
   // Navigation handlers
   const handleLeftStore = useUIStore((state) => state.handleLeft);
   const handleRightStore = useUIStore((state) => state.handleRight);
+
+  // Route detection
+  const isModalActive = location.pathname !== '/';
+  const isProfileRoute = location.pathname.startsWith('/profile');
+  const isIdeasRoute = location.pathname.startsWith('/ideas');
+  const shouldShowModal = isIdeasRoute || isProfileRoute;
 
   // Navigation handlers
   const handleLeft = () =>

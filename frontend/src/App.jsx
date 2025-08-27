@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import AppLayout from './components/AppLayout';
 import IdeasFetcher from './components/IdeasFetcher';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import useAuthStore from './store/useAuthStore';
 
 // Profile pages
@@ -28,12 +30,33 @@ const App = () => {
     <>
       <IdeasFetcher />
       <Routes>
-        {/* Auth routes - simple layout */}
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/register' element={<RegisterPage />} />
+        {/* Auth routes - public but redirect if authenticated */}
+        <Route
+          path='/login'
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
+        />
 
-        {/* Main app routes - complex layout */}
-        <Route path='/*' element={<AppLayout />} />
+        {/* Main app routes - protected by authentication */}
+        <Route
+          path='/*'
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

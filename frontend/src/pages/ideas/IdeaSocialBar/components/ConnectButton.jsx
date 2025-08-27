@@ -43,7 +43,8 @@ const ConnectBtn = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
+    filter: grayscale(50%);
   }
 `;
 
@@ -53,7 +54,7 @@ const ConnectIcon = styled.img`
 `;
 
 const ConnectText = styled.h4`
-  color: #808080;
+  color: ${(props) => (props.disabled ? '#cccccc' : '#808080')};
   font-weight: 400;
 `;
 
@@ -132,7 +133,9 @@ export const ConnectButton = ({ ideaId }) => {
         </ConnectBtn>
         <ConnectCount>{connections}</ConnectCount>
       </ButtonContainer>
-      <ConnectText>{isConnected ? 'Connected' : 'Connect'}</ConnectText>
+      <ConnectText disabled={isOwnIdea}>
+        {isOwnIdea ? 'Your Idea' : isConnected ? 'Connected' : 'Connect'}
+      </ConnectText>
     </ConnectButtonContainer>
   );
 };
