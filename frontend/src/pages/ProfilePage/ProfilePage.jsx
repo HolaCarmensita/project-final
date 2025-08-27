@@ -15,6 +15,26 @@ const Page = styled.div`
   /* Remove overflow-y: auto to prevent double scrollbars */
 `;
 
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+`;
+
+const LoggedInText = styled.span`
+  font-size: 14px;
+  color: #666;
+`;
+
+const Username = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+`;
+
 // The content sections below are now split into dedicated components.
 
 const ProfilePage = () => {
@@ -22,6 +42,10 @@ const ProfilePage = () => {
 
   return (
     <Page>
+      <UserInfo>
+        <LoggedInText>Logged in:</LoggedInText>
+        <Username>{user?.fullName || user?.firstName || 'User'}</Username>
+      </UserInfo>
       <MyIdeasSection />
       <LikedIdeasSection />
       <ConnectionsSection />

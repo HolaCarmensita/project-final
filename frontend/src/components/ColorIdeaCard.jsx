@@ -25,7 +25,10 @@ const IdeaDesc = styled.p`
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  @media (min-width: 768px) { -webkit-line-clamp: 3; line-clamp: 3; }
+  @media (min-width: 768px) {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
 `;
 const OpenButtonWrap = styled.div`
   align-self: flex-end;
@@ -40,16 +43,23 @@ const Row = styled.div`
   font-size: 12px;
 `;
 
-export default function ColorIdeaCard({ idea, actions, openButton, showDate = true }) {
+export default function ColorIdeaCard({
+  idea,
+  actions,
+  openButton,
+  showDate = true,
+}) {
   return (
     <CardContent>
       {actions}
       <IdeaTitle>{idea.title}</IdeaTitle>
-      <IdeaDesc>{idea.bodyText || ''}</IdeaDesc>
+      <IdeaDesc>{idea.description || ''}</IdeaDesc>
       {openButton && <OpenButtonWrap>{openButton}</OpenButtonWrap>}
       {showDate && (
         <Row>
-          <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+          <span>
+            {new Date(idea.createdAt || Date.now()).toLocaleDateString()}
+          </span>
         </Row>
       )}
     </CardContent>
