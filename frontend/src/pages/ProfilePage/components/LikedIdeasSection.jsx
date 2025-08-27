@@ -28,7 +28,7 @@ export default function LikedIdeasSection() {
   const [unstacked, setUnstacked] = React.useState(false);
 
   return (
-    <section style={{ marginBottom: 60 }}>
+    <section>
       <div
         style={{
           display: 'flex',

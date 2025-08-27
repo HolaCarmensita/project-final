@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuthStore } from '../../../store/useAuthStore';
 import SectionHeader from '../../../components/SectionHeader';
 
 const Section = styled.section`
@@ -49,14 +48,8 @@ const EmptyMessage = styled.div`
   padding: 20px;
 `;
 
-export default function MyConnectionsSection() {
+export default function MyConnectionsSection({ connections = [] }) {
   const navigate = useNavigate();
-
-  // Get state from AuthStore (user data with connectedIdeas)
-  const currentUser = useAuthStore((store) => store.user);
-
-  // Get ideas I connected to from user data
-  const myConnections = currentUser?.connectedIdeas || [];
 
   return (
     <div>
@@ -64,8 +57,8 @@ export default function MyConnectionsSection() {
         Ideas I Connected To
       </h4>
       <ConnectionsList>
-        {myConnections.length > 0 ? (
-          myConnections.map((connection, i) => (
+        {connections.length > 0 ? (
+          connections.map((connection, i) => (
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}

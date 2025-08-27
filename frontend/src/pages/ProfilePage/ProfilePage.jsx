@@ -9,9 +9,9 @@ import ProfileSettingsSection from './components/ProfileSettingsSection';
 
 // Container pinned to the right using global overlay rules
 const Page = styled.div`
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  gap: 24px;
   /* Remove overflow-y: auto to prevent double scrollbars */
 `;
 

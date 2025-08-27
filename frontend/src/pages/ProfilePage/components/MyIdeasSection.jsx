@@ -13,9 +13,7 @@ import StackedIdeaCards from '../../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../../components/ColorIdeaCard';
 import UnstackToggleButton from '../../../components/UnstackToggleButton';
 
-const Section = styled.section`
-  margin-bottom: 60px;
-`;
+const Section = styled.section``;
 
 export default function MyIdeasSection() {
   const navigate = useNavigate();

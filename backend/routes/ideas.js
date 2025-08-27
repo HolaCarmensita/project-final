@@ -43,6 +43,9 @@ router.post(
       // Save to database
       await idea.save();
 
+      // Populate the creator field before sending response
+      await idea.populate('creator', 'firstName lastName email fullName');
+
       res.json({
         message: 'Idea object created and saved to database!',
         idea: idea,

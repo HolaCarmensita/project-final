@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../store/useAuthStore';
 import useUsersStore from '../../../store/useUsersStore';
 
-const Section = styled.section`
-  margin-bottom: 60px;
-`;
+const Section = styled.section``;
+
 const SectionHeader = styled.div`
   display: flex;
   align-items: baseline;

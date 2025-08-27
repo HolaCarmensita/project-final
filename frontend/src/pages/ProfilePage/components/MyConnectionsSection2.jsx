@@ -57,16 +57,8 @@ const EmptyMessage = styled.div`
   padding: 20px;
 `;
 
-export default function MyConnectionsSection2() {
+export default function MyConnectionsSection2({ connections = [] }) {
   const navigate = useNavigate();
-
-  // Get state from AuthStore (user data with receivedConnections)
-  const currentUser = useAuthStore((store) => store.user);
-
-  // Get received connections from user data
-  const receivedConnections = currentUser?.receivedConnections || [];
-
-  // No loading/error states needed since we get data from store
 
   return (
     <div>
@@ -74,8 +66,8 @@ export default function MyConnectionsSection2() {
         People Who Connected To My Ideas
       </h4>
       <ConnectionsList>
-        {receivedConnections.length > 0 ? (
-          receivedConnections.map((connection, i) => (
+        {connections.length > 0 ? (
+          connections.map((connection, i) => (
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}

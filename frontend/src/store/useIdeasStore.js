@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import randomColor from 'randomcolor';
 import ideasService from '../services/ideasService.js';
+import { useAuthStore } from './useAuthStore.js';
 
 // Keep the color generation function - it's essential for your app's design
 const getUniqueColorPair = (() => {
@@ -50,8 +51,37 @@ export const useIdeasStore = create((set, get) => ({
           return { ...idea, orbColor, auraColor };
         });
 
+        // Get current user from auth store to determine liked/connected status
+        const currentUser = useAuthStore.getState().user;
+
+        // Initialize likedIds and connectedIds based on current user's interactions
+        const likedIds = [];
+        const connectedIds = [];
+
+        if (currentUser) {
+          ideasWithColors.forEach((idea) => {
+            // Check if current user has liked this idea
+            const isLiked = idea.likedBy?.some(
+              (user) => user._id === currentUser._id
+            );
+            if (isLiked) {
+              likedIds.push(idea._id);
+            }
+
+            // Check if current user has connected to this idea
+            const isConnected = idea.connectedBy?.some(
+              (connection) => connection.user._id === currentUser._id
+            );
+            if (isConnected) {
+              connectedIds.push(idea._id);
+            }
+          });
+        }
+
         set({
           ideas: ideasWithColors,
+          likedIds,
+          connectedIds,
           isLoading: false,
           hasMore: ideasWithColors.length > 0,
         });
@@ -149,10 +179,14 @@ export const useIdeasStore = create((set, get) => ({
         set((state) => {
           const nextIdeas = state.ideas.filter((idea) => idea._id !== id);
           const nextLiked = state.likedIds.filter((likedId) => likedId !== id);
+          const nextConnected = state.connectedIds.filter(
+            (connectedId) => connectedId !== id
+          );
 
           return {
             ideas: nextIdeas,
             likedIds: nextLiked,
+            connectedIds: nextConnected,
             isLoading: false,
           };
         });
@@ -265,41 +299,6 @@ export const useIdeasStore = create((set, get) => ({
       }
     } catch (error) {
       return { success: false, message: 'Failed to disconnect from idea' };
-    }
-  },
-
-  // Search ideas
-  searchIdeas: async (query) => {
-    set({ isLoading: true, error: null });
-
-    try {
-      const result = await ideasService.searchIdeas(query);
-
-      if (result.success) {
-        // Add colors to ideas (your app's design requirement)
-        const ideasWithColors = result.ideas.map((idea) => {
-          const { orbColor, auraColor } = getUniqueColorPair();
-          return { ...idea, orbColor, auraColor };
-        });
-
-        set({
-          ideas: ideasWithColors,
-          isLoading: false,
-        });
-        return { success: true, ideas: ideasWithColors };
-      } else {
-        set({
-          error: result.message,
-          isLoading: false,
-        });
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      set({
-        error: 'Failed to search ideas',
-        isLoading: false,
-      });
-      return { success: false, message: 'Failed to search ideas' };
     }
   },
 

@@ -153,25 +153,6 @@ const getLikedIdeas = async () => {
   }
 };
 
-// Search ideas
-const searchIdeas = async (query) => {
-  try {
-    const response = await api.get(
-      `/ideas/search?q=${encodeURIComponent(query)}`
-    );
-    return {
-      success: true,
-      ideas: response.data.ideas,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      error,
-    };
-  }
-};
-
 // Connect to idea
 const connectToIdea = async (id, message) => {
   try {
@@ -217,7 +198,6 @@ export const ideasService = {
   unlikeIdea,
   getIdeasByUser,
   getLikedIdeas,
-  searchIdeas,
   connectToIdea,
   disconnectFromIdea,
 };
