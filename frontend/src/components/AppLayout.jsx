@@ -44,7 +44,7 @@ const AppLayout = () => {
       );
       if (ideas.length > 0 && ideas[idx]) {
         const idea = ideas[idx];
-        navigate(idea.id ? `/ideas/${idea.id}` : '/ideas');
+        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
       }
     });
 
@@ -55,7 +55,7 @@ const AppLayout = () => {
       );
       if (ideas.length > 0 && ideas[idx]) {
         const idea = ideas[idx];
-        navigate(idea.id ? `/ideas/${idea.id}` : '/ideas');
+        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
       }
     });
 

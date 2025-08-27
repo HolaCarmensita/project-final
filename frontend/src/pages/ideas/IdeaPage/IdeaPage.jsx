@@ -65,9 +65,7 @@ const IdeaPage = () => {
   // Update selected index when ideas or id changes
   useEffect(() => {
     if (ideas.length > 0 && id) {
-      const idx = ideas.findIndex(
-        (idea) => idea._id === id || idea.id === Number(id)
-      );
+      const idx = ideas.findIndex((idea) => idea._id === id);
       if (idx >= 0) {
         setSelectedIndex(idx);
       } else {

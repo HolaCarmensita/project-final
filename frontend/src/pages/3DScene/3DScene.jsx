@@ -123,15 +123,15 @@ const Scene = () => {
     const pos = getSpherePosition(i, orbCount, sphereRadius);
     return (
       <IdeaOrb
-        key={idea.id ?? i}
+        key={idea._id ?? i}
         position={pos}
         text={idea.title || idea.text}
         orbColor={idea.orbColor}
         onClick={() => {
           handleOrbClick(pos);
           setTimeout(() => {
-            if (idea.id) {
-              navigate(`/ideas/${idea.id}`);
+            if (idea._id) {
+              navigate(`/ideas/${idea._id}`);
             } else {
               navigate(`/ideas`);
             }

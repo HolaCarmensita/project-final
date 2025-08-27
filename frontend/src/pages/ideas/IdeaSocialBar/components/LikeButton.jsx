@@ -64,7 +64,7 @@ const LikeCount = styled.p`
 export const LikeButton = ({ ideaId }) => {
   // Get all data from store (updates automatically)
   const idea = useIdeasStore((store) =>
-    store.ideas.find((i) => i._id === ideaId || i.id === ideaId)
+    store.ideas.find((i) => i._id === ideaId)
   );
 
   const likedIds = useIdeasStore((store) => store.likedIds);

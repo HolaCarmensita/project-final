@@ -65,7 +65,7 @@ const ConnectCount = styled.p`
 export const ConnectButton = ({ ideaId }) => {
   // Get all data from store (updates automatically)
   const idea = useIdeasStore((store) =>
-    store.ideas.find((i) => i._id === ideaId || i.id === ideaId)
+    store.ideas.find((i) => i._id === ideaId)
   );
 
   const connectedIds = useIdeasStore((store) => store.connectedIds || []);

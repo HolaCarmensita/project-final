@@ -12,14 +12,16 @@ const StackCard = styled.div`
   border-radius: 16px;
   padding: 16px;
   color: #121212;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background: ${(p) => p.bg || '#e5f3ff'};
   transform: translateY(${(p) => p.offset || 0}px);
   box-shadow: ${(p) => (p.top ? '0 8px 18px rgba(0,0,0,0.08)' : 'none')};
   z-index: ${(p) => p.z || 1};
   margin-top: -40px;
 
-  &:first-child { margin-top: 0; }
+  &:first-child {
+    margin-top: 0;
+  }
 `;
 
 const IdeaTitle = styled.h4`
@@ -46,13 +48,17 @@ const Row = styled.div`
  * - showFooter: boolean (show date/footer on the top card)
  * - linkBuilder: (id) => string (route to open idea)
  */
-export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBuilder = (id) => `/ideas/${id}` }) {
+export default function StackedIdeaCards({
+  ideas = [],
+  showFooter = true,
+  linkBuilder = (id) => `/ideas/${id}`,
+}) {
   const storeIdeas = useIdeasStore((s) => s.ideas);
   return (
     <StackWrap>
       {ideas.map((idea, idx) => (
         <StackCard
-          key={idea.id}
+          key={idea._id}
           z={idx + 1}
           offset={idx * 8}
           bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
@@ -62,15 +68,19 @@ export default function StackedIdeaCards({ ideas = [], showFooter = true, linkBu
             <>
               <IdeaTitle>{idea.title}</IdeaTitle>
               <OpenIdeaButton
-                ideaId={idea.id}
-                to={linkBuilder(idea.id)}
+                ideaId={idea._id}
+                to={linkBuilder(idea._id)}
                 title={idea.title}
-                variant="outlined"
+                variant='outlined'
                 style={{ padding: '8px 12px', fontSize: 14 }}
               />
               {showFooter && (
                 <Row>
-                  <span>{new Date(idea.createdAt || Date.now()).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(
+                      idea.createdAt || Date.now()
+                    ).toLocaleDateString()}
+                  </span>
                 </Row>
               )}
             </>

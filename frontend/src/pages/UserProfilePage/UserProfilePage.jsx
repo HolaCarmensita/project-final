@@ -112,8 +112,8 @@ export default function UserProfilePage() {
   // Filter ideas for this user when ideas or userId changes
   useEffect(() => {
     if (ideas.length > 0 && userId) {
-      const filteredIdeas = ideas.filter((idea) => 
-        idea.creator?._id === userId || idea.creatorId === userId
+      const filteredIdeas = ideas.filter(
+        (idea) => idea.creator?._id === userId || idea.creatorId === userId
       );
       setUserIdeas(filteredIdeas);
     }
@@ -124,7 +124,7 @@ export default function UserProfilePage() {
     return (
       <Page>
         <TopBar>
-          <BackBtn aria-label="Back" onClick={() => navigate(-1)}>
+          <BackBtn aria-label='Back' onClick={() => navigate(-1)}>
             &#x2039; Back
           </BackBtn>
         </TopBar>
@@ -138,7 +138,7 @@ export default function UserProfilePage() {
     return (
       <Page>
         <TopBar>
-          <BackBtn aria-label="Back" onClick={() => navigate(-1)}>
+          <BackBtn aria-label='Back' onClick={() => navigate(-1)}>
             &#x2039; Back
           </BackBtn>
         </TopBar>
@@ -160,7 +160,7 @@ export default function UserProfilePage() {
     <Page>
       <TopBar>
         {/* this is the back button */}
-        <BackBtn aria-label="Back" onClick={() => navigate(-1)}>
+        <BackBtn aria-label='Back' onClick={() => navigate(-1)}>
           &#x2039; Back
         </BackBtn>
       </TopBar>
@@ -168,7 +168,11 @@ export default function UserProfilePage() {
       <UserRow>
         <Avatar>
           {profileUser.avatar && (
-            <img src={profileUser.avatar} alt="avatar" style={{ width: '100%', borderRadius: '50%' }} />
+            <img
+              src={profileUser.avatar}
+              alt='avatar'
+              style={{ width: '100%', borderRadius: '50%' }}
+            />
           )}
         </Avatar>
         <UserInfo>
@@ -182,12 +186,21 @@ export default function UserProfilePage() {
         {profileUser.socialLinks && (
           <div style={{ marginTop: 8 }}>
             {profileUser.socialLinks.twitter && (
-              <a href={profileUser.socialLinks.twitter} target="_blank" rel="noopener noreferrer" style={{ marginRight: 12 }}>
+              <a
+                href={profileUser.socialLinks.twitter}
+                target='_blank'
+                rel='noopener noreferrer'
+                style={{ marginRight: 12 }}
+              >
                 Twitter
               </a>
             )}
             {profileUser.socialLinks.linkedin && (
-              <a href={profileUser.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+              <a
+                href={profileUser.socialLinks.linkedin}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 LinkedIn
               </a>
             )}
@@ -195,7 +208,16 @@ export default function UserProfilePage() {
         )}
         {isOwnProfile && (
           <div style={{ marginTop: 16 }}>
-            <button style={{ padding: '8px 16px', borderRadius: 6, background: '#d46a8c', color: '#fff', border: 'none', cursor: 'pointer' }}>
+            <button
+              style={{
+                padding: '8px 16px',
+                borderRadius: 6,
+                background: '#d46a8c',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
               Edit Profile
             </button>
           </div>
@@ -203,9 +225,19 @@ export default function UserProfilePage() {
       </UserDetails>
 
       <IdeasSection>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-          <SectionHeader title="ideas" count={userIdeas.length} />
-          <UnstackToggleButton unstacked={unstacked} onClick={() => setUnstacked((v) => !v)} />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            marginBottom: 8,
+          }}
+        >
+          <SectionHeader title='ideas' count={userIdeas.length} />
+          <UnstackToggleButton
+            unstacked={unstacked}
+            onClick={() => setUnstacked((v) => !v)}
+          />
         </div>
         <StackedIdeaCards
           ideas={userIdeas}
@@ -213,7 +245,11 @@ export default function UserProfilePage() {
             <ColorIdeaCard
               idea={idea}
               openButton={
-                <OpenIdeaButton ideaId={idea._id || idea.id} to={`/ideas/${idea._id || idea.id}`} title={idea.title} />
+                <OpenIdeaButton
+                  ideaId={idea._id}
+                  to={`/ideas/${idea._id}`}
+                  title={idea.title}
+                />
               }
               showDate={true}
             />
