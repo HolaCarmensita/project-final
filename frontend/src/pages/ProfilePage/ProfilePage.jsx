@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import MyIdeasSection from './components/MyIdeasSection';
 import LikedIdeasSection from './components/LikedIdeasSection';
 import ConnectionsSection from './components/ConnectionsSection';
-import MyConnectionsSection from './components/MyConnectionsSection';
 import { useAuthStore } from '../../store/useAuthStore';
 import ProfileSettingsSection from './components/ProfileSettingsSection';
 
@@ -25,7 +24,6 @@ const ProfilePage = () => {
     <Page>
       <MyIdeasSection />
       <LikedIdeasSection />
-      <MyConnectionsSection />
       <ConnectionsSection />
       <ProfileSettingsSection />
     </Page>

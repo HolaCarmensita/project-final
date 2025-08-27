@@ -1,12 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useIdeasStore } from '../../../store/useIdeasStore';
 import { useAuthStore } from '../../../store/useAuthStore';
-import SectionHeader from '../../../components/SectionHeader';
-
-const Section = styled.section`
-  margin-bottom: 60px;
-`;
 
 const ConnectionsList = styled.div`
   display: flex;
@@ -43,49 +39,72 @@ const Note = styled.div`
   top: 0 !important;
 `;
 
+const LoadingMessage = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 20px;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  color: #d32f2f;
+  padding: 20px;
+`;
+
 const EmptyMessage = styled.div`
   text-align: center;
   color: #666;
   padding: 20px;
 `;
 
-export default function MyConnectionsSection() {
+export default function MyConnectionsSection2() {
   const navigate = useNavigate();
 
-  // Get state from AuthStore (user data with connectedIdeas)
+  // Get state from AuthStore (user data with receivedConnections)
   const currentUser = useAuthStore((store) => store.user);
 
-  // Get ideas I connected to from user data
-  const myConnections = currentUser?.connectedIdeas || [];
+  // Get received connections from user data
+  const receivedConnections = currentUser?.receivedConnections || [];
+
+  // No loading/error states needed since we get data from store
 
   return (
     <div>
       <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
-        Ideas I Connected To
+        People Who Connected To My Ideas
       </h4>
       <ConnectionsList>
-        {myConnections.length > 0 ? (
-          myConnections.map((connection, i) => (
+        {receivedConnections.length > 0 ? (
+          receivedConnections.map((connection, i) => (
             <Person
               key={connection._id || i}
               style={{ cursor: 'pointer' }}
               onClick={() =>
-                navigate(`/ideas/${connection.idea._id || connection.idea}`)
+                navigate(
+                  `/user/${
+                    connection.connectedBy._id || connection.connectedBy
+                  }`
+                )
               }
             >
-              <Avatar style={{ background: '#ddd' }} />
+              <Avatar style={{ background: connection.color || '#ddd' }} />
               <div>
-                <Name>{connection.idea?.title || 'Unknown Idea'}</Name>
+                <Name>
+                  {connection.connectedBy?.fullName ||
+                    (connection.connectedBy?.firstName &&
+                    connection.connectedBy?.lastName
+                      ? `${connection.connectedBy.firstName} ${connection.connectedBy.lastName}`
+                      : 'Unknown User')}
+                </Name>
                 <Role>
-                  Connected on:{' '}
-                  {new Date(connection.connectedAt).toLocaleDateString()}
+                  Connected to: {connection.idea?.title || 'Unknown Idea'}
                 </Role>
                 <Note>{connection.message}</Note>
               </div>
             </Person>
           ))
         ) : (
-          <EmptyMessage>You haven't connected to any ideas yet.</EmptyMessage>
+          <EmptyMessage>No one has connected to your ideas yet.</EmptyMessage>
         )}
       </ConnectionsList>
     </div>
