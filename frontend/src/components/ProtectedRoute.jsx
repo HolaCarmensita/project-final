@@ -5,9 +5,10 @@ import { useAuthStore } from '../store/useAuthStore';
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
+  const isInitializing = useAuthStore((state) => state.isInitializing);
 
-  // Show loading state while checking authentication
-  if (isLoading) {
+  // Show loading state while checking authentication or initializing
+  if (isLoading || isInitializing) {
     return (
       <div
         style={{

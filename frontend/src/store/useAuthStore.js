@@ -4,9 +4,9 @@ import api from '../services/api.js';
 
 // Create the authentication store (authentication only)
 export const useAuthStore = create((set, get) => ({
-  // State
-  token: null,
-  isAuthenticated: false,
+  // State - initialize from localStorage immediately
+  token: authService.getToken(),
+  isAuthenticated: !!authService.getToken(),
   isLoading: false,
   error: null,
   isInitializing: false,
@@ -34,35 +34,30 @@ export const useAuthStore = create((set, get) => ({
     const user = authService.getUser();
 
     if (token && user) {
-      set({
-        token,
-        isAuthenticated: true,
-        isLoading: true,
-        error: null,
-      });
-
-      // Validate token with backend
-      const validation = await get().validateToken();
-
-      if (validation.valid) {
-        set({
-          isLoading: false,
-          error: null,
-          isInitializing: false,
+      // Token validation happens in background, don't block UI
+      get()
+        .validateToken()
+        .then((validation) => {
+          if (validation.valid) {
+            set({
+              isLoading: false,
+              error: null,
+              isInitializing: false,
+            });
+            console.log('AuthStore: Token validated successfully');
+          } else {
+            // Token is invalid - clear auth state
+            authService.logout();
+            set({
+              token: null,
+              isAuthenticated: false,
+              isLoading: false,
+              error: null,
+              isInitializing: false,
+            });
+            console.log('AuthStore: Token validation failed, logged out');
+          }
         });
-        console.log('AuthStore: Token validated successfully');
-      } else {
-        // Token is invalid - clear auth state
-        authService.logout();
-        set({
-          token: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: null,
-          isInitializing: false,
-        });
-        console.log('AuthStore: Token validation failed, logged out');
-      }
     } else {
       set({ isInitializing: false });
       console.log('AuthStore: No valid auth data in localStorage');
