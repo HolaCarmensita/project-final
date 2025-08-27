@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
+import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ router.use(authenticateToken);
 
 router.post(
   '/',
+  upload.array('files', 5), // Handle up to 5 files with field name 'files'
   [
     body('title')
       .trim()
@@ -24,7 +26,7 @@ router.post(
   ],
   async (req, res) => {
     try {
-      //check validations error
+      // Check validations error
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res
@@ -34,13 +36,26 @@ router.post(
 
       const { title, description } = req.body;
 
-      //creates an new idea object
+      // Process uploaded files
+      const imageUrls = [];
+      if (req.files && req.files.length > 0) {
+        req.files.forEach((file) => {
+          // Create URL for the uploaded file
+          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
+            file.filename
+          }`;
+          imageUrls.push(imageUrl);
+        });
+      }
+
+      // Create a new idea object
       const idea = new Idea({
         title,
         description,
         creator: req.user._id,
         likeCount: 0,
         connectionCount: 0,
+        images: imageUrls, // Add the image URLs to the idea
       });
 
       // Save to database
@@ -54,9 +69,10 @@ router.post(
         idea: idea,
       });
     } catch (error) {
+      console.error('Error creating idea:', error);
       res
         .status(500)
-        .json({ message: 'Internal server error', error: error, message });
+        .json({ message: 'Internal server error', error: error.message });
     }
   }
 );

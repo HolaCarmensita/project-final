@@ -37,7 +37,27 @@ const getIdeaById = async (id) => {
 // Create new idea
 const createIdea = async (ideaData) => {
   try {
-    const response = await api.post('/ideas', ideaData);
+    // Create FormData for file upload
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append('title', ideaData.title);
+    formData.append('description', ideaData.description);
+
+    // Add files if they exist
+    if (ideaData.files && ideaData.files.length > 0) {
+      ideaData.files.forEach((file) => {
+        formData.append('files', file);
+      });
+    }
+
+    // Send with different headers for FormData
+    const response = await api.post('/ideas', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     return {
       success: true,
       idea: response.data.idea,

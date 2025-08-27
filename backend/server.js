@@ -39,6 +39,9 @@ database.once('open', () => {
 app.use(cors());
 app.use(express.json());
 
+// Serve uploaded files statically
+app.use('/uploads', express.static('uploads'));
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello Technigo!');

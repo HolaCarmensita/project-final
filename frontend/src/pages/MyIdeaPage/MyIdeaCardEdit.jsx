@@ -106,29 +106,41 @@ export default function MyIdeaCardEdit() {
   const ideas = useIdeasStore((s) => s.ideas);
   const idea = ideas.find((i) => String(i._id) === String(id));
   const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState(
-    idea
-      ? {
-          title: idea.title,
-          bodyText: idea.bodyText,
-          images: idea.images || [],
-          altTexts: (idea.images || []).map(() => 'Alternative text'),
-        }
-      : null
-  );
+  const [form, setForm] = useState(null);
 
-  if (!idea)
+  // Initialize form when idea is loaded
+  React.useEffect(() => {
+    if (idea) {
+      setForm({
+        title: idea.title,
+        bodyText: idea.description,
+        images: idea.images || [],
+        altTexts: (idea.images || []).map(() => 'Alternative text'),
+      });
+    }
+  }, [idea]);
+
+  if (!idea) {
     return (
       <Page>
         <div>Idea not found.</div>
       </Page>
     );
+  }
+
+  if (!form) {
+    return (
+      <Page>
+        <div>Loading...</div>
+      </Page>
+    );
+  }
 
   const handleSave = () => {
     // For dev: just update local state, not persistent
     Object.assign(idea, {
       title: form.title,
-      bodyText: form.bodyText,
+      description: form.bodyText,
       images: form.images,
       altTexts: form.altTexts,
     });
@@ -161,17 +173,9 @@ export default function MyIdeaCardEdit() {
       ) : (
         <Title>{idea.title}</Title>
       )}
-      {editMode ? (
-        <TextArea
-          rows={3}
-          value={form.bodyText}
-          onChange={(e) => setForm((f) => ({ ...f, bodyText: e.target.value }))}
-        />
-      ) : (
-        <BodyText>{idea.bodyText}</BodyText>
-      )}
+
       <ImageGallery>
-        {(form.images || idea.images).map((img, idx) => (
+        {(form.images || idea.images || []).map((img, idx) => (
           <div key={img + idx}>
             <ImgWrap style={{ position: 'relative' }}>
               <img
@@ -243,6 +247,17 @@ export default function MyIdeaCardEdit() {
           </div>
         )}
       </ImageGallery>
+
+      {editMode ? (
+        <TextArea
+          rows={3}
+          value={form.bodyText}
+          onChange={(e) => setForm((f) => ({ ...f, bodyText: e.target.value }))}
+        />
+      ) : (
+        <BodyText>{idea.description}</BodyText>
+      )}
+
       {idea.connectedBy && idea.connectedBy.length > 0 && (
         <Connections>
           {idea.connectedBy.map((connection, index) => (

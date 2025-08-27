@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import Button from "../components/Button";
-import { useIdeasStore } from "../store/useIdeasStore";
-import { useUIStore } from "../store/useUIStore";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Button from '../components/Button';
+import { useIdeasStore } from '../store/useIdeasStore';
+import { useUIStore } from '../store/useUIStore';
 
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
-  display: ${(p) => (p.open ? "block" : "none")};
+  background: rgba(0, 0, 0, 0.35);
+  display: ${(p) => (p.open ? 'block' : 'none')};
   z-index: 30;
 `;
 
@@ -21,7 +21,7 @@ const Sheet = styled.div`
   background: #fff;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
   padding: 24px 20px 16px;
   z-index: 5001;
 `;
@@ -36,6 +36,38 @@ const Label = styled.label`
   font-size: 14px;
   color: #333;
   margin: 14px 0 6px;
+`;
+
+const FileList = styled.div`
+  margin-top: 8px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  max-height: 100px;
+  overflow-y: auto;
+`;
+
+const FileItem = styled.div`
+  font-size: 12px;
+  color: #666;
+  margin: 2px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const RemoveFileButton = styled.button`
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #cc0000;
+  }
 `;
 
 const Input = styled.input`
@@ -83,11 +115,11 @@ const SuccessMessage = styled.div`
 `;
 
 const AddIdeaSheet = ({ isOpen, onClose }) => {
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
   const [files, setFiles] = useState([]);
-  const [titleError, setTitleError] = useState("");
-  const [descError, setDescError] = useState("");
+  const [titleError, setTitleError] = useState('');
+  const [descError, setDescError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Get store functions
@@ -101,35 +133,39 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
     setFiles(Array.from(e.target.files || []));
   };
 
+  const removeFile = (index) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
   const validateForm = () => {
     let isValid = true;
-    
+
     // Clear previous errors
-    setTitleError("");
-    setDescError("");
+    setTitleError('');
+    setDescError('');
     clearError();
 
     // Validate title
     if (!title.trim()) {
-      setTitleError("Title is required");
+      setTitleError('Title is required');
       isValid = false;
     } else if (title.trim().length < 3) {
-      setTitleError("Title must be at least 3 characters");
+      setTitleError('Title must be at least 3 characters');
       isValid = false;
     } else if (title.trim().length > 100) {
-      setTitleError("Title must be less than 100 characters");
+      setTitleError('Title must be less than 100 characters');
       isValid = false;
     }
 
     // Validate description
     if (!desc.trim()) {
-      setDescError("Description is required");
+      setDescError('Description is required');
       isValid = false;
     } else if (desc.trim().length < 10) {
-      setDescError("Description must be at least 10 characters");
+      setDescError('Description must be at least 10 characters');
       isValid = false;
     } else if (desc.trim().length > 2000) {
-      setDescError("Description must be less than 2000 characters");
+      setDescError('Description must be less than 2000 characters');
       isValid = false;
     }
 
@@ -153,10 +189,10 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
       if (result.success) {
         setIsSuccess(true);
         // Reset form
-        setTitle("");
-        setDesc("");
+        setTitle('');
+        setDesc('');
         setFiles([]);
-        
+
         // Close modal after 2 seconds
         setTimeout(() => {
           setIsAddOpen(false);
@@ -170,11 +206,11 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
 
   const handleClose = () => {
     if (!isLoading) {
-      setTitle("");
-      setDesc("");
+      setTitle('');
+      setDesc('');
       setFiles([]);
-      setTitleError("");
-      setDescError("");
+      setTitleError('');
+      setDescError('');
       clearError();
       setIsSuccess(false);
       setIsAddOpen(false);
@@ -183,14 +219,14 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
-    setTitleError("");
+    setTitleError('');
     clearError();
     setIsSuccess(false);
   };
 
   const handleDescChange = (e) => {
     setDesc(e.target.value);
-    setDescError("");
+    setDescError('');
     clearError();
     setIsSuccess(false);
   };
@@ -199,39 +235,60 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
     <>
       <Overlay open={isOpen} onClick={handleClose} />
       {isOpen && (
-        <Sheet role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <Sheet
+          role='dialog'
+          aria-modal='true'
+          onClick={(e) => e.stopPropagation()}
+        >
           <form onSubmit={handlePost}>
             <Title>Adding idea</Title>
 
-            <Label htmlFor="idea-title">Idea Title</Label>
+            <Label htmlFor='idea-title'>Idea Title</Label>
             <Input
-              id="idea-title"
-              placeholder="Enter the title of your idea"
+              id='idea-title'
+              placeholder='Enter the title of your idea'
               value={title}
               onChange={handleTitleChange}
               disabled={isLoading || isSuccess}
             />
             {titleError && <ErrorMessage>{titleError}</ErrorMessage>}
 
-            <Label htmlFor="idea-desc">Description</Label>
+            <Label htmlFor='idea-desc'>Description</Label>
             <TextArea
-              id="idea-desc"
-              placeholder="Describe your idea..."
+              id='idea-desc'
+              placeholder='Describe your idea...'
               value={desc}
               onChange={handleDescChange}
               disabled={isLoading || isSuccess}
             />
             {descError && <ErrorMessage>{descError}</ErrorMessage>}
 
-            <Label htmlFor="idea-files">Upload file</Label>
-            <Input 
-              id="idea-files" 
-              type="file" 
-              multiple 
-              accept="image/png, image/jpeg" 
+            <Label htmlFor='idea-files'>Upload file</Label>
+            <Input
+              id='idea-files'
+              type='file'
+              multiple
+              accept='image/png, image/jpeg'
               onChange={handleFiles}
               disabled={isLoading || isSuccess}
             />
+
+            {files.length > 0 && (
+              <FileList>
+                {files.map((file, index) => (
+                  <FileItem key={index}>
+                    <span>{file.name}</span>
+                    <RemoveFileButton
+                      type='button'
+                      onClick={() => removeFile(index)}
+                      disabled={isLoading || isSuccess}
+                    >
+                      Remove
+                    </RemoveFileButton>
+                  </FileItem>
+                ))}
+              </FileList>
+            )}
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -242,18 +299,14 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
             )}
 
             <Row>
-              <Button 
-                type="button" 
+              <Button
+                type='button'
                 onClick={handleClose}
                 disabled={isLoading || isSuccess}
               >
                 CANCEL
               </Button>
-              <Button 
-                type="submit" 
-                primary
-                disabled={isLoading || isSuccess}
-              >
+              <Button type='submit' primary disabled={isLoading || isSuccess}>
                 {isLoading ? 'POSTING...' : isSuccess ? 'SUCCESS!' : 'POST'}
               </Button>
             </Row>
