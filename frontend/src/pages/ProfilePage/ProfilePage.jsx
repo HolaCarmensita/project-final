@@ -15,13 +15,18 @@ const Page = styled.div`
   /* Remove overflow-y: auto to prevent double scrollbars */
 `;
 
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+`;
+
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 16px 0;
+  padding-bottom: 16px;
   border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
 `;
 
 const LoggedInText = styled.span`
@@ -42,6 +47,7 @@ const ProfilePage = () => {
 
   return (
     <Page>
+      <Title>Profile</Title>
       <UserInfo>
         <LoggedInText>Logged in:</LoggedInText>
         <Username>{user?.fullName || user?.firstName || 'User'}</Username>
