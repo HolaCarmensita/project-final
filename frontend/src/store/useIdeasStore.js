@@ -34,14 +34,13 @@ const getColorPairForId = (stableId = '') => {
 };
 
 export const useIdeasStore = create((set, get) => ({
-  // State
+  // State - ensure ideas is always an array
   ideas: [],
   isLoading: false,
   error: null,
   hasMore: true,
 
   // Actions
-  // Get all ideas from API
   fetchIdeas: async () => {
     // Prevent multiple simultaneous fetches
     if (get().isLoading) {
@@ -55,8 +54,11 @@ export const useIdeasStore = create((set, get) => ({
       const result = await ideasService.getAllIdeas();
 
       if (result.success) {
+        // Ensure ideas is always an array
+        const ideasArray = result.ideas || [];
+
         // Add deterministic colors per idea using a stable id
-        const ideasWithColors = result.ideas.map((idea) => {
+        const ideasWithColors = ideasArray.map((idea) => {
           const stableId = idea._id || idea.id || String(idea.createdAt || '');
           const { orbColor, auraColor } = getColorPairForId(stableId);
           return { ...idea, orbColor, auraColor };
@@ -70,6 +72,7 @@ export const useIdeasStore = create((set, get) => ({
       } else {
         // API failed - set error state
         set({
+          ideas: [], // Ensure ideas is always an array
           error: result.message || 'Failed to fetch ideas',
           isLoading: false,
           hasMore: false,
@@ -78,6 +81,7 @@ export const useIdeasStore = create((set, get) => ({
     } catch (error) {
       // API error - set error state
       set({
+        ideas: [], // Ensure ideas is always an array
         error: 'Failed to fetch ideas',
         isLoading: false,
         hasMore: false,

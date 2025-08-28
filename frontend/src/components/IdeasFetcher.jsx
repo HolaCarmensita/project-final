@@ -19,12 +19,13 @@ const IdeasFetcher = () => {
     }
 
     // Fetch once on first mount when not loading and ideas are empty
-    if (!hasInitialized.current && ideas.length === 0 && !isLoading) {
+    // Add null check for ideas
+    if (!hasInitialized.current && (!ideas || ideas.length === 0) && !isLoading) {
       console.log('IdeasFetcher: Fetching ideas...');
       fetchIdeas();
       hasInitialized.current = true;
     }
-  }, [isAuthenticated, ideas.length, isLoading]); // Remove fetchIdeas dependency to prevent re-renders
+  }, [isAuthenticated, ideas?.length, isLoading]); // Use optional chaining
 
   // This component doesn't render anything
   return null;

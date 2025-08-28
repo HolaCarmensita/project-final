@@ -44,6 +44,15 @@ router.post(
   ],
   async (req, res) => {
     try {
+      // Check if database is connected
+      if (mongoose.connection.readyState !== 1) {
+        console.error('Database not connected. ReadyState:', mongoose.connection.readyState);
+        return res.status(503).json({
+          message: 'Database connection not available',
+          error: 'Database disconnected'
+        });
+      }
+
       // Check validations error
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -54,15 +63,27 @@ router.post(
 
       const { title, description } = req.body;
 
+      // Validate required fields
+      if (!title || !description) {
+        return res.status(400).json({
+          message: 'Title and description are required'
+        });
+      }
+
       // Process uploaded files
       const imageUrls = [];
       if (req.files && req.files.length > 0) {
         for (const file of req.files) {
-          const buffer = file.buffer;
-          const result = await uploadBufferToCloudinary(buffer);
-          const imageUrl = result.secure_url;
-          console.log('File uploaded:', imageUrl);
-          imageUrls.push(imageUrl);
+          try {
+            const buffer = file.buffer;
+            const result = await uploadBufferToCloudinary(buffer);
+            const imageUrl = result.secure_url;
+            console.log('File uploaded:', imageUrl);
+            imageUrls.push(imageUrl);
+          } catch (uploadError) {
+            console.error('File upload error:', uploadError);
+            // Continue with other files, don't fail the entire request
+          }
         }
       }
 
@@ -88,9 +109,11 @@ router.post(
       });
     } catch (error) {
       console.error('Error creating idea:', error);
-      res
-        .status(500)
-        .json({ message: 'Internal server error', error: error.message });
+      res.status(500).json({
+        message: 'Internal server error',
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
   }
 );
@@ -100,6 +123,15 @@ router.get('/', async (req, res) => {
   try {
     console.log('Fetching ideas...');
 
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.error('Database not connected. ReadyState:', mongoose.connection.readyState);
+      return res.status(503).json({
+        message: 'Database connection not available',
+        error: 'Database disconnected'
+      });
+    }
+
     // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName role')
@@ -107,15 +139,21 @@ router.get('/', async (req, res) => {
       .lean();
 
     console.log('Ideas found:', ideas.length);
-    console.log('First idea:', ideas[0]);
+
+    // Add null check for ideas
+    const safeIdeas = ideas || [];
 
     res.json({
       message: 'Ideas retrieved successfully',
-      ideas: ideas,
+      ideas: safeIdeas,
     });
   } catch (error) {
     console.error('Error in GET /ideas:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 

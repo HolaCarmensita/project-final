@@ -142,6 +142,17 @@ const Scene = () => {
     );
   });
 
+  // Add WebGL error handling
+  const handleWebGLError = (error) => {
+    console.warn('WebGL Context Lost, attempting to recover...', error);
+    // You can add recovery logic here
+  };
+
+  // Add error boundary for Canvas
+  const onError = (error) => {
+    console.error('Three.js error:', error);
+  };
+
   return (
     <div
       style={{
@@ -166,6 +177,13 @@ const Scene = () => {
         }}
       />
       <Canvas
+        onError={onError}
+        gl={{
+          powerPreference: "high-performance",
+          antialias: true,
+          alpha: true,
+          preserveDrawingBuffer: false
+        }}
         camera={{ position: [0, 0, 50], fov: 75 }}
         style={{ position: 'relative', zIndex: 1 }}
       >
