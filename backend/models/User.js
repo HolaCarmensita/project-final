@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema(
           required: true,
           maxlength: [500, 'Connection message cannot exceed 500 characters'],
         },
+        socialLink: {
+          type: String,
+          trim: true,
+          maxlength: [200, 'Social link cannot exceed 200 characters'],
+        },
         connectedAt: {
           type: Date,
           default: Date.now,
@@ -86,6 +91,11 @@ const userSchema = new mongoose.Schema(
           type: String,
           required: true,
           maxlength: [500, 'Connection message cannot exceed 500 characters'],
+        },
+        socialLink: {
+          type: String,
+          trim: true,
+          maxlength: [200, 'Social link cannot exceed 200 characters'],
         },
         connectedAt: {
           type: Date,

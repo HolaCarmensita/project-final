@@ -49,6 +49,15 @@ const TextArea = styled.textarea`
   resize: vertical;
 `;
 
+const Input = styled.input`
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+`;
+
 const Row = styled.div`
   display: flex;
   gap: 16px;
@@ -79,6 +88,8 @@ export default function ConnectModal() {
   const close = useUIStore((s) => s.setIsConnectOpen);
   const [message, setMessage] = useState('');
   const [messageError, setMessageError] = useState('');
+  const [socialLink, setSocialLink] = useState('');
+  const [socialLinkError, setSocialLinkError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Get store functions
@@ -92,6 +103,7 @@ export default function ConnectModal() {
 
     // Clear previous errors
     setMessageError('');
+    setSocialLinkError('');
     clearError();
 
     // Validate message
@@ -106,7 +118,24 @@ export default function ConnectModal() {
       isValid = false;
     }
 
+    // Validate social link (optional but if provided, should be a valid URL)
+    if (socialLink.trim() && !isValidUrl(socialLink.trim())) {
+      setSocialLinkError(
+        'Please enter a valid URL (e.g., https://linkedin.com/in/yourprofile)'
+      );
+      isValid = false;
+    }
+
     return isValid;
+  };
+
+  const isValidUrl = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
   };
 
   const onSubmit = async (e) => {
@@ -117,11 +146,16 @@ export default function ConnectModal() {
     }
 
     try {
-      const result = await connectToIdea(target?.ideaId, message.trim());
+      const result = await connectToIdea(
+        target?.ideaId,
+        message.trim(),
+        socialLink.trim()
+      );
 
       if (result.success) {
         setIsSuccess(true);
         setMessage('');
+        setSocialLink('');
 
         // Close modal after 2 seconds
         setTimeout(() => {
@@ -138,6 +172,8 @@ export default function ConnectModal() {
     if (!isLoading) {
       setMessage('');
       setMessageError('');
+      setSocialLink('');
+      setSocialLinkError('');
       clearError();
       setIsSuccess(false);
       close(false);
@@ -147,6 +183,13 @@ export default function ConnectModal() {
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
     setMessageError('');
+    clearError();
+    setIsSuccess(false);
+  };
+
+  const handleSocialLinkChange = (e) => {
+    setSocialLink(e.target.value);
+    setSocialLinkError('');
     clearError();
     setIsSuccess(false);
   };
@@ -177,6 +220,20 @@ export default function ConnectModal() {
             {messageError && <ErrorMessage>{messageError}</ErrorMessage>}
             <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
               {`Write a personal message to ${userName}`}
+            </div>
+
+            <Label htmlFor='social-link'>Social link (optional)</Label>
+            <Input
+              id='social-link'
+              type='url'
+              placeholder='https://linkedin.com/in/yourprofile'
+              value={socialLink}
+              onChange={handleSocialLinkChange}
+              disabled={isLoading || isSuccess}
+            />
+            {socialLinkError && <ErrorMessage>{socialLinkError}</ErrorMessage>}
+            <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
+              Share your LinkedIn, portfolio, or other social profile
             </div>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
