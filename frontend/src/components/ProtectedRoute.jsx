@@ -1,11 +1,12 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
   const isInitializing = useAuthStore((state) => state.isInitializing);
+  const location = useLocation();
 
   // Show loading state while checking authentication or initializing
   if (isLoading || isInitializing) {
@@ -23,8 +24,13 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Redirect to login if not authenticated
+  // If not authenticated, allow access to public app views ('/' and '/ideas...')
   if (!isAuthenticated) {
+    const path = location.pathname || '/';
+    const isPublicPath = path === '/' || path === '/ideas' || path.startsWith('/ideas/');
+    if (isPublicPath) {
+      return children;
+    }
     return <Navigate to='/login' replace />;
   }
 

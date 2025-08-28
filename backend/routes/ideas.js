@@ -8,11 +8,11 @@ import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
-// All routes will be protected (require authentication)
-router.use(authenticateToken);
+// Protect write/modify routes only; GET routes remain public
 
 router.post(
   '/',
+  authenticateToken,
   upload.array('files', 5), // Handle up to 5 files with field name 'files'
   [
     body('title')
@@ -41,9 +41,8 @@ router.post(
       if (req.files && req.files.length > 0) {
         req.files.forEach((file) => {
           // Create URL for the uploaded file
-          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
-            file.filename
-          }`;
+          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename
+            }`;
           console.log('File uploaded:', imageUrl);
           imageUrls.push(imageUrl);
         });
@@ -124,7 +123,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update idea
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const idea = await Idea.findById(req.params.id);
 
@@ -154,7 +153,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete idea
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const idea = await Idea.findById(req.params.id);
 
@@ -178,7 +177,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Like/unlike idea
-router.post('/:id/like', async (req, res) => {
+router.post('/:id/like', authenticateToken, async (req, res) => {
   try {
     const idea = await Idea.findById(req.params.id);
 
@@ -236,7 +235,7 @@ router.post('/:id/like', async (req, res) => {
 });
 
 // Connect to idea
-router.post('/:id/connect', async (req, res) => {
+router.post('/:id/connect', authenticateToken, async (req, res) => {
   try {
     // 1. Get the idea ID from the URL parameter
     const ideaId = req.params.id;
@@ -326,7 +325,7 @@ router.post('/:id/connect', async (req, res) => {
 });
 
 // Disconnect from idea
-router.delete('/:id/connect', async (req, res) => {
+router.delete('/:id/connect', authenticateToken, async (req, res) => {
   try {
     // 1. Get the idea ID from the URL parameter
     const ideaId = req.params.id;

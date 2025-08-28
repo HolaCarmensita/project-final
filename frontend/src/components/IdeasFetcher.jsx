@@ -18,13 +18,8 @@ const IdeasFetcher = () => {
       lastAuthState.current = isAuthenticated;
     }
 
-    // Only fetch if user is authenticated, we haven't initialized yet, ideas are empty, and not currently loading
-    if (
-      isAuthenticated &&
-      !hasInitialized.current &&
-      ideas.length === 0 &&
-      !isLoading
-    ) {
+    // Fetch once on first mount when not loading and ideas are empty
+    if (!hasInitialized.current && ideas.length === 0 && !isLoading) {
       console.log('IdeasFetcher: Fetching ideas...');
       fetchIdeas();
       hasInitialized.current = true;

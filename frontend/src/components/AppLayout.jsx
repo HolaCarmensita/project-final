@@ -7,6 +7,7 @@ import ConnectModal from '../modals/ConnectModal';
 import Header from './Header1';
 import { useIdeasStore } from '../store/useIdeasStore';
 import { useUIStore } from '../store/useUIStore';
+import useAuthStore from '../store/useAuthStore';
 
 import IdeaPage from '../pages/ideas/IdeaPage/IdeaPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
@@ -26,6 +27,7 @@ const AppLayout = () => {
 
   // Ideas data
   const ideas = useIdeasStore((state) => state.ideas);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Navigation handlers
   const handleLeftStore = useUIStore((state) => state.handleLeft);
@@ -78,7 +80,13 @@ const AppLayout = () => {
     <div className='app-container'>
       <div className='content-layout'>
         <NavBar
-          onAdd={openAddModal}
+          onAdd={() => {
+            if (isAuthenticated) {
+              openAddModal();
+            } else {
+              navigate('/login');
+            }
+          }}
           onLeft={handleLeft}
           onRight={handleRight}
           hideOnMobile={isProfileRoute}
@@ -91,9 +99,8 @@ const AppLayout = () => {
         <ConnectModal />
 
         <div
-          className={`scene-container ${
-            shouldShowModal ? 'scene-container--hidden-mobile' : ''
-          }`}
+          className={`scene-container ${shouldShowModal ? 'scene-container--hidden-mobile' : ''
+            }`}
         >
           <Header />
           <Scene ideas={ideas} />

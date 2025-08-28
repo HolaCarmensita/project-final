@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // Get the base URL from environment variables
+// Backend routes are mounted at root (e.g., '/ideas'), so no '/api' prefix
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // Create axios instance with default configuration
 const api = axios.create({

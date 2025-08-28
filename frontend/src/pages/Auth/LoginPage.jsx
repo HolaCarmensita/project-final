@@ -3,14 +3,46 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import IconButton from '../../components/IconButton';
+import closeIcon from '../../assets/icons/close.svg';
 import { useAuthStore } from '../../store/useAuthStore';
 
-const LoginContainer = styled.div`
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
   align-items: center;
-  padding: 48px 24px;
+  justify-content: center;
+`;
+
+const LoginContainer = styled.div`
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 40px 32px;
+  min-width: 340px;
+  max-width: 90vw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  @media (max-width: 600px) {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    min-width: 100vw;
+    border-radius: 0;
+    padding: 24px 20px;
+    align-items: stretch;
+    overflow-y: auto;
+  }
 `;
 
 const WelcomeText = styled.div`
@@ -87,7 +119,7 @@ const ErrorMessage = styled.p`
   margin-top: 4px;
 `;
 
-const LoginPage = () => {
+const LoginModal = ({ onClose }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -180,66 +212,70 @@ const LoginPage = () => {
     setPasswordError(''); // Clear password error when user types
   };
 
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+      return;
+    }
+    navigate('/');
+  };
+
   return (
-    <LoginContainer>
-      {/* <WelcomeText>
-        <h2>
-          Welcome to Penive, a place to explore, share and connect with creative
-          ideas and minds.
-        </h2>
-
-        <h2> Please login or register to get started.</h2>
-      </WelcomeText> */}
-
-      <LoginForm onSubmit={handleSubmit}>
-        <Title>Login</Title>
-
-        <InputContainer>
-          <Label htmlFor='email'>Email</Label>
-          <Input
-            id='email'
-            type='text'
-            placeholder='Enter your email'
-            value={email}
-            onChange={handleEmailChange}
-            onBlur={handleEmailBlur}
-          />
-          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
-        </InputContainer>
-
-        <InputContainer>
-          <Label htmlFor='password'>Password</Label>
-          <Input
-            id='password'
-            type='password'
-            placeholder='Enter your password'
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
-        </InputContainer>
-
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-
-        <ForgotPasswordLink to='/forgot-password'>
-          Forgot password?
-        </ForgotPasswordLink>
-
-        <Button
-          type='submit'
-          primary
-          disabled={isLoading}
-          style={{ width: '100%', marginTop: '16px' }}
+    <ModalOverlay>
+      <LoginContainer>
+        <IconButton
+          iconSrc={closeIcon}
+          ariaLabel="Close"
+          title="Close"
+          onClick={handleClose}
+          style={{ position: 'absolute', top: 12, right: 12, width: 44, height: 44 }}
         >
-          {isLoading ? 'LOGGING IN...' : 'LOGIN'}
-        </Button>
-
-        <SignUpText>
-          Don't have an account yet? <Link to='/register'>Sign up</Link>
-        </SignUpText>
-      </LoginForm>
-    </LoginContainer>
+          <img src={closeIcon} alt="Close" style={{ width: 28, height: 28 }} />
+        </IconButton>
+        <LoginForm onSubmit={handleSubmit}>
+          <Title>Login</Title>
+          <InputContainer>
+            <Label htmlFor='email'>Email</Label>
+            <Input
+              id='email'
+              type='text'
+              placeholder='Enter your email'
+              value={email}
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
+            />
+            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor='password'>Password</Label>
+            <Input
+              id='password'
+              type='password'
+              placeholder='Enter your password'
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          </InputContainer>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <ForgotPasswordLink to='/forgot-password'>
+            Forgot password?
+          </ForgotPasswordLink>
+          <Button
+            type='submit'
+            primary
+            disabled={isLoading}
+            style={{ width: '100%', marginTop: '16px' }}
+          >
+            {isLoading ? 'LOGGING IN...' : 'LOGIN'}
+          </Button>
+          <SignUpText>
+            Don't have an account yet? <Link to='/register'>Sign up</Link>
+          </SignUpText>
+        </LoginForm>
+      </LoginContainer>
+    </ModalOverlay>
   );
 };
 
-export default LoginPage;
+export default LoginModal;
