@@ -2,6 +2,30 @@
    LAYOUT SYSTEM MOBILE FIRST 
    ========================================================================== */
 
+/* Animation for modal growing in with flex - iPad */
+@keyframes growInWithFlexIpad {
+  from {
+    flex: 0;
+    opacity: 0;
+  }
+  to {
+    flex: 0 0 50vw;
+    opacity: 1;
+  }
+}
+
+/* Animation for modal growing in with flex - Desktop */
+@keyframes growInWithFlexDesktop {
+  from {
+    flex: 0;
+    opacity: 0;
+  }
+  to {
+    flex: 0 0 30vw;
+    opacity: 1;
+  }
+}
+
 /* Content layout */
 .content-layout {
   display: flex;
@@ -40,6 +64,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 16px;
+  animation: growInWithFlexIpad 0.5s ease-out;
 }
 
 .modal-container > header {
@@ -84,7 +109,7 @@
   }
 
   .modal-container {
-    width: 50vw;
+    flex: 0 0 50vw;
     height: 100vh;
     z-index: 10;
     background-color: white;
@@ -93,6 +118,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 24px;
+    animation: growInWithFlexIpad 0.5s ease-out;
   }
 
   /* Override hidden state on desktop - scene container should always show */
@@ -103,6 +129,7 @@
 
 @media (min-width: 1024px) {
   .modal-container {
-    width: 30vw;
+    flex: 0 0 30vw;
+    animation: growInWithFlexDesktop 0.5s ease-out;
   }
 }
