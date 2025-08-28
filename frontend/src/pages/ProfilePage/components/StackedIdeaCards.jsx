@@ -1,7 +1,19 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import OpenIdeaButton from '../../../components/OpenIdeaButton';
 import { useIdeasStore } from '../../../store/useIdeasStore';
+
+// Define keyframes globally
+const fadeInText = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const StackWrap = styled.div`
   position: relative;
@@ -28,6 +40,8 @@ const IdeaTitle = styled.h4`
   font-size: 18px;
   line-height: 1.2;
   margin-bottom: 12px;
+  animation: ${fadeInText} 0.6s ease-out both;
+  animation-delay: ${(p) => 0.5 + (p.$delay || 0) * 0.3}s;
 `;
 
 // Open button now uses shared component; keep a wrapper only if we need custom layout.
@@ -39,6 +53,8 @@ const Row = styled.div`
   margin-top: 16px;
   color: #6b6b6b;
   font-size: 12px;
+  animation: ${fadeInText} 0.6s ease-out both;
+  animation-delay: ${(p) => 0.5 + (p.$delay || 0) * 0.3 + 0.4}s;
 `;
 
 /**
@@ -66,7 +82,7 @@ export default function StackedIdeaCards({
         >
           {idx === ideas.length - 1 ? (
             <>
-              <IdeaTitle>{idea.title}</IdeaTitle>
+              <IdeaTitle $delay={idx}>{idea.title}</IdeaTitle>
               <OpenIdeaButton
                 ideaId={idea._id}
                 to={linkBuilder(idea._id)}
@@ -75,7 +91,7 @@ export default function StackedIdeaCards({
                 style={{ padding: '8px 12px', fontSize: 14 }}
               />
               {showFooter && (
-                <Row>
+                <Row $delay={idx}>
                   <span>
                     {new Date(
                       idea.createdAt || Date.now()
@@ -85,7 +101,9 @@ export default function StackedIdeaCards({
               )}
             </>
           ) : (
-            <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
+            <IdeaTitle style={{ opacity: 0.85 }} $delay={idx}>
+              {idea.title}
+            </IdeaTitle>
           )}
         </StackCard>
       ))}
