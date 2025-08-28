@@ -10,19 +10,52 @@ import docsRoutes from './routes/docs.js';
 // Load environment variables
 dotenv.config();
 
+// --- MongoDB connection diagnostics ---
+const redactMongoUri = (uri = '') => {
+  try {
+    if (!uri) return '[empty]';
+    // Hide credentials but show host/db for debugging
+    const url = new URL(uri.replace('mongodb+srv://', 'https://').replace('mongodb://', 'http://'));
+    const protocol = uri.startsWith('mongodb+srv://') ? 'mongodb+srv://' : 'mongodb://';
+    const host = url.host;
+    const pathname = url.pathname;
+    return `${protocol}<credentials>@${host}${pathname}`;
+  } catch {
+    return '[unparseable URI]';
+  }
+};
+
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project';
 const port = process.env.PORT || 8080;
+
+console.log('Boot: Node version:', process.version);
+console.log('Boot: Mongo URI (redacted):', redactMongoUri(mongoUrl));
+console.log('Boot: PORT:', port);
 
 const app = express();
 
 // MongoDB connection
-mongoose.connect(mongoUrl);
+console.log('Mongo: attempting to connect...');
+mongoose.set('strictQuery', true);
+mongoose.connect(mongoUrl, {
+  serverSelectionTimeoutMS: 15000,
+});
 
 const database = mongoose.connection;
 
-// Basic error handling
-database.on('error', (error) => {
-  console.error('MongoDB connection error:', error);
+database.on('connecting', () => console.log('Mongo: connecting...'));
+database.on('connected', () => console.log('Mongo: connected'));
+database.on('open', () => console.log('Mongo: connection open'));
+database.on('error', (err) => console.error('Mongo: connection error:', err?.message || err));
+database.on('disconnected', () => console.warn('Mongo: disconnected'));
+database.on('reconnected', () => console.log('Mongo: reconnected'));
+
+// Basic error handling already above; keep process-level guards
+process.on('unhandledRejection', (reason) => {
+  console.error('Process: unhandledRejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Process: uncaughtException:', err);
 });
 
 // Start server only after database connects
