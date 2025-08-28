@@ -7,7 +7,6 @@ const PageHeaderContainer = styled.div`
   flex-direction: column;
   padding: 0 0 16px 0;
   border-bottom: 1px solid #eee;
-  margin-bottom: 24px;
 `;
 
 const PageTitle = styled.h1`
