@@ -84,7 +84,7 @@
   }
 
   .modal-container {
-    width: 30vw;
+    width: 50vw;
     height: 100vh;
     z-index: 10;
     background-color: white;
@@ -98,5 +98,11 @@
   /* Override hidden state on desktop - scene container should always show */
   .scene-container--hidden-mobile {
     display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-container {
+    width: 30vw;
   }
 }
