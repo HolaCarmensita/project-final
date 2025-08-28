@@ -2,23 +2,36 @@ import { create } from 'zustand';
 import randomColor from 'randomcolor';
 import ideasService from '../services/ideasService.js';
 
-// Keep the color generation function - it's essential for your app's design
-const getUniqueColorPair = (() => {
-  const usedColors = new Set();
-  return () => {
-    let orbColor, auraColor, combo;
-    do {
-      orbColor = randomColor({ luminosity: 'bright' });
-      const orbH =
-        Number(orbColor.match(/\d+/)?.[0]) || Math.floor(Math.random() * 360);
-      const compH = (orbH + 180) % 360;
-      auraColor = randomColor({ hue: compH, luminosity: 'light' });
-      combo = orbColor + '-' + auraColor;
-    } while (usedColors.has(combo));
-    usedColors.add(combo);
-    return { orbColor, auraColor };
-  };
-})();
+// Deterministic color generator based on a stable idea identifier
+// This guarantees the same colors across reloads, deployments, and devices
+const getColorPairForId = (stableId = '') => {
+  // 32-bit FNV-1a hash
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < stableId.length; i += 1) {
+    hash ^= stableId.charCodeAt(i);
+    hash = (hash >>> 0) * 0x01000193;
+  }
+
+  const base = hash >>> 0;
+  // Golden-angle distribution to maximize separation between hues
+  // 137.508° is the golden angle in degrees
+  const hueIndex = base % 100000; // large cycle
+  const orbHue = (hueIndex * 137.508) % 360;
+
+  // Derive saturation/lightness from hash to avoid overly similar tones
+  const satSeed = ((base >> 8) & 0xff) / 255; // 0..1
+  const lightSeed = ((base >> 16) & 0xff) / 255; // 0..1
+  const saturation = Math.round(60 + satSeed * 25); // 60%..85%
+  const lightness = Math.round(45 + lightSeed * 15); // 45%..60%
+
+  const auraHue = (orbHue + 180) % 360; // complementary for contrast
+  const auraSaturation = Math.min(90, saturation + 10);
+  const auraLightness = Math.min(85, lightness + 25);
+
+  const orbColor = `hsl(${orbHue}, ${saturation}%, ${lightness}%)`;
+  const auraColor = `hsl(${auraHue}, ${auraSaturation}%, ${auraLightness}%)`;
+  return { orbColor, auraColor };
+};
 
 export const useIdeasStore = create((set, get) => ({
   // State
@@ -42,9 +55,10 @@ export const useIdeasStore = create((set, get) => ({
       const result = await ideasService.getAllIdeas();
 
       if (result.success) {
-        // Add colors to ideas (your app's design requirement)
+        // Add deterministic colors per idea using a stable id
         const ideasWithColors = result.ideas.map((idea) => {
-          const { orbColor, auraColor } = getUniqueColorPair();
+          const stableId = idea._id || idea.id || String(idea.createdAt || '');
+          const { orbColor, auraColor } = getColorPairForId(stableId);
           return { ...idea, orbColor, auraColor };
         });
 
@@ -79,7 +93,8 @@ export const useIdeasStore = create((set, get) => ({
       const result = await ideasService.createIdea(ideaData);
 
       if (result.success) {
-        const { orbColor, auraColor } = getUniqueColorPair();
+        const stableId = result.idea?._id || result.idea?.id || '';
+        const { orbColor, auraColor } = getColorPairForId(stableId);
         const newIdea = { ...result.idea, orbColor, auraColor };
 
         set((state) => ({

@@ -61,7 +61,7 @@ export default function StackedIdeaCards({
           key={idea._id}
           z={idx + 1}
           offset={idx * 8}
-          bg={`linear-gradient(180deg, ${idea.orbColor} 0%, ${idea.auraColor} 100%)`}
+          bg={idea.orbColor}
           top={idx === ideas.length - 1}
         >
           {idx === ideas.length - 1 ? (
