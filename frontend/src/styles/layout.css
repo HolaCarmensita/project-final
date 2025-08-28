@@ -14,6 +14,18 @@
   }
 }
 
+/* Animation for modal shrinking out with flex - iPad */
+@keyframes shrinkOutWithFlexIpad {
+  from {
+    flex: 0 0 50vw;
+    opacity: 1;
+  }
+  to {
+    flex: 0;
+    opacity: 0;
+  }
+}
+
 /* Animation for modal growing in with flex - Desktop */
 @keyframes growInWithFlexDesktop {
   from {
@@ -23,6 +35,18 @@
   to {
     flex: 0 0 30vw;
     opacity: 1;
+  }
+}
+
+/* Animation for modal shrinking out with flex - Desktop */
+@keyframes shrinkOutWithFlexDesktop {
+  from {
+    flex: 0 0 30vw;
+    opacity: 1;
+  }
+  to {
+    flex: 0;
+    opacity: 0;
   }
 }
 
@@ -63,8 +87,13 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
   animation: growInWithFlexIpad 0.5s ease-out;
+}
+
+/* Modal container when animating out */
+.modal-container--hiding {
+  animation: shrinkOutWithFlexIpad 0.5s ease-out forwards;
+  pointer-events: none;
 }
 
 .modal-container > header {
@@ -73,6 +102,11 @@
   z-index: 100;
   background-color: white;
   transition: transform 0.3s ease;
+}
+
+/* Modal content with padding */
+.modal-content {
+  padding: 16px;
 }
 
 /* ==========================================================================
@@ -105,7 +139,6 @@
     z-index: 10;
     background-color: transparent;
     transition: width 0.3s ease;
-    padding: 16px;
   }
 
   .modal-container {
@@ -117,8 +150,17 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 24px;
     animation: growInWithFlexIpad 0.5s ease-out;
+  }
+
+  .modal-content {
+    padding: 24px;
+  }
+
+  /* Modal container when animating out on iPad */
+  .modal-container--hiding {
+    animation: shrinkOutWithFlexIpad 0.5s ease-out forwards;
+    pointer-events: none;
   }
 
   /* Override hidden state on desktop - scene container should always show */
@@ -131,5 +173,11 @@
   .modal-container {
     flex: 0 0 30vw;
     animation: growInWithFlexDesktop 0.5s ease-out;
+  }
+
+  /* Modal container when animating out on desktop */
+  .modal-container--hiding {
+    animation: shrinkOutWithFlexDesktop 0.5s ease-out forwards;
+    pointer-events: none;
   }
 }
