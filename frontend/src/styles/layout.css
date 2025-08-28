@@ -172,6 +172,7 @@
 @media (min-width: 1024px) {
   .modal-container {
     flex: 0 0 30vw;
+    max-width: 600px;
     animation: growInWithFlexDesktop 1s ease-out;
   }
 

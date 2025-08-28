@@ -21,8 +21,9 @@ const Item = styled.div`
 `;
 
 const Avatar = styled.div`
-  width: 56px;
-  height: 56px;
+  min-width: 62px;
+  min-height: 62px;
+  flex-shrink: 0;
   border-radius: 8px;
   background: ${(p) => p.bg || '#ddd'};
 `;
@@ -39,6 +40,10 @@ const Info = styled.div`
 const Message = styled.div`
   color: #3d3d3d;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
 `;
 
 const EmptyMessage = styled.div`

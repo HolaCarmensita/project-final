@@ -1,19 +1,7 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import OpenIdeaButton from '../../../components/OpenIdeaButton';
 import { useIdeasStore } from '../../../store/useIdeasStore';
-
-// Define keyframes globally
-const fadeInText = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
 
 const StackWrap = styled.div`
   position: relative;
@@ -40,8 +28,6 @@ const IdeaTitle = styled.h4`
   font-size: 18px;
   line-height: 1.2;
   margin-bottom: 12px;
-  animation: ${fadeInText} 0.6s ease-out both;
-  animation-delay: ${(p) => 0.5 + (p.$delay || 0) * 0.3}s;
 `;
 
 // Open button now uses shared component; keep a wrapper only if we need custom layout.
@@ -53,8 +39,6 @@ const Row = styled.div`
   margin-top: 16px;
   color: #6b6b6b;
   font-size: 12px;
-  animation: ${fadeInText} 0.6s ease-out both;
-  animation-delay: ${(p) => 0.5 + (p.$delay || 0) * 0.3 + 0.4}s;
 `;
 
 /**
