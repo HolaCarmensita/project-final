@@ -14,6 +14,14 @@ const IdeaPageContainer = styled.div`
   height: 100%;
 `;
 
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 24px 0;
+  align-self: flex-start;
+`;
+
 const LoadingMessage = styled.div`
   display: flex;
   justify-content: center;
@@ -80,6 +88,7 @@ const IdeaPage = () => {
   if (isLoading && ideas.length === 0) {
     return (
       <IdeaPageContainer>
+        <Title>Explore</Title>
         <LoadingMessage>Loading ideas...</LoadingMessage>
       </IdeaPageContainer>
     );
@@ -89,6 +98,7 @@ const IdeaPage = () => {
   if (error && ideas.length === 0) {
     return (
       <IdeaPageContainer>
+        <Title>Explore</Title>
         <ErrorMessage>Error loading ideas: {error}</ErrorMessage>
       </IdeaPageContainer>
     );
@@ -98,6 +108,7 @@ const IdeaPage = () => {
   if (!isLoading && ideas.length === 0) {
     return (
       <IdeaPageContainer>
+        <Title>Explore</Title>
         <NoIdeasMessage>No ideas available.</NoIdeasMessage>
       </IdeaPageContainer>
     );
@@ -107,6 +118,7 @@ const IdeaPage = () => {
   if (ideas.length > 0 && selectedIndex >= 0 && selectedIndex < ideas.length) {
     return (
       <IdeaPageContainer>
+        <Title>Explore</Title>
         <IdeaCard idea={ideas[selectedIndex]} />
         {/* <MockNavigation onNext={goToNext} onPrevious={goToPrevious} /> */}
       </IdeaPageContainer>
@@ -116,6 +128,7 @@ const IdeaPage = () => {
   // Fallback - should not reach here
   return (
     <IdeaPageContainer>
+      <Title>Explore</Title>
       <NoIdeasMessage>Loading...</NoIdeasMessage>
     </IdeaPageContainer>
   );
