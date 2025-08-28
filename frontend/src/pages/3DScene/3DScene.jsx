@@ -193,7 +193,7 @@ const Scene = () => {
             'radial-gradient(circle at 60% 40%, #ffe6e6 0%, #fff7d6 60%, #e6f7ff 100%)',
         }}
       />
-      {/* 3D scene rendered in WebGL */}
+      {/* 3D scene rendered in WebGL, web graphic library */}
       <Canvas
         onError={onError}
         gl={{
