@@ -45,6 +45,7 @@ const Row = styled.div`
   font-size: 12px;
 `;
 
+export default function ColorIdeaCard({
   idea,
   actions,
   openButton,
