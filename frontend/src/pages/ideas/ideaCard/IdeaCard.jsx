@@ -6,6 +6,7 @@ import IdeaSocialBar from '../IdeaSocialBar/IdeaSocialBar';
 import IdeaText from './components/IdeaText';
 
 const IdeaCardContainer = styled.div`
+  padding-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;

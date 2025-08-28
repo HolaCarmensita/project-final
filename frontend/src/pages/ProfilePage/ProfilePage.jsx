@@ -12,8 +12,14 @@ import ProfileSettingsSection from './components/ProfileSettingsSection';
 const Page = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   /* Remove overflow-y: auto to prevent double scrollbars */
+`;
+
+const PageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 `;
 
 // The content sections below are now split into dedicated components.
@@ -24,10 +30,12 @@ const ProfilePage = () => {
   return (
     <Page>
       <PageHeader title='Profile' user={user} />
-      <MyIdeasSection />
-      <LikedIdeasSection />
-      <ConnectionsSection />
-      <ProfileSettingsSection />
+      <PageContent>
+        <MyIdeasSection />
+        <LikedIdeasSection />
+        <ConnectionsSection />
+        <ProfileSettingsSection />
+      </PageContent>
     </Page>
   );
 };
