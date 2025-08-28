@@ -45,9 +45,9 @@ router.post(
       if (req.files && req.files.length > 0) {
         req.files.forEach((file) => {
           // Create URL for the uploaded file
-          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename
-            }`;
-          console.log('File uploaded:', imageUrl);
+          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
+            file.filename
+          }`;
           imageUrls.push(imageUrl);
         });
       }
@@ -84,16 +84,11 @@ router.post(
 // Get all ideas
 router.get('/', async (req, res) => {
   try {
-    console.log('Fetching ideas...');
-
     // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName role')
       .sort({ createdAt: -1 })
       .lean();
-
-    console.log('Ideas found:', ideas.length);
-    console.log('First idea:', ideas[0]);
 
     res.json({
       message: 'Ideas retrieved successfully',
@@ -215,17 +210,8 @@ router.post('/:id/like', authenticateToken, async (req, res) => {
     }
 
     // Save both user and idea
-    console.log('About to save user and idea...');
     const savedUser = await user.save();
     const savedIdea = await idea.save();
-
-    console.log('Save operations completed');
-    console.log('Saved user likedIdeas:', savedUser.likedIdeas);
-    console.log('Saved idea likeCount:', savedIdea.likeCount);
-
-    // Verify the save worked by fetching the user again
-    const verifyUser = await User.findById(userId);
-    console.log('Verified user likedIdeas from DB:', verifyUser.likedIdeas);
 
     res.json({
       message: isLiked ? 'Idea unliked' : 'Idea liked',
