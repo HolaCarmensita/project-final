@@ -1,18 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Sparkles } from '@react-three/drei';
-import { useNavigate } from 'react-router-dom';
-import { useIdeasStore } from '../../store/useIdeasStore';
-import { useUIStore } from '../../store/useUIStore';
-import { gsap } from 'gsap';
-import IdeaOrb from './IdeaOrb';
-import CameraController from './CameraController';
-import Joystick from '../../components/Joystick';
-import { getSpherePosition } from './sphereLayout';
-import { useShowJoystick } from './useShowJoystick';
-import { useSceneNavigation } from './useSceneNavigation';
+import { Canvas } from '@react-three/fiber'; // React wrapper for Three.js WebGL rendering
+import { OrbitControls, Sparkles } from '@react-three/drei'; // Prebuilt helpers (camera controls, sparkles)
+import { useNavigate } from 'react-router-dom'; // Navigation between app pages
+import { useIdeasStore } from '../../store/useIdeasStore'; // Global state: stores ideas
+import { useUIStore } from '../../store/useUIStore'; // Global state: stores selected index
+import { gsap } from 'gsap'; // Animation library for smooth camera transitions
+import IdeaOrb from './IdeaOrb'; // Custom component: one "orb" representing an idea
+import CameraController from './CameraController'; // Custom component: moves camera based on joystick/keyboard
+import Joystick from '../../components/Joystick'; // On-screen joystick for mobile controls
+import { getSpherePosition } from './sphereLayout'; // Function to calculate positions on a sphere
+import { useShowJoystick } from './useShowJoystick'; // Hook to decide if joystick should be shown
+import { useSceneNavigation } from './useSceneNavigation'; // Hook for keyboard navigation between orbs
 
-// Helper to detect when user is typing in an input/textarea/contentEditable field
+// Helper function: detect if user is currently typing in an input field
+// (prevents navigation or camera moves when typing)
 const isTypingIntoField = () => {
   if (typeof document === 'undefined') return false;
   const el = document.activeElement;
@@ -28,19 +29,26 @@ const isTypingIntoField = () => {
 };
 
 const Scene = () => {
+  // Global state: get all ideas
   const ideas = useIdeasStore((state) => state.ideas);
+  // Global state: track which idea orb is currently selected
   const selectedIndex = useUIStore((state) => state.selectedIndex);
   const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
-  const navigate = useNavigate();
-  const controlsRef = useRef();
-  // ...existing code...
+
+  const navigate = useNavigate(); // For routing
+  const controlsRef = useRef(); // Ref for OrbitControls (so we can animate camera)
+
+  // Handles clicking on an orb -> moves camera smoothly towards it
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
       const controls = controlsRef.current;
+
+      // Where the camera should point (target = orb position)
       const target = { x: position[0], y: position[1], z: position[2] };
+      // Camera position slightly offset in Z so it doesn't overlap the orb
       const camOffset = { x: position[0], y: position[1], z: position[2] + 8 };
 
-      // Only animate if position/target actually changed
+      // Check if camera is already at this position
       const pos = controls.object.position;
       const tgt = controls.target;
       const needsMove =
@@ -52,17 +60,19 @@ const Scene = () => {
         tgt.z !== target.z;
       if (!needsMove) return;
 
-      // Kill previous tweens to avoid overlap
+      // Kill any previous animations to avoid overlapping
       gsap.killTweensOf([controls.object.position, controls.target]);
 
+      // Animate the camera to new position
       gsap.to(controls.object.position, {
         x: camOffset.x,
         y: camOffset.y,
         z: camOffset.z,
         duration: 1.2,
-        onUpdate: () => controls.update(),
+        onUpdate: () => controls.update(), // Refresh OrbitControls
       });
 
+      // Animate OrbitControls target to look at the orb
       gsap.to(controls.target, {
         x: target.x,
         y: target.y,
@@ -72,9 +82,10 @@ const Scene = () => {
       });
     }
   };
-  // ...existing code...
-  const sphereRadius = 20;
-  // Use custom hook for keyboard and camera navigation
+
+  const sphereRadius = 20; // Radius of sphere layout where orbs are placed
+
+  // Hook for navigation (keyboard + camera movement)
   useSceneNavigation({
     ideas,
     selectedIndex,
@@ -83,7 +94,10 @@ const Scene = () => {
     sphereRadius,
   });
 
+  // Ref to keep joystick vector values (x, y, force)
   const joystickVecRef = useRef({ x: 0, y: 0, force: 0 });
+
+  // Handle joystick movements
   const handleJoystickMove = (data) => {
     if (!data || !data.vector) {
       joystickVecRef.current = { x: 0, y: 0, force: 0 };
@@ -94,10 +108,10 @@ const Scene = () => {
     joystickVecRef.current = { x, y, force };
   };
 
+  // Decide if joystick should be shown (likely on mobile only)
   const showJoystick = useShowJoystick();
 
-  // ...existing code...
-
+  // Function: zoom camera to the next orb left/right
   const zoomToNeighbor = (direction) => {
     let newIndex = selectedIndex;
     if (direction === 'left')
@@ -105,6 +119,7 @@ const Scene = () => {
     if (direction === 'right') newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
+    // Calculate orb position on sphere (Fibonacci sphere algorithm)
     const offset = 2 / ideas.length;
     const increment = Math.PI * (3 - Math.sqrt(5));
     const y = newIndex * offset - 1 + offset / 2;
@@ -113,42 +128,44 @@ const Scene = () => {
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
 
+    // Move camera to the new orb
     handleOrbClick([x * sphereRadius, y * sphereRadius, z * sphereRadius]);
   };
 
-  // ...existing code...
+  // How many orbs to render
   const orbCount = ideas.length;
 
+  // Map ideas into IdeaOrb components positioned on sphere
   const orbs = ideas.map((idea, i) => {
     const pos = getSpherePosition(i, orbCount, sphereRadius);
     return (
       <IdeaOrb
-        key={idea._id ?? i}
-        position={pos}
-        text={idea.title || idea.text}
-        orbColor={idea.orbColor}
+        key={idea._id ?? i} // Unique key
+        position={pos} // 3D position
+        text={idea.title || idea.text} // Label text
+        orbColor={idea.orbColor} // Custom color
         onClick={() => {
-          handleOrbClick(pos);
+          handleOrbClick(pos); // Animate camera
           setTimeout(() => {
+            // Navigate to idea page after animation
             if (idea._id) {
               navigate(`/ideas/${idea._id}`);
             } else {
               navigate(`/ideas`);
             }
-          }, 900); // Slightly before camera animation ends
+          }, 900); // Wait almost until camera finishes moving
           setSelectedIndex(i);
         }}
       />
     );
   });
 
-  // Add WebGL error handling
+  // Handle WebGL context loss (can happen on weak GPUs)
   const handleWebGLError = (error) => {
     console.warn('WebGL Context Lost, attempting to recover...', error);
-    // You can add recovery logic here
   };
 
-  // Add error boundary for Canvas
+  // Error boundary for Canvas rendering
   const onError = (error) => {
     console.error('Three.js error:', error);
   };
@@ -162,7 +179,7 @@ const Scene = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Radial gradient background */}
+      {/* Radial gradient background behind WebGL canvas */}
       <div
         style={{
           position: 'absolute',
@@ -176,30 +193,32 @@ const Scene = () => {
             'radial-gradient(circle at 60% 40%, #ffe6e6 0%, #fff7d6 60%, #e6f7ff 100%)',
         }}
       />
+      {/* 3D scene rendered in WebGL */}
       <Canvas
         onError={onError}
         gl={{
-          powerPreference: "high-performance",
-          antialias: true,
-          alpha: true,
-          preserveDrawingBuffer: false
+          powerPreference: "high-performance", // Try to use GPU for speed
+          antialias: true, // Smooth edges
+          alpha: true, // Transparent background
+          preserveDrawingBuffer: false, // Don’t store old frames
         }}
-        camera={{ position: [0, 0, 50], fov: 75 }}
+        camera={{ position: [0, 0, 50], fov: 75 }} // Start camera position
         style={{ position: 'relative', zIndex: 1 }}
       >
+        {/* Light fog for depth */}
         <fog attach='fog' args={['#f7f7fa', 20, 70]} />
-        <ambientLight intensity={0.6} />
-        <directionalLight intensity={0.4} position={[5, 5, 5]} />
-        <CameraController joystickVecRef={joystickVecRef} />
-        {orbs}
+        <ambientLight intensity={0.6} /> {/* Soft light everywhere */}
+        <directionalLight intensity={0.4} position={[5, 5, 5]} /> {/* Sunlight */}
+        <CameraController joystickVecRef={joystickVecRef} /> {/* Moves camera with joystick */}
+        {orbs} {/* Render all idea orbs */}
         <OrbitControls
           ref={controlsRef}
-          enableZoom={false}
-          enablePan={false}
-          target={[0, 0, 0]}
+          enableZoom={false} // Disable zoom
+          enablePan={false} // Disable pan
+          target={[0, 0, 0]} // Camera looks at scene center
           makeDefault
         />
-        {/* Global ambient sparkles field (less dense and further out) */}
+        {/* Sparkle effects for atmosphere */}
         <Sparkles
           count={250}
           scale={[100, 80, 100]}
@@ -209,7 +228,6 @@ const Scene = () => {
           color='#84c7ff'
           noise={2}
         />
-        {/* Mid-distance layer for wider coverage */}
         <Sparkles
           count={120}
           scale={[200, 160, 200]}
@@ -219,7 +237,6 @@ const Scene = () => {
           color='#84c7ff'
           noise={2.5}
         />
-        {/* Far layer to fill deep background */}
         <Sparkles
           count={180}
           scale={[320, 260, 320]}
@@ -229,9 +246,10 @@ const Scene = () => {
           color='#84c7ff'
           noise={3}
         />
-        {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}
+        {/* Note: Postprocessing bloom was removed to avoid errors */}
       </Canvas>
 
+      {/* Show joystick only on mobile (if hook says so) */}
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );
