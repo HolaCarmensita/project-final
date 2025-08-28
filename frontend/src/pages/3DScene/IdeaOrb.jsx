@@ -19,7 +19,7 @@ const RimGlowMaterial = shaderMaterial(
     dirY: 1,
     dirZ: 1,
   },
-  // 🔹 Vertex Shader (controls positions of vertices, adds wobble)
+  // 🔹 Vertex Shader (controls positions of vertices, adds wobble) OpenGL Shading Language
   `
   uniform float time;
   uniform float phase;
