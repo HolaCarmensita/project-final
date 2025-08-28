@@ -45,8 +45,10 @@ const createIdea = async (ideaData) => {
     formData.append('description', ideaData.description);
 
     // Add files if they exist
+    console.log('Files to upload:', ideaData.files ? ideaData.files.length : 0);
     if (ideaData.files && ideaData.files.length > 0) {
-      ideaData.files.forEach((file) => {
+      ideaData.files.forEach((file, index) => {
+        console.log(`File ${index}:`, file.name, 'Size:', file.size, 'Type:', file.type);
         formData.append('files', file);
       });
     }

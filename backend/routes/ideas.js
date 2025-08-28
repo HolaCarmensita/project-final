@@ -7,6 +7,13 @@ import { authenticateToken } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
 import cloudinary from '../services/cloudinary.js';
 import stream from 'stream';
+
+// Test Cloudinary configuration
+console.log('Cloudinary config check:', {
+  cloudName: process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set',
+  apiKey: process.env.CLOUDINARY_API_KEY ? 'Set' : 'Not set',
+  apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set'
+});
 import {
   sendConnectionNotification,
   sendConnectionConfirmation,
@@ -17,10 +24,20 @@ const router = express.Router();
 // Helper function to upload buffer to Cloudinary
 const uploadBufferToCloudinary = (buffer, folder = 'ideas') =>
   new Promise((resolve, reject) => {
+    console.log('Starting Cloudinary upload for folder:', folder);
+
     const passthrough = new stream.PassThrough();
     const cldStream = cloudinary.uploader.upload_stream(
       { folder, resource_type: 'image' },
-      (err, result) => (err ? reject(err) : resolve(result))
+      (err, result) => {
+        if (err) {
+          console.error('Cloudinary upload failed:', err);
+          reject(err);
+        } else {
+          console.log('Cloudinary upload successful:', result.secure_url);
+          resolve(result);
+        }
+      }
     );
     passthrough.end(buffer);
     passthrough.pipe(cldStream);
@@ -72,19 +89,26 @@ router.post(
 
       // Process uploaded files
       const imageUrls = [];
+      console.log('Files received:', req.files ? req.files.length : 0);
+
       if (req.files && req.files.length > 0) {
         for (const file of req.files) {
           try {
+            console.log('Processing file:', file.originalname, 'Size:', file.size);
             const buffer = file.buffer;
+            console.log('Buffer size:', buffer.length);
+
             const result = await uploadBufferToCloudinary(buffer);
             const imageUrl = result.secure_url;
-            console.log('File uploaded:', imageUrl);
+            console.log('File uploaded successfully:', imageUrl);
             imageUrls.push(imageUrl);
           } catch (uploadError) {
-            console.error('File upload error:', uploadError);
+            console.error('File upload error for', file.originalname, ':', uploadError);
             // Continue with other files, don't fail the entire request
           }
         }
+      } else {
+        console.log('No files received in request');
       }
 
       // Create a new idea object
