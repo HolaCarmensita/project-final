@@ -92,12 +92,12 @@ router.post(
       console.log('Files received:', req.files ? req.files.length : 0);
 
       if (req.files && req.files.length > 0) {
+        req.files.forEach((file, idx) => {
+          console.log(`File[${idx}]: name=${file.originalname}, size=${file.size}, type=${file.mimetype}`);
+        });
         for (const file of req.files) {
           try {
-            console.log('Processing file:', file.originalname, 'Size:', file.size);
             const buffer = file.buffer;
-            console.log('Buffer size:', buffer.length);
-
             const result = await uploadBufferToCloudinary(buffer);
             const imageUrl = result.secure_url;
             console.log('File uploaded successfully:', imageUrl);
@@ -109,6 +109,10 @@ router.post(
         }
       } else {
         console.log('No files received in request');
+        return res.status(400).json({
+          message: 'No image files received. Please select images to upload.',
+          error: 'No files in request',
+        });
       }
 
       // Create a new idea object

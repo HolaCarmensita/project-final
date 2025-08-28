@@ -115,6 +115,10 @@ const Dot = styled.button`
 const ImageCarousel = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  useEffect(() => {
+    console.log('ImageCarousel images prop:', images);
+  }, [images]);
+
   const displayImages = images || [];
 
   // Swipe handlers
@@ -166,17 +170,16 @@ const ImageCarousel = ({ images = [] }) => {
     <CarouselContainer
       {...handlers}
       role='region'
-      aria-label={`Image carousel, ${currentIndex + 1} of ${
-        displayImages.length
-      } images`}
+      aria-label={`Image carousel, ${currentIndex + 1} of ${displayImages.length
+        } images`}
       aria-live='polite'
     >
       <CarouselTrack $currentIndex={currentIndex}>
         {displayImages.map((image, index) => (
           <CarouselSlide key={index}>
             <CarouselImage
-              src={image.url || image}
-              alt={image.alt || `Image ${index + 1} of ${displayImages.length}`}
+              src={typeof image === 'string' ? image : image.url}
+              alt={`Image ${index + 1} of ${displayImages.length}`}
               aria-hidden={index !== currentIndex}
             />
           </CarouselSlide>
@@ -198,9 +201,8 @@ const ImageCarousel = ({ images = [] }) => {
             onClick={goToNext}
             disabled={currentIndex === displayImages.length - 1}
             tabIndex={3}
-            aria-label={`Go to next image (${currentIndex + 2} of ${
-              displayImages.length
-            })`}
+            aria-label={`Go to next image (${currentIndex + 2} of ${displayImages.length
+              })`}
           >
             ›
           </NextButton>
