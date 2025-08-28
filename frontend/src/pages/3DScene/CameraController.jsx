@@ -1,5 +1,6 @@
-import { useThree, useFrame } from "@react-three/fiber";
-import { useRef, useEffect } from "react";
+import { useThree, useFrame } from '@react-three/fiber';
+import { useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Helper to detect when user is typing in an input/textarea/contentEditable field
 const isTypingIntoField = () => {
@@ -11,7 +12,8 @@ const isTypingIntoField = () => {
     tag === 'INPUT' ||
     tag === 'TEXTAREA' ||
     el.isContentEditable === true ||
-    (typeof el.getAttribute === 'function' && el.getAttribute('role') === 'textbox')
+    (typeof el.getAttribute === 'function' &&
+      el.getAttribute('role') === 'textbox')
   );
 };
 
@@ -19,45 +21,62 @@ const MOVE_SPEED = 0.5;
 const JOYSTICK_SCALE = 0.6;
 
 const keyMap = {
-  ArrowUp: "forward",
-  ArrowDown: "backward",
-  ArrowLeft: "left",
-  ArrowRight: "right",
-  w: "forward",
-  s: "backward",
-  a: "left",
-  d: "right",
+  ArrowUp: 'forward',
+  ArrowDown: 'backward',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  w: 'forward',
+  s: 'backward',
+  a: 'left',
+  d: 'right',
 };
 
 export default function CameraController({ joystickVecRef }) {
   const { camera, controls } = useThree();
   const pressed = useRef({});
+  const location = useLocation();
+
+  // Check if we're on the ideas route
+  const isIdeasRoute = location.pathname.startsWith('/ideas');
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (isTypingIntoField()) return; // ignore movement keys while typing
+
+      // On ideas route, disable left/right arrow keys for camera movement
+      if (isIdeasRoute && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        return; // Don't handle left/right arrows on ideas route
+      }
+
       if (keyMap[e.key]) pressed.current[keyMap[e.key]] = true;
     };
     const handleKeyUp = (e) => {
       if (isTypingIntoField()) return; // ignore key state updates while typing
+
+      // On ideas route, disable left/right arrow keys for camera movement
+      if (isIdeasRoute && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        return; // Don't handle left/right arrows on ideas route
+      }
+
       if (keyMap[e.key]) pressed.current[keyMap[e.key]] = false;
     };
     const handleFocusIn = () => {
       // Clear any stuck keys when focusing into an input field
       if (isTypingIntoField()) pressed.current = {};
     };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("focusin", handleFocusIn);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('focusin', handleFocusIn);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("focusin", handleFocusIn);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('focusin', handleFocusIn);
     };
-  }, []);
+  }, [isIdeasRoute]);
 
   useFrame(() => {
-    let moveX = 0, moveZ = 0;
+    let moveX = 0,
+      moveZ = 0;
 
     if (pressed.current.forward) moveZ += MOVE_SPEED;
     if (pressed.current.backward) moveZ -= MOVE_SPEED;
