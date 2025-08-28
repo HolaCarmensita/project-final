@@ -5,12 +5,26 @@ import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
+import cloudinary from '../services/cloudinary.js';
+import stream from 'stream';
 import {
   sendConnectionNotification,
   sendConnectionConfirmation,
 } from '../services/emailService.js';
 
 const router = express.Router();
+
+// Helper function to upload buffer to Cloudinary
+const uploadBufferToCloudinary = (buffer, folder = 'ideas') =>
+  new Promise((resolve, reject) => {
+    const passthrough = new stream.PassThrough();
+    const cldStream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: 'image' },
+      (err, result) => (err ? reject(err) : resolve(result))
+    );
+    passthrough.end(buffer);
+    passthrough.pipe(cldStream);
+  });
 
 // Protect write/modify routes only; GET routes remain public
 
@@ -43,13 +57,13 @@ router.post(
       // Process uploaded files
       const imageUrls = [];
       if (req.files && req.files.length > 0) {
-        req.files.forEach((file) => {
-          // Create URL for the uploaded file
-          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename
-            }`;
+        for (const file of req.files) {
+          const buffer = file.buffer;
+          const result = await uploadBufferToCloudinary(buffer);
+          const imageUrl = result.secure_url;
           console.log('File uploaded:', imageUrl);
           imageUrls.push(imageUrl);
-        });
+        }
       }
 
       // Create a new idea object
