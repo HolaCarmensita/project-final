@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import PageHeader from '../../../components/PageHeader';
 import IdeaCard from '../ideaCard/IdeaCard';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -12,14 +13,6 @@ const IdeaPageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   height: 100%;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 24px 0;
-  align-self: flex-start;
 `;
 
 const LoadingMessage = styled.div`
@@ -88,7 +81,7 @@ const IdeaPage = () => {
   if (isLoading && ideas.length === 0) {
     return (
       <IdeaPageContainer>
-        <Title>Explore</Title>
+        <PageHeader title='Explore' />
         <LoadingMessage>Loading ideas...</LoadingMessage>
       </IdeaPageContainer>
     );
@@ -98,7 +91,7 @@ const IdeaPage = () => {
   if (error && ideas.length === 0) {
     return (
       <IdeaPageContainer>
-        <Title>Explore</Title>
+        <PageHeader title='Explore' />
         <ErrorMessage>Error loading ideas: {error}</ErrorMessage>
       </IdeaPageContainer>
     );
@@ -108,7 +101,7 @@ const IdeaPage = () => {
   if (!isLoading && ideas.length === 0) {
     return (
       <IdeaPageContainer>
-        <Title>Explore</Title>
+        <PageHeader title='Explore' />
         <NoIdeasMessage>No ideas available.</NoIdeasMessage>
       </IdeaPageContainer>
     );
@@ -118,7 +111,7 @@ const IdeaPage = () => {
   if (ideas.length > 0 && selectedIndex >= 0 && selectedIndex < ideas.length) {
     return (
       <IdeaPageContainer>
-        <Title>Explore</Title>
+        <PageHeader title='Explore' />
         <IdeaCard idea={ideas[selectedIndex]} />
         {/* <MockNavigation onNext={goToNext} onPrevious={goToPrevious} /> */}
       </IdeaPageContainer>
@@ -128,7 +121,7 @@ const IdeaPage = () => {
   // Fallback - should not reach here
   return (
     <IdeaPageContainer>
-      <Title>Explore</Title>
+      <PageHeader title='Explore' />
       <NoIdeasMessage>Loading...</NoIdeasMessage>
     </IdeaPageContainer>
   );
