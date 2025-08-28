@@ -5,6 +5,10 @@ import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
+import {
+  sendConnectionNotification,
+  sendConnectionConfirmation,
+} from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -240,8 +244,8 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
     // 1. Get the idea ID from the URL parameter
     const ideaId = req.params.id;
 
-    // 2. Get the connection message from request body
-    const { message } = req.body;
+    // 2. Get the connection message and social link from request body
+    const { message, socialLink } = req.body;
 
     // 3. Get the user ID from the authentication token (already available from middleware)
     const userId = req.user._id;
@@ -290,6 +294,7 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
     user.connectedIdeas.push({
       idea: ideaId,
       message: message.trim(),
+      socialLink: socialLink || null,
       connectedAt: new Date(),
     });
 
@@ -300,6 +305,7 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
         idea: ideaId,
         connectedBy: userId,
         message: message.trim(),
+        socialLink: socialLink || null,
         connectedAt: new Date(),
       });
     }
@@ -310,7 +316,25 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
     // 11. Save all updates
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 12. Return success
+    // 12. Send email notifications (don't block the response if email fails)
+    try {
+      // Send notification to idea creator
+      await sendConnectionNotification(
+        ideaCreator,
+        user,
+        idea,
+        message.trim(),
+        socialLink
+      );
+
+      // Send confirmation to connecting user
+      await sendConnectionConfirmation(user, ideaCreator, idea);
+    } catch (emailError) {
+      console.error('Failed to send connection emails:', emailError);
+      // Don't fail the connection if email fails
+    }
+
+    // 13. Return success
     res.json({
       message: 'Successfully connected to idea',
       success: true,

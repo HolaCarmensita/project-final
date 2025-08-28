@@ -176,9 +176,12 @@ const getLikedIdeas = async () => {
 };
 
 // Connect to idea
-const connectToIdea = async (id, message) => {
+const connectToIdea = async (id, message, socialLink) => {
   try {
-    const response = await api.post(`/ideas/${id}/connect`, { message });
+    const response = await api.post(`/ideas/${id}/connect`, {
+      message,
+      socialLink,
+    });
     return {
       success: true,
       idea: response.data.idea,

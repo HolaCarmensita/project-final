@@ -104,11 +104,11 @@ export const useInteractionsStore = create((set, get) => ({
   },
 
   // Connect to an idea
-  connectToIdea: async (id, message) => {
+  connectToIdea: async (id, message, socialLink) => {
     set({ isLoading: true, error: null });
 
     try {
-      const result = await ideasService.connectToIdea(id, message);
+      const result = await ideasService.connectToIdea(id, message, socialLink);
 
       if (result.success) {
         // Update the idea counter in ideas store
