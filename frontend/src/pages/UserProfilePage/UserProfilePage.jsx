@@ -6,7 +6,7 @@ import StackedIdeaCards from '../../components/StackedIdeaCards';
 import ColorIdeaCard from '../../components/ColorIdeaCard';
 import OpenIdeaButton from '../../components/OpenIdeaButton';
 import UnstackToggleButton from '../../components/UnstackToggleButton';
-import { useUsersStore } from '../../store/useUsersStore';
+import { useUserStore } from '../../store/useUserStore';
 import { useIdeasStore } from '../../store/useIdeasStore';
 import { useAuthStore } from '../../store/useAuthStore';
 
@@ -95,9 +95,9 @@ export default function UserProfilePage() {
   const isOwnProfile = currentUser?._id === userId;
 
   // Get user data from UsersStore
-  const fetchUserById = useUsersStore((state) => state.fetchUserById);
-  const isLoading = useUsersStore((state) => state.isLoading);
-  const error = useUsersStore((state) => state.error);
+  const fetchUserById = useUserStore((state) => state.fetchUserById);
+  const isLoading = useUserStore((state) => state.isLoading);
+  const error = useUserStore((state) => state.error);
 
   // Get ideas from IdeasStore
   const ideas = useIdeasStore((state) => state.ideas);

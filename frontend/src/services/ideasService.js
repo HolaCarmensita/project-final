@@ -1,5 +1,21 @@
 import api from './api.js';
 
+// Retry utility function
+const withRetry = async (fn, maxRetries = 3, delay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Wait before retrying (exponential backoff)
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt));
+    }
+  }
+};
+
 // Get all ideas
 const getAllIdeas = async () => {
   try {
@@ -109,38 +125,42 @@ const deleteIdea = async (id) => {
 
 // Like idea
 const likeIdea = async (id) => {
-  try {
-    const response = await api.post(`/ideas/${id}/like`);
-    return {
-      success: true,
-      idea: response.data.idea,
-      user: response.data.user,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      error,
-    };
-  }
+  return withRetry(async () => {
+    try {
+      const response = await api.post(`/ideas/${id}/like`);
+      return {
+        success: true,
+        idea: response.data.idea,
+        user: response.data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        error,
+      };
+    }
+  });
 };
 
 // Unlike idea (same endpoint as like - it toggles)
 const unlikeIdea = async (id) => {
-  try {
-    const response = await api.post(`/ideas/${id}/like`);
-    return {
-      success: true,
-      idea: response.data.idea,
-      user: response.data.user,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      error,
-    };
-  }
+  return withRetry(async () => {
+    try {
+      const response = await api.post(`/ideas/${id}/like`);
+      return {
+        success: true,
+        idea: response.data.idea,
+        user: response.data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        error,
+      };
+    }
+  });
 };
 
 // Get ideas by user
@@ -179,40 +199,45 @@ const getLikedIdeas = async () => {
 
 // Connect to idea
 const connectToIdea = async (id, message, socialLink) => {
-  try {
-    const response = await api.post(`/ideas/${id}/connect`, {
-      message,
-      socialLink,
-    });
-    return {
-      success: true,
-      idea: response.data.idea,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      error,
-    };
-  }
+  return withRetry(async () => {
+    try {
+      const response = await api.post(`/ideas/${id}/connect`, {
+        message,
+        socialLink,
+      });
+      return {
+        success: true,
+        idea: response.data.idea,
+        user: response.data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        error,
+      };
+    }
+  });
 };
 
 // Disconnect from idea
 const disconnectFromIdea = async (id) => {
-  try {
-    const response = await api.delete(`/ideas/${id}/connect`);
-    return {
-      success: true,
-      idea: response.data.idea,
-      user: response.data.user,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      error,
-    };
-  }
+  return withRetry(async () => {
+    try {
+      const response = await api.delete(`/ideas/${id}/connect`);
+      return {
+        success: true,
+        idea: response.data.idea,
+        user: response.data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        error,
+      };
+    }
+  });
 };
 
 // Export all functions

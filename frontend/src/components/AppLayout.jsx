@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import Scene from '../pages/3DScene/3DScene';
 import NavBar from './NavBar';
@@ -29,9 +29,9 @@ const AppLayout = () => {
   const ideas = useIdeasStore((state) => state.ideas);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  // Navigation handlers
-  const handleLeftStore = useUIStore((state) => state.handleLeft);
-  const handleRightStore = useUIStore((state) => state.handleRight);
+  // NAGIVATION HANDLERS
+  const navigateLeft = useUIStore((state) => state.navigateLeft);
+  const navigateRight = useUIStore((state) => state.navigateRight);
 
   // Route detection
   const isModalActive = location.pathname !== '/';
@@ -40,28 +40,44 @@ const AppLayout = () => {
   const isConnectionsRoute = location.pathname.startsWith('/connections');
   const shouldShowModal = isIdeasRoute || isProfileRoute || isConnectionsRoute;
 
-  // Navigation handlers
-  const handleLeft = () =>
-    handleLeftStore((idx) => {
-      window.dispatchEvent(
-        new CustomEvent('moveCameraToIndex', { detail: idx })
-      );
-      if (ideas.length > 0 && ideas[idx]) {
-        const idea = ideas[idx];
-        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-      }
-    });
+  // Animation state
+  const [isModalAnimatingOut, setIsModalAnimatingOut] = useState(false);
+  const [shouldRenderModal, setShouldRenderModal] = useState(shouldShowModal);
+  const [currentModalRoute, setCurrentModalRoute] = useState(
+    shouldShowModal ? location.pathname : null
+  );
 
-  const handleRight = () =>
-    handleRightStore((idx) => {
-      window.dispatchEvent(
-        new CustomEvent('moveCameraToIndex', { detail: idx })
-      );
-      if (ideas.length > 0 && ideas[idx]) {
-        const idea = ideas[idx];
-        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-      }
-    });
+  // Handle modal animation timing
+  useEffect(() => {
+    if (shouldShowModal && !shouldRenderModal) {
+      // Show modal immediately
+      setShouldRenderModal(true);
+      setIsModalAnimatingOut(false);
+      setCurrentModalRoute(location.pathname);
+    } else if (!shouldShowModal && shouldRenderModal) {
+      // Start hide animation
+      setIsModalAnimatingOut(true);
+      // Wait for animation to complete before removing from DOM
+      const timer = setTimeout(() => {
+        setShouldRenderModal(false);
+        setIsModalAnimatingOut(false);
+        setCurrentModalRoute(null);
+      }, 500); // Match animation duration
+      return () => clearTimeout(timer);
+    } else if (shouldShowModal && shouldRenderModal && !isModalAnimatingOut) {
+      // Update route only when not animating
+      setCurrentModalRoute(location.pathname);
+    }
+  }, [
+    shouldShowModal,
+    shouldRenderModal,
+    location.pathname,
+    isModalAnimatingOut,
+  ]);
+
+  // SIMPLE NAVIGATION HANDLERS
+  const handleLeft = () => navigateLeft(navigate, ideas);
+  const handleRight = () => navigateRight(navigate, ideas);
 
   // Add idea handler
   const handleSubmitIdea = (ideaData) => {
@@ -79,6 +95,7 @@ const AppLayout = () => {
   return (
     <div className='app-container'>
       <div className='content-layout'>
+        {/* HERE IS THE NAVBAR */}
         <NavBar
           onAdd={() => {
             if (isAuthenticated) {
@@ -99,18 +116,23 @@ const AppLayout = () => {
         <ConnectModal />
 
         <div
-          className={`scene-container ${shouldShowModal ? 'scene-container--hidden-mobile' : ''
-            }`}
+          className={`scene-container ${
+            shouldShowModal ? 'scene-container--hidden-mobile' : ''
+          }`}
         >
           <Header />
           <Scene ideas={ideas} />
         </div>
 
-        {shouldShowModal && (
-          <div className='modal-container'>
+        {shouldRenderModal && (
+          <div
+            className={`modal-container ${
+              isModalAnimatingOut ? 'modal-container--hiding' : ''
+            }`}
+          >
             <Header />
             <div className='modal-content'>
-              <Routes>
+              <Routes location={currentModalRoute}>
                 <Route path='/ideas' element={<IdeaPage />} />
                 <Route path='/ideas/' element={<IdeaPage />} />
                 <Route path='/ideas/:id' element={<IdeaPage />} />

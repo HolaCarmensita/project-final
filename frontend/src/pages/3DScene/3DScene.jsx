@@ -10,7 +10,7 @@ import CameraController from './CameraController';
 import Joystick from '../../components/Joystick';
 import { getSpherePosition } from './sphereLayout';
 import { useShowJoystick } from './useShowJoystick';
-import { useSceneNavigation } from './useSceneNavigation';
+import { useSceneNavigation } from '../../hooks/useSceneNavigation';
 
 // Helper to detect when user is typing in an input/textarea/contentEditable field
 const isTypingIntoField = () => {
@@ -33,7 +33,8 @@ const Scene = () => {
   const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
   const navigate = useNavigate();
   const controlsRef = useRef();
-  // ...existing code...
+
+  // Handle orb click
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
       const controls = controlsRef.current;
@@ -72,9 +73,11 @@ const Scene = () => {
       });
     }
   };
-  // ...existing code...
+
+  // set sphere radius
   const sphereRadius = 20;
-  // Use custom hook for keyboard and camera navigation
+
+  // USE CUSTOM HOOK FOR KEYBOARD AND CAMERA NAVIGATION
   useSceneNavigation({
     ideas,
     selectedIndex,
@@ -162,7 +165,7 @@ const Scene = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Radial gradient background */}
+      {/* Radial gradient background */}s{' '}
       <div
         style={{
           position: 'absolute',
@@ -231,7 +234,6 @@ const Scene = () => {
         />
         {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}
       </Canvas>
-
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );

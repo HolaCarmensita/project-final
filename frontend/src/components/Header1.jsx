@@ -86,8 +86,8 @@ const Header = ({ onThemeToggle }) => {
 
   const handleProfileClick = () => {
     if (isOnProfilePage) {
-      // If on profile page, go back to previous page
-      navigate(-1);
+      // If on profile page, close modal by going to home
+      navigate('/');
     } else {
       // If not on profile page, go to profile
       navigate('/profile');

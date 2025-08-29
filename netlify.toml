@@ -1,0 +1,13 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  VITE_API_BASE_URL = "https://api.render.com/deploy/srv-d2o87kf5r7bs738ivi30?key=HUPb1chL8-s"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
