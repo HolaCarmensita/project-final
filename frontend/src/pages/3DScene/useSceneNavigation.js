@@ -15,8 +15,10 @@ export function useSceneNavigation({
   const navigate = useNavigate();
 
   // Get navigation handlers from UI store
-  const handleLeftStore = useUIStore((state) => state.handleLeft);
-  const handleRightStore = useUIStore((state) => state.handleRight);
+  const navigateLeft = useUIStore((state) => state.navigateLeft);
+  const navigateRight = useUIStore((state) => state.navigateRight);
+  const navigateLeftSimple = useUIStore((state) => state.navigateLeftSimple);
+  const navigateRightSimple = useUIStore((state) => state.navigateRightSimple);
 
   // Check if we're on the ideas route
   const isIdeasRoute = location.pathname.startsWith('/ideas');
@@ -42,37 +44,19 @@ export function useSceneNavigation({
 
       if (e.key === 'ArrowLeft') {
         if (isIdeasRoute) {
-          // On ideas route, use the same navigation as NavBar
-          handleLeftStore((idx) => {
-            window.dispatchEvent(
-              new CustomEvent('moveCameraToIndex', { detail: idx })
-            );
-            if (ideas.length > 0 && ideas[idx]) {
-              const idea = ideas[idx];
-              navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-            }
-          });
+          // On ideas route, use complete navigation (camera + page change)
+          navigateLeft(navigate, ideas);
         } else {
-          // On other routes, use the original behavior
-          let newIndex = (selectedIndex - 1 + ideas.length) % ideas.length;
-          setSelectedIndex(newIndex);
+          // On other routes, use simple navigation (just selection change)
+          navigateLeftSimple();
         }
       } else if (e.key === 'ArrowRight') {
         if (isIdeasRoute) {
-          // On ideas route, use the same navigation as NavBar
-          handleRightStore((idx) => {
-            window.dispatchEvent(
-              new CustomEvent('moveCameraToIndex', { detail: idx })
-            );
-            if (ideas.length > 0 && ideas[idx]) {
-              const idea = ideas[idx];
-              navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-            }
-          });
+          // On ideas route, use complete navigation (camera + page change)
+          navigateRight(navigate, ideas);
         } else {
-          // On other routes, use the original behavior
-          let newIndex = (selectedIndex + 1) % ideas.length;
-          setSelectedIndex(newIndex);
+          // On other routes, use simple navigation (just selection change)
+          navigateRightSimple();
         }
       }
     };
@@ -82,12 +66,11 @@ export function useSceneNavigation({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [
-    selectedIndex,
-    ideas.length,
-    setSelectedIndex,
     isIdeasRoute,
-    handleLeftStore,
-    handleRightStore,
+    navigateLeft,
+    navigateRight,
+    navigateLeftSimple,
+    navigateRightSimple,
     navigate,
     ideas,
   ]);

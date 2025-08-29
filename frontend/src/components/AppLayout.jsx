@@ -29,9 +29,9 @@ const AppLayout = () => {
   const ideas = useIdeasStore((state) => state.ideas);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  // Navigation handlers
-  const handleLeftStore = useUIStore((state) => state.handleLeft);
-  const handleRightStore = useUIStore((state) => state.handleRight);
+  // Navigation handlers - now much simpler!
+  const navigateLeft = useUIStore((state) => state.navigateLeft);
+  const navigateRight = useUIStore((state) => state.navigateRight);
 
   // Route detection
   const isModalActive = location.pathname !== '/';
@@ -75,28 +75,9 @@ const AppLayout = () => {
     isModalAnimatingOut,
   ]);
 
-  // Navigation handlers
-  const handleLeft = () =>
-    handleLeftStore((idx) => {
-      window.dispatchEvent(
-        new CustomEvent('moveCameraToIndex', { detail: idx })
-      );
-      if (ideas.length > 0 && ideas[idx]) {
-        const idea = ideas[idx];
-        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-      }
-    });
-
-  const handleRight = () =>
-    handleRightStore((idx) => {
-      window.dispatchEvent(
-        new CustomEvent('moveCameraToIndex', { detail: idx })
-      );
-      if (ideas.length > 0 && ideas[idx]) {
-        const idea = ideas[idx];
-        navigate(idea._id ? `/ideas/${idea._id}` : '/ideas');
-      }
-    });
+  // Simple navigation handlers - no more duplicate code!
+  const handleLeft = () => navigateLeft(navigate, ideas);
+  const handleRight = () => navigateRight(navigate, ideas);
 
   // Add idea handler
   const handleSubmitIdea = (ideaData) => {
