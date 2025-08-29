@@ -80,6 +80,7 @@ const allowedOrigins = [
   'http://localhost:5173', // Vite dev server
   'http://localhost:3000', // Common React dev server
   'http://localhost:4173', // Vite preview
+  'https://aesthetic-dolphin-63dc60.netlify.app', // Your Netlify URL
   process.env.FRONTEND_URL, // Production frontend URL
 ].filter(Boolean); // Remove any undefined values
 
