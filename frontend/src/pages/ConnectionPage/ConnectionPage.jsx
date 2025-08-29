@@ -106,7 +106,7 @@ const MessageBox = styled.div`
 const MessageTitle = styled.h4`
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #222;
 `;
 
 const MessageText = styled.p`

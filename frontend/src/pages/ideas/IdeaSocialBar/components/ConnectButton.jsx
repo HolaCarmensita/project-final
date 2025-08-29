@@ -55,7 +55,7 @@ const ConnectIcon = styled.img`
 `;
 
 const ConnectText = styled.h4`
-  color: ${(props) => (props.disabled ? '#cccccc' : '#808080')};
+  color: ${(props) => (props.disabled ? '#888' : '#222')};
   font-weight: 400;
 `;
 
@@ -137,14 +137,13 @@ export const ConnectButton = ({ ideaId }) => {
         <ConnectBtn
           onClick={handleClick}
           disabled={isOwnIdea}
-          tabIndex={5}
-          aria-label={`${
-            isOwnIdea
+          tabIndex={0}
+          aria-label={`${isOwnIdea
               ? 'Cannot connect to your own idea'
               : isConnected
-              ? 'Disconnect from'
-              : 'Connect with'
-          } this idea. ${connections} connections`}
+                ? 'Disconnect from'
+                : 'Connect with'
+            } this idea. ${connections} connections`}
         >
           <ConnectIcon
             src={isConnected ? atBold : at}

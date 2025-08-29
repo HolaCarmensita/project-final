@@ -194,7 +194,7 @@ const ImageCarousel = ({ images = [] }) => {
           <PrevButton
             onClick={goToPrevious}
             disabled={currentIndex === 0}
-            tabIndex={2}
+            tabIndex={0}
             aria-label={`Go to previous image (${currentIndex} of ${displayImages.length})`}
           >
             ‹
@@ -202,7 +202,7 @@ const ImageCarousel = ({ images = [] }) => {
           <NextButton
             onClick={goToNext}
             disabled={currentIndex === displayImages.length - 1}
-            tabIndex={3}
+            tabIndex={0}
             aria-label={`Go to next image (${currentIndex + 2} of ${displayImages.length
               })`}
           >
@@ -219,7 +219,7 @@ const ImageCarousel = ({ images = [] }) => {
               key={index}
               $active={index === currentIndex}
               onClick={() => goToSlide(index)}
-              tabIndex={-1} // Remove from tab order
+              tabIndex={0} // Accessible tab order
               aria-hidden='true' // Hide from screen readers
             />
           ))}

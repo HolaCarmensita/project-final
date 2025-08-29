@@ -60,7 +60,7 @@ const ProfileButton = ({
   return (
     <ProfileContainer
       onClick={handleClick}
-      tabIndex={1}
+      tabIndex={0}
       role='button'
       aria-label={`View profile of ${author}, ${role}`}
       onKeyDown={(e) => {

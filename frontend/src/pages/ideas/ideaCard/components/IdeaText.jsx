@@ -18,7 +18,7 @@ const IdeaTextContainer = styled.div`
   }
 `;
 
-const IdeaTitle = styled.h1`
+const IdeaTitle = styled.h2`
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
@@ -38,7 +38,7 @@ const IdeaText = ({
 }) => {
   return (
     <IdeaTextContainer
-      tabIndex={-1}
+      tabIndex={0}
       role='article'
       aria-label={`Idea: ${title}`}
       aria-describedby='idea-body'

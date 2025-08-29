@@ -54,7 +54,7 @@ const HeartIcon = styled.img`
 `;
 
 const LikeText = styled.h4`
-  color: ${(props) => (props.disabled ? '#cccccc' : '#808080')};
+  color: ${(props) => (props.disabled ? '#888' : '#222')};
   font-weight: 400;
 `;
 
@@ -97,14 +97,13 @@ export const LikeButton = ({ ideaId }) => {
         <StyledButton
           onClick={handleClick}
           disabled={isOwnIdea}
-          tabIndex={4}
-          aria-label={`${
-            isOwnIdea
+          tabIndex={0}
+          aria-label={`${isOwnIdea
               ? 'Cannot like your own idea'
               : isLiked
-              ? 'Unlike'
-              : 'Like'
-          } this idea. ${likes} likes`}
+                ? 'Unlike'
+                : 'Like'
+            } this idea. ${likes} likes`}
         >
           <HeartIcon src={isLiked ? heartFill : heart} alt='heart' />
         </StyledButton>

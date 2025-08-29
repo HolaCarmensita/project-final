@@ -26,7 +26,7 @@ const Sheet = styled.div`
   z-index: 5001;
 `;
 
-const Title = styled.h3`
+const Title = styled.h2`
   margin: 0 0 12px 0;
   font-weight: 600;
 `;

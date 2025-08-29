@@ -12,7 +12,7 @@ const IdeaTitle = styled.h4`
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 4px;
-  color: #0f0f0f;
+  color: #222;
 `;
 const IdeaDesc = styled.p`
   font-size: 16px;
