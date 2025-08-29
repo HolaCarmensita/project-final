@@ -146,7 +146,7 @@ router.get('/', async (req, res) => {
 
     res.json({
       message: 'Ideas retrieved successfully',
-      ideas: safeIdeas,
+      ideas: ideas,
     });
   } catch (error) {
     console.error('Error in GET /ideas:', error);
