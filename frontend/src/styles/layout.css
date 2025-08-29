@@ -2,6 +2,26 @@
    LAYOUT SYSTEM MOBILE FIRST 
    ========================================================================== */
 
+/* Animation for modal fading in on mobile */
+@keyframes fadeInMobile {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation for modal fading out on mobile */
+@keyframes fadeOutMobile {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Animation for modal growing in with flex - iPad */
 @keyframes growInWithFlexIpad {
   from {
@@ -86,17 +106,21 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  animation: growInWithFlexIpad 1s ease-out;
+  gap: 0px;
+  /* Fade in animation on mobile */
+  animation: fadeInMobile 0.2s ease-out;
 }
 
 /* Modal container when animating out */
 .modal-container--hiding {
-  animation: shrinkOutWithFlexIpad 0.5s ease-out forwards;
+  /* Fade out animation on mobile */
+  animation: fadeOutMobile 0.2s ease-out forwards;
   pointer-events: none;
 }
 
 .modal-container > header {
+  padding: 16px;
+
   display: flex;
   width: 100%;
   z-index: 100;
@@ -114,6 +138,18 @@
    ========================================================================== */
 
 @media (min-width: 768px) {
+  .modal-container {
+    flex: 0 0 50vw;
+    height: 100vh;
+    z-index: 10;
+    background-color: white;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: growInWithFlexIpad 1s ease-out;
+  }
+
   .content-layout {
     flex-direction: row;
   }
@@ -139,18 +175,6 @@
     z-index: 10;
     background-color: transparent;
     transition: width 0.3s ease;
-  }
-
-  .modal-container {
-    flex: 0 0 50vw;
-    height: 100vh;
-    z-index: 10;
-    background-color: white;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    animation: growInWithFlexIpad 1s ease-out;
   }
 
   .modal-content {
