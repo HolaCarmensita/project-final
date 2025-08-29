@@ -15,8 +15,12 @@ const redactMongoUri = (uri = '') => {
   try {
     if (!uri) return '[empty]';
     // Hide credentials but show host/db for debugging
-    const url = new URL(uri.replace('mongodb+srv://', 'https://').replace('mongodb://', 'http://'));
-    const protocol = uri.startsWith('mongodb+srv://') ? 'mongodb+srv://' : 'mongodb://';
+    const url = new URL(
+      uri.replace('mongodb+srv://', 'https://').replace('mongodb://', 'http://')
+    );
+    const protocol = uri.startsWith('mongodb+srv://')
+      ? 'mongodb+srv://'
+      : 'mongodb://';
     const host = url.host;
     const pathname = url.pathname;
     return `${protocol}<credentials>@${host}${pathname}`;
@@ -46,7 +50,9 @@ const database = mongoose.connection;
 database.on('connecting', () => console.log('Mongo: connecting...'));
 database.on('connected', () => console.log('Mongo: connected'));
 database.on('open', () => console.log('Mongo: connection open'));
-database.on('error', (err) => console.error('Mongo: connection error:', err?.message || err));
+database.on('error', (err) =>
+  console.error('Mongo: connection error:', err?.message || err)
+);
 database.on('disconnected', () => console.warn('Mongo: disconnected'));
 database.on('reconnected', () => console.log('Mongo: reconnected'));
 
@@ -69,7 +75,31 @@ database.once('open', () => {
 });
 
 // Middleware
-app.use(cors());
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173', // Vite dev server
+  'http://localhost:3000', // Common React dev server
+  'http://localhost:4173', // Vite preview
+  process.env.FRONTEND_URL, // Production frontend URL
+].filter(Boolean); // Remove any undefined values
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 app.use(express.json());
 
 // Serve uploaded files statically
