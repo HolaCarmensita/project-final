@@ -33,7 +33,8 @@ const Scene = () => {
   const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
   const navigate = useNavigate();
   const controlsRef = useRef();
-  // ...existing code...
+
+  // Handle orb click
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
       const controls = controlsRef.current;
@@ -72,9 +73,11 @@ const Scene = () => {
       });
     }
   };
-  // ...existing code...
+
+  // set sphere radius
   const sphereRadius = 20;
-  // Use custom hook for keyboard and camera navigation
+
+  // USE CUSTOM HOOK FOR KEYBOARD AND CAMERA NAVIGATION
   useSceneNavigation({
     ideas,
     selectedIndex,
@@ -151,8 +154,7 @@ const Scene = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Radial gradient background */}
-      s{' '}
+      {/* Radial gradient background */}s{' '}
       <div
         style={{
           position: 'absolute',

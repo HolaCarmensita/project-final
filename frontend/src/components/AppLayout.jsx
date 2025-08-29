@@ -29,7 +29,7 @@ const AppLayout = () => {
   const ideas = useIdeasStore((state) => state.ideas);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  // Navigation handlers - now much simpler!
+  // NAGIVATION HANDLERS
   const navigateLeft = useUIStore((state) => state.navigateLeft);
   const navigateRight = useUIStore((state) => state.navigateRight);
 
@@ -75,7 +75,7 @@ const AppLayout = () => {
     isModalAnimatingOut,
   ]);
 
-  // Simple navigation handlers - no more duplicate code!
+  // SIMPLE NAVIGATION HANDLERS
   const handleLeft = () => navigateLeft(navigate, ideas);
   const handleRight = () => navigateRight(navigate, ideas);
 
@@ -95,6 +95,7 @@ const AppLayout = () => {
   return (
     <div className='app-container'>
       <div className='content-layout'>
+        {/* HERE IS THE NAVBAR */}
         <NavBar
           onAdd={() => {
             if (isAuthenticated) {

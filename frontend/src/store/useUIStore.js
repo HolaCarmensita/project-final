@@ -90,25 +90,6 @@ export const useUIStore = create((set, get) => ({
     set({ selectedIndex: newIndex });
   },
 
-  // Legacy functions for backward compatibility
-  handleLeft: (callback) => {
-    const ideas = useIdeasStore.getState().getIdeas();
-    const currentIndex = get().selectedIndex;
-    const newIndex = (currentIndex - 1 + ideas.length) % ideas.length;
-
-    set({ selectedIndex: newIndex });
-    if (typeof callback === 'function') callback(newIndex);
-  },
-
-  handleRight: (callback) => {
-    const ideas = useIdeasStore.getState().getIdeas();
-    const currentIndex = get().selectedIndex;
-    const newIndex = (currentIndex + 1) % ideas.length;
-
-    set({ selectedIndex: newIndex });
-    if (typeof callback === 'function') callback(newIndex);
-  },
-
   // Getters
   getIsAddOpen: () => get().isAddOpen,
   getIsConnectOpen: () => get().isConnectOpen,

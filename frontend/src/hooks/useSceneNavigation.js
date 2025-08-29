@@ -39,6 +39,7 @@ export function useSceneNavigation({
       );
     };
 
+    // HANDLE KEYDOWN
     const handleKeyDown = (e) => {
       if (isTypingIntoField()) return;
 
