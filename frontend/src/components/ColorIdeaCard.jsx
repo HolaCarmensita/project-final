@@ -41,8 +41,8 @@ const Row = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-top: 16px;
-  color: #6b6b6b;
-  font-size: 12px;
+  color: #222;
+  font-size: 15px;
 `;
 
 export default function ColorIdeaCard({
