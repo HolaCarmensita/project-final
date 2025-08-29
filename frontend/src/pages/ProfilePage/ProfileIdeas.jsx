@@ -12,7 +12,7 @@ const Box = styled.div`
 export default function ProfileIdeas() {
   return (
     <Box className="modal-container active">
-      <h2>My Ideas</h2>
+      <h2 style={{ color: '#222' }}>My Ideas</h2>
       <p>Coming soon…</p>
     </Box>
   );
