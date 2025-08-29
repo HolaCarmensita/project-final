@@ -320,10 +320,34 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
       // Don't fail the connection if email fails
     }
 
-    // 13. Return success
+    // 13. Populate the updated user data before returning
+    const populatedUser = await User.findById(userId)
+      .populate('likedIdeas')
+      .populate({
+        path: 'connectedIdeas.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.connectedBy',
+        select: 'firstName lastName email fullName',
+      });
+
+    // 14. Return success with updated user data
     res.json({
       message: 'Successfully connected to idea',
       success: true,
+      user: populatedUser,
+      idea: idea,
     });
   } catch (error) {
     console.error('Error in POST /ideas/:id/connect:', error);
@@ -384,11 +408,33 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
     // 8. Save all updates
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 9. Return success with updated user data
+    // 9. Populate the updated user data before returning
+    const populatedUser = await User.findById(userId)
+      .populate('likedIdeas')
+      .populate({
+        path: 'connectedIdeas.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.connectedBy',
+        select: 'firstName lastName email fullName',
+      });
+
+    // 10. Return success with updated user data
     res.json({
       message: 'Successfully disconnected from idea',
       success: true,
-      user: user,
+      user: populatedUser,
       idea: idea,
     });
   } catch (error) {
