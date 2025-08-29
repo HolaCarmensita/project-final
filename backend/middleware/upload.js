@@ -1,6 +1,6 @@
 import multer from 'multer';
 
-// Keep files in memory as Buffer for direct upload to Cloudinary
+// Keep files in memory as Buffer for local file storage
 const storage = multer.memoryStorage();
 
 // File filter to only allow certain file types

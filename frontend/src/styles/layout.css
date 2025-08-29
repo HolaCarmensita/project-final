@@ -152,6 +152,7 @@
 
   .content-layout {
     flex-direction: row;
+    width: 100%;
   }
 
   .modal-container > header {

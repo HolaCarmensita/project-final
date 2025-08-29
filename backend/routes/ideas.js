@@ -5,43 +5,13 @@ import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
-import cloudinary from '../services/cloudinary.js';
-import stream from 'stream';
 
-// Test Cloudinary configuration
-console.log('Cloudinary config check:', {
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set',
-  apiKey: process.env.CLOUDINARY_API_KEY ? 'Set' : 'Not set',
-  apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set',
-});
 import {
   sendConnectionNotification,
   sendConnectionConfirmation,
 } from '../services/emailService.js';
 
 const router = express.Router();
-
-// Helper function to upload buffer to Cloudinary
-const uploadBufferToCloudinary = (buffer, folder = 'ideas') =>
-  new Promise((resolve, reject) => {
-    console.log('Starting Cloudinary upload for folder:', folder);
-
-    const passthrough = new stream.PassThrough();
-    const cldStream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: 'image' },
-      (err, result) => {
-        if (err) {
-          console.error('Cloudinary upload failed:', err);
-          reject(err);
-        } else {
-          console.log('Cloudinary upload successful:', result.secure_url);
-          resolve(result);
-        }
-      }
-    );
-    passthrough.end(buffer);
-    passthrough.pipe(cldStream);
-  });
 
 // Protect write/modify routes only; GET routes remain public
 
