@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useUIStore } from '../../store/useUIStore';
-import { useIdeasStore } from '../../store/useIdeasStore';
+import { useUIStore } from '../store/useUIStore';
+import { useIdeasStore } from '../store/useIdeasStore';
 
 // Custom hook for keyboard and camera navigation
 export function useSceneNavigation({

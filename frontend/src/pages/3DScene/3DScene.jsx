@@ -10,7 +10,7 @@ import CameraController from './CameraController';
 import Joystick from '../../components/Joystick';
 import { getSpherePosition } from './sphereLayout';
 import { useShowJoystick } from './useShowJoystick';
-import { useSceneNavigation } from './useSceneNavigation';
+import { useSceneNavigation } from '../../hooks/useSceneNavigation';
 
 // Helper to detect when user is typing in an input/textarea/contentEditable field
 const isTypingIntoField = () => {
