@@ -5,7 +5,7 @@ import { useRef, useMemo } from "react";
 import * as THREE from "three";
 import React from "react";
 
-// 🔹 Create a custom shader material with rim glow effect
+//  Create a custom shader material with rim glow effect
 const RimGlowMaterial = shaderMaterial(
   // Uniforms = dynamic variables we pass into the shader
   {
@@ -19,7 +19,7 @@ const RimGlowMaterial = shaderMaterial(
     dirY: 1,
     dirZ: 1,
   },
-  // 🔹 Vertex Shader (controls positions of vertices, adds wobble) OpenGL Shading Language
+  //  Vertex Shader (controls positions of vertices, adds wobble) OpenGL Shading Language
   `
   uniform float time;
   uniform float phase;
@@ -48,7 +48,7 @@ const RimGlowMaterial = shaderMaterial(
     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
   }
   `,
-  // 🔹 Fragment Shader (controls pixel colors, adds rim glow)
+  //  Fragment Shader (controls pixel colors, adds rim glow)
   `
   uniform vec3 color;     // Base color
   uniform vec3 rimColor;  // Rim glow color
@@ -72,7 +72,7 @@ const RimGlowMaterial = shaderMaterial(
 extend({ RimGlowMaterial });
 
 
-// 🔹 IdeaOrb Component
+//  IdeaOrb Component
 const IdeaOrb = ({
   position = [0, 2, 0],   // Default position
   orbColor = "#ffa0e5",   // Default orb color
@@ -87,7 +87,7 @@ const IdeaOrb = ({
   const materialRef = useRef();   // Reference for the custom shader
   const { camera } = useThree();  // Get active camera from scene
 
-  // 🔹 Animate orb rotation + pulsing scale
+  // Animate orb rotation + pulsing scale
   useFrame((state) => {
     if (groupRef.current) {
       // Rotate orb to always face camera
@@ -104,7 +104,7 @@ const IdeaOrb = ({
     }
   });
 
-  // 🔹 Utility: generate "wobbly" sphere geometry
+  // Utility: generate "wobbly" sphere geometry
   const getWooblyGeometry = (radius = 1.2, detail = 32, wobble = 1) => {
     const geometry = new THREE.SphereGeometry(radius, detail, detail);
     const position = geometry.attributes.position;
@@ -123,14 +123,14 @@ const IdeaOrb = ({
   // UseMemo ensures we only generate once (not every render)
   const geometry = useMemo(() => getWooblyGeometry(1.2, 32, 0.03), []);
 
-  // 🔹 Generate random uniforms (if not provided as props)
+  // Generate random uniforms (if not provided as props)
   const phaseValue = useMemo(() => phase ?? Math.random() * Math.PI * 2, [phase]);
   const freqValue = useMemo(() => freq ?? (0.7 + Math.random() * 1.6), [freq]);
   const dirXValue = useMemo(() => dirX ?? (0.7 + Math.random() * 2.6), [dirX]);
   const dirYValue = useMemo(() => dirY ?? (0.7 + Math.random() * 2.6), [dirY]);
   const dirZValue = useMemo(() => dirZ ?? (0.7 + Math.random() * 2.6), [dirZ]);
 
-  // 🔹 Update shader uniforms on each frame
+  //Update shader uniforms on each frame
   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
@@ -144,7 +144,7 @@ const IdeaOrb = ({
 
   return (
     <group ref={groupRef} position={position}>
-      {/* 🔹 Glowing Orb Mesh */}
+      {/*  Glowing Orb Mesh */}
       <mesh
         geometry={geometry}
         onClick={() => onClick && onClick(position)}
@@ -166,7 +166,7 @@ const IdeaOrb = ({
         />
       </mesh>
 
-      {/* 🔹 Sparkles effect around orb */}
+      {/*  Sparkles effect around orb */}
       <Sparkles
         count={10}   // number of sparkles
         scale={2.2}  // area size

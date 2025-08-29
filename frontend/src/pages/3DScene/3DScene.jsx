@@ -60,7 +60,7 @@ const Scene = () => {
         tgt.z !== target.z;
       if (!needsMove) return;
 
-      // Kill any previous animations to avoid overlapping
+      // Kill any previous animations to avoid overlapping, GSAP library 
       gsap.killTweensOf([controls.object.position, controls.target]);
 
       // Animate the camera to new position
@@ -119,12 +119,12 @@ const Scene = () => {
     if (direction === 'right') newIndex = (selectedIndex + 1) % ideas.length;
     setSelectedIndex(newIndex);
 
-    // Calculate orb position on sphere (Fibonacci sphere algorithm)
-    const offset = 2 / ideas.length;
+    // Calculate orb position on sphere 
+    const offset = 2 / ideas.length; // spread orbs out
     const increment = Math.PI * (3 - Math.sqrt(5));
-    const y = newIndex * offset - 1 + offset / 2;
-    const r = Math.sqrt(1 - y * y);
-    const phi = newIndex * increment;
+    const y = newIndex * offset - 1 + offset / 2; //y vertical positioning
+    const r = Math.sqrt(1 - y * y); //r radius at hight
+    const phi = newIndex * increment; // angle around the sphere
     const x = Math.cos(phi) * r;
     const z = Math.sin(phi) * r;
 
@@ -135,6 +135,7 @@ const Scene = () => {
   // How many orbs to render
   const orbCount = ideas.length;
 
+  //HERE: 
   // Map ideas into IdeaOrb components positioned on sphere
   const orbs = ideas.map((idea, i) => {
     const pos = getSpherePosition(i, orbCount, sphereRadius);
@@ -145,7 +146,7 @@ const Scene = () => {
         text={idea.title || idea.text} // Label text
         orbColor={idea.orbColor} // Custom color
         onClick={() => {
-          handleOrbClick(pos); // Animate camera
+          handleOrbClick(pos); // calls Animate camera
           setTimeout(() => {
             // Navigate to idea page after animation
             if (idea._id) {
@@ -153,7 +154,7 @@ const Scene = () => {
             } else {
               navigate(`/ideas`);
             }
-          }, 900); // Wait almost until camera finishes moving
+          }, 900); // Wait almost until camera finishes moving, ms
           setSelectedIndex(i);
         }}
       />
