@@ -23,6 +23,7 @@ const IdeaCard = ({ idea = null }) => {
   if (!idea) {
     return <div>No idea data available</div>;
   }
+
   return (
     <IdeaCardContainer>
       <ProfileButton

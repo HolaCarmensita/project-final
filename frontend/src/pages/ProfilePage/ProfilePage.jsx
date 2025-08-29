@@ -1,6 +1,7 @@
 // this is the profile page for the user!!
 import React from 'react';
 import styled from 'styled-components';
+import PageHeader from '../../components/PageHeader';
 import MyIdeasSection from './components/MyIdeasSection';
 import LikedIdeasSection from './components/LikedIdeasSection';
 import ConnectionsSection from './components/ConnectionsSection';
@@ -11,28 +12,14 @@ import ProfileSettingsSection from './components/ProfileSettingsSection';
 const Page = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   /* Remove overflow-y: auto to prevent double scrollbars */
 `;
 
-const UserInfo = styled.div`
+const PageContent = styled.div`
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 0;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
-`;
-
-const LoggedInText = styled.span`
-  font-size: 14px;
-  color: #666;
-`;
-
-const Username = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+  flex-direction: column;
+  gap: 24px;
 `;
 
 // The content sections below are now split into dedicated components.
@@ -42,14 +29,13 @@ const ProfilePage = () => {
 
   return (
     <Page>
-      <UserInfo>
-        <LoggedInText>Logged in:</LoggedInText>
-        <Username>{user?.fullName || user?.firstName || 'User'}</Username>
-      </UserInfo>
-      <MyIdeasSection />
-      <LikedIdeasSection />
-      <ConnectionsSection />
-      <ProfileSettingsSection />
+      <PageHeader title='Profile' user={user} />
+      <PageContent>
+        <MyIdeasSection />
+        <LikedIdeasSection />
+        <ConnectionsSection />
+        <ProfileSettingsSection />
+      </PageContent>
     </Page>
   );
 };

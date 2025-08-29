@@ -7,7 +7,7 @@ const TopBarContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 0 0 16px 0;
   border-bottom: 1px solid #eee;
   background: #fff;
 `;
@@ -71,7 +71,7 @@ const TopBar = ({
       {showBackButton && (
         <BackButton onClick={handleBack} aria-label={backLabel}>
           <img src={arrowBackIcon} alt={backLabel} />
-          <span>{title}</span>
+          <h4>{title}</h4>
         </BackButton>
       )}
 

@@ -66,7 +66,7 @@ export default function StackedIdeaCards({
         >
           {idx === ideas.length - 1 ? (
             <>
-              <IdeaTitle>{idea.title}</IdeaTitle>
+              <IdeaTitle $delay={idx}>{idea.title}</IdeaTitle>
               <OpenIdeaButton
                 ideaId={idea._id}
                 to={linkBuilder(idea._id)}
@@ -75,7 +75,7 @@ export default function StackedIdeaCards({
                 style={{ padding: '8px 12px', fontSize: 14 }}
               />
               {showFooter && (
-                <Row>
+                <Row $delay={idx}>
                   <span>
                     {new Date(
                       idea.createdAt || Date.now()
@@ -85,7 +85,9 @@ export default function StackedIdeaCards({
               )}
             </>
           ) : (
-            <IdeaTitle style={{ opacity: 0.85 }}>{idea.title}</IdeaTitle>
+            <IdeaTitle style={{ opacity: 0.85 }} $delay={idx}>
+              {idea.title}
+            </IdeaTitle>
           )}
         </StackCard>
       ))}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../store/useAuthStore';
-import useUsersStore from '../../../store/useUsersStore';
+import useUserStore from '../../../store/useUserStore';
 
 const Section = styled.section``;
 
@@ -17,16 +17,16 @@ const SectionHeader = styled.div`
   }
 `;
 const ProfileCard = styled.div`
-  display: grid;
-  grid-template-columns: 40px 1fr;
+  display: flex;
+  align-items: center;
   gap: 12px;
   padding: 12px 0;
   border-bottom: 2px solid #e9e9e9;
   margin-bottom: 10px;
 `;
 const Avatar = styled.div`
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
   border-radius: 8px;
   background: ${(p) => p.bg || '#E8E8E8'};
 `;
@@ -113,7 +113,7 @@ const DeleteConfirmActions = styled.div`
 export default function ProfileSettingsSection() {
   const navigate = useNavigate();
   const { logout, user } = useAuthStore();
-  const { deleteAccount, isLoading, error } = useUsersStore();
+  const { deleteAccount, isLoading, error } = useUserStore();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleLogout = () => {

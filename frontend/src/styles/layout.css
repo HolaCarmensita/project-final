@@ -2,6 +2,74 @@
    LAYOUT SYSTEM MOBILE FIRST 
    ========================================================================== */
 
+/* Animation for modal fading in on mobile */
+@keyframes fadeInMobile {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation for modal fading out on mobile */
+@keyframes fadeOutMobile {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animation for modal growing in with flex - iPad */
+@keyframes growInWithFlexIpad {
+  from {
+    flex: 0;
+    opacity: 0;
+  }
+  to {
+    flex: 0 0 50vw;
+    opacity: 1;
+  }
+}
+
+/* Animation for modal shrinking out with flex - iPad */
+@keyframes shrinkOutWithFlexIpad {
+  from {
+    flex: 0 0 50vw;
+    opacity: 1;
+  }
+  to {
+    flex: 0;
+    opacity: 0;
+  }
+}
+
+/* Animation for modal growing in with flex - Desktop */
+@keyframes growInWithFlexDesktop {
+  from {
+    flex: 0;
+    opacity: 0;
+  }
+  to {
+    flex: 0 0 30vw;
+    opacity: 1;
+  }
+}
+
+/* Animation for modal shrinking out with flex - Desktop */
+@keyframes shrinkOutWithFlexDesktop {
+  from {
+    flex: 0 0 30vw;
+    opacity: 1;
+  }
+  to {
+    flex: 0;
+    opacity: 0;
+  }
+}
+
 /* Content layout */
 .content-layout {
   display: flex;
@@ -38,11 +106,21 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  gap: 0px;
+  /* Fade in animation on mobile */
+  animation: fadeInMobile 0.2s ease-out;
+}
+
+/* Modal container when animating out */
+.modal-container--hiding {
+  /* Fade out animation on mobile */
+  animation: fadeOutMobile 0.2s ease-out forwards;
+  pointer-events: none;
 }
 
 .modal-container > header {
+  padding: 16px;
+
   display: flex;
   width: 100%;
   z-index: 100;
@@ -50,11 +128,28 @@
   transition: transform 0.3s ease;
 }
 
+/* Modal content with padding */
+.modal-content {
+  padding: 16px;
+}
+
 /* ==========================================================================
    MEDIA QUERIES - IPAD
    ========================================================================== */
 
 @media (min-width: 768px) {
+  .modal-container {
+    flex: 0 0 50vw;
+    height: 100vh;
+    z-index: 10;
+    background-color: white;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: growInWithFlexIpad 1s ease-out;
+  }
+
   .content-layout {
     flex-direction: row;
   }
@@ -80,23 +175,34 @@
     z-index: 10;
     background-color: transparent;
     transition: width 0.3s ease;
-    padding: 16px;
   }
 
-  .modal-container {
-    width: 30vw;
-    height: 100vh;
-    z-index: 10;
-    background-color: white;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  .modal-content {
     padding: 24px;
+  }
+
+  /* Modal container when animating out on iPad */
+  .modal-container--hiding {
+    animation: shrinkOutWithFlexIpad 0.5s ease-out forwards;
+    pointer-events: none;
   }
 
   /* Override hidden state on desktop - scene container should always show */
   .scene-container--hidden-mobile {
     display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-container {
+    flex: 0 0 30vw;
+    max-width: 600px;
+    animation: growInWithFlexDesktop 1s ease-out;
+  }
+
+  /* Modal container when animating out on desktop */
+  .modal-container--hiding {
+    animation: shrinkOutWithFlexDesktop 0.5s ease-out forwards;
+    pointer-events: none;
   }
 }

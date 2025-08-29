@@ -120,15 +120,19 @@ export const useInteractionsStore = create((set, get) => ({
         );
         useIdeasStore.getState().setIdeas(updatedIdeas);
 
-        // Update the user's connectedIdeas array in user store
-        const currentUser = useUserStore.getState().getUser();
-        if (currentUser) {
-          useUserStore
-            .getState()
-            .updateConnections([
-              ...currentUser.connectedIdeas,
-              { idea: id, message },
-            ]);
+        // Update user store with backend response data
+        if (result.user) {
+          console.log(
+            'Updating user store with backend data (connect):',
+            result.user.connectedIdeas
+          );
+          useUserStore.getState().setUser(result.user);
+        } else {
+          console.error(
+            'Backend did not return user data for connect operation'
+          );
+          set({ isLoading: false, error: 'Failed to update user data' });
+          return { success: false, message: 'Failed to update user data' };
         }
 
         set({ isLoading: false, error: null });

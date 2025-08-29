@@ -33,6 +33,8 @@ const IdeaDesc = styled.p`
 const OpenButtonWrap = styled.div`
   align-self: flex-end;
   margin-top: auto;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transition: opacity 0.6s ease-in-out;
 `;
 const Row = styled.div`
   display: flex;
@@ -54,7 +56,9 @@ export default function ColorIdeaCard({
       {actions}
       <IdeaTitle>{idea.title}</IdeaTitle>
       <IdeaDesc>{idea.description || ''}</IdeaDesc>
-      {openButton && <OpenButtonWrap>{openButton}</OpenButtonWrap>}
+      {openButton && (
+        <OpenButtonWrap $isVisible={true}>{openButton}</OpenButtonWrap>
+      )}
       {showDate && (
         <Row>
           <span>

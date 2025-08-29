@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber'; // React wrapper for Three.js WebGL rendering
-import { OrbitControls, Sparkles } from '@react-three/drei'; // Prebuilt helpers (camera controls, sparkles)
-import { useNavigate } from 'react-router-dom'; // Navigation between app pages
-import { useIdeasStore } from '../../store/useIdeasStore'; // Global state: stores ideas
-import { useUIStore } from '../../store/useUIStore'; // Global state: stores selected index
-import { gsap } from 'gsap'; // Animation library for smooth camera transitions
-import IdeaOrb from './IdeaOrb'; // Custom component: one "orb" representing an idea
-import CameraController from './CameraController'; // Custom component: moves camera based on joystick/keyboard
-import Joystick from '../../components/Joystick'; // On-screen joystick for mobile controls
-import { getSpherePosition } from './sphereLayout'; // Function to calculate positions on a sphere
-import { useShowJoystick } from './useShowJoystick'; // Hook to decide if joystick should be shown
-import { useSceneNavigation } from './useSceneNavigation'; // Hook for keyboard navigation between orbs
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Sparkles } from '@react-three/drei';
+import { useNavigate } from 'react-router-dom';
+import { useIdeasStore } from '../../store/useIdeasStore';
+import { useUIStore } from '../../store/useUIStore';
+import { gsap } from 'gsap';
+import IdeaOrb from './IdeaOrb';
+import CameraController from './CameraController';
+import Joystick from '../../components/Joystick';
+import { getSpherePosition } from './sphereLayout';
+import { useShowJoystick } from './useShowJoystick';
+import { useSceneNavigation } from '../../hooks/useSceneNavigation';
 
 // Helper function: detect if user is currently typing in an input field
 // (prevents navigation or camera moves when typing)
@@ -34,11 +34,10 @@ const Scene = () => {
   // Global state: track which idea orb is currently selected
   const selectedIndex = useUIStore((state) => state.selectedIndex);
   const setSelectedIndex = useUIStore((state) => state.setSelectedIndex);
+  const navigate = useNavigate();
+  const controlsRef = useRef();
 
-  const navigate = useNavigate(); // For routing
-  const controlsRef = useRef(); // Ref for OrbitControls (so we can animate camera)
-
-  // Handles clicking on an orb -> moves camera smoothly towards it
+  // Handle orb click
   const handleOrbClick = (position) => {
     if (controlsRef.current) {
       const controls = controlsRef.current;
@@ -83,9 +82,10 @@ const Scene = () => {
     }
   };
 
-  const sphereRadius = 20; // Radius of sphere layout where orbs are placed
+  // set sphere radius
+  const sphereRadius = 20;
 
-  // Hook for navigation (keyboard + camera movement)
+  // USE CUSTOM HOOK FOR KEYBOARD AND CAMERA NAVIGATION
   useSceneNavigation({
     ideas,
     selectedIndex,
@@ -179,7 +179,7 @@ const Scene = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Radial gradient background behind WebGL canvas */}
+      {/* Radial gradient background */}s{' '}
       <div
         style={{
           position: 'absolute',
@@ -197,7 +197,7 @@ const Scene = () => {
       <Canvas
         onError={onError}
         gl={{
-          powerPreference: "high-performance", // Try to use GPU for speed
+          powerPreference: 'high-performance', // Try to use GPU for speed
           antialias: true, // Smooth edges
           alpha: true, // Transparent background
           preserveDrawingBuffer: false, // Don’t store old frames
@@ -208,8 +208,10 @@ const Scene = () => {
         {/* Light fog for depth */}
         <fog attach='fog' args={['#f7f7fa', 20, 70]} />
         <ambientLight intensity={0.6} /> {/* Soft light everywhere */}
-        <directionalLight intensity={0.4} position={[5, 5, 5]} /> {/* Sunlight */}
-        <CameraController joystickVecRef={joystickVecRef} /> {/* Moves camera with joystick */}
+        <directionalLight intensity={0.4} position={[5, 5, 5]} />{' '}
+        {/* Sunlight */}
+        <CameraController joystickVecRef={joystickVecRef} />{' '}
+        {/* Moves camera with joystick */}
         {orbs} {/* Render all idea orbs */}
         <OrbitControls
           ref={controlsRef}
@@ -248,8 +250,6 @@ const Scene = () => {
         />
         {/* Note: Postprocessing bloom was removed to avoid errors */}
       </Canvas>
-
-      {/* Show joystick only on mobile (if hook says so) */}
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );

@@ -9,25 +9,29 @@ import deleteIcon from '../../assets/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD
 import aiIcon from '../../assets/icons/at_bold.svg';
 
 const Page = styled.div`
-  padding: 24px 18px 32px 18px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 `;
 
 const Title = styled.h2`
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 8px;
 `;
 const BodyText = styled.p`
   font-size: 16px;
   color: #222;
-  margin-bottom: 18px;
 `;
 const ImageGallery = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-bottom: 18px;
+  gap: 16px;
 `;
 const ImgWrap = styled.div`
   border-radius: 12px;
@@ -150,147 +154,153 @@ export default function MyIdeaCardEdit() {
   return (
     <Page>
       <TopBar
-        title='My Profile'
+        title='Back to Profile'
         actionLabel={editMode ? 'Cancel' : 'Edit'}
         onAction={() => setEditMode((v) => !v)}
       />
-      {editMode ? (
-        <EditBar>
-          <ActionBtn onClick={handleSave}>Save</ActionBtn>
-          <ActionBtn
-            onClick={() => setEditMode(false)}
-            style={{ background: '#fff', color: '#232323' }}
-          >
-            Cancel
-          </ActionBtn>
-        </EditBar>
-      ) : null}
-      {editMode ? (
-        <Input
-          value={form.title}
-          onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-        />
-      ) : (
-        <Title>{idea.title}</Title>
-      )}
 
-      <ImageGallery>
-        {(form.images || idea.images || []).map((img, idx) => (
-          <div key={img + idx}>
-            <ImgWrap style={{ position: 'relative' }}>
-              <img
-                src={img}
-                alt={form.altTexts ? form.altTexts[idx] : 'Alternative text'}
-              />
-              {editMode && (
-                <IconButton
-                  iconSrc={deleteIcon}
-                  ariaLabel='Delete image'
-                  title='Delete image'
-                  onClick={() => {
-                    setForm((f) => {
-                      const images = [...f.images];
-                      const altTexts = [...f.altTexts];
-                      images.splice(idx, 1);
-                      altTexts.splice(idx, 1);
-                      return { ...f, images, altTexts };
-                    });
-                  }}
-                  style={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    width: 28,
-                    height: 28,
-                    background: 'rgba(255,255,255,0.85)',
-                    borderRadius: '50%',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    zIndex: 2,
+      <Content>
+        {editMode ? (
+          <Input
+            value={form.title}
+            onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+          />
+        ) : (
+          <Title>{idea.title}</Title>
+        )}
+
+        <ImageGallery>
+          {(form.images || idea.images || []).map((img, idx) => (
+            <div key={img + idx}>
+              <ImgWrap style={{ position: 'relative' }}>
+                <img
+                  src={img}
+                  alt={form.altTexts ? form.altTexts[idx] : 'Alternative text'}
+                />
+                {editMode && (
+                  <IconButton
+                    iconSrc={deleteIcon}
+                    ariaLabel='Delete image'
+                    title='Delete image'
+                    onClick={() => {
+                      setForm((f) => {
+                        const images = [...f.images];
+                        const altTexts = [...f.altTexts];
+                        images.splice(idx, 1);
+                        altTexts.splice(idx, 1);
+                        return { ...f, images, altTexts };
+                      });
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      width: 28,
+                      height: 28,
+                      background: 'rgba(255,255,255,0.85)',
+                      borderRadius: '50%',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                      zIndex: 2,
+                    }}
+                  />
+                )}
+              </ImgWrap>
+            </div>
+          ))}
+          {editMode && (
+            <div style={{ marginTop: 8 }}>
+              <label
+                style={{
+                  display: 'inline-block',
+                  cursor: 'pointer',
+                  color: '#3a7afe',
+                  fontWeight: 500,
+                }}
+              >
+                + Add image
+                <input
+                  type='file'
+                  accept='image/*'
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new window.FileReader();
+                      reader.onload = (ev) => {
+                        setForm((f) => ({
+                          ...f,
+                          images: [...f.images, ev.target.result],
+                          altTexts: [...f.altTexts, 'Alternative text'],
+                        }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                    e.target.value = '';
                   }}
                 />
-              )}
-            </ImgWrap>
-          </div>
-        ))}
+              </label>
+            </div>
+          )}
+        </ImageGallery>
+
+        {editMode ? (
+          <TextArea
+            rows={3}
+            value={form.bodyText}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, bodyText: e.target.value }))
+            }
+          />
+        ) : (
+          <BodyText>{idea.description}</BodyText>
+        )}
+
+        {idea.connectedBy && idea.connectedBy.length > 0 && (
+          <Connections>
+            {idea.connectedBy.map((connection, index) => (
+              <ConnRow key={connection._id || index}>
+                <span
+                  role='img'
+                  aria-label='connected'
+                  style={{ color: '#3a7afe', fontSize: 18 }}
+                >
+                  @
+                </span>
+                {connection.user?.fullName ||
+                  connection.user?.firstName ||
+                  'Unknown User'}{' '}
+                connected{' '}
+                <span
+                  style={{ marginLeft: 'auto', color: '#888', fontSize: 13 }}
+                >
+                  {new Date(connection.connectedAt).toLocaleDateString(
+                    'en-US',
+                    {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    }
+                  )}
+                </span>
+              </ConnRow>
+            ))}
+          </Connections>
+        )}
+        <DateRow>
+          Last edited:{' '}
+          {new Date(idea.updatedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </DateRow>
+
         {editMode && (
-          <div style={{ marginTop: 8 }}>
-            <label
-              style={{
-                display: 'inline-block',
-                cursor: 'pointer',
-                color: '#3a7afe',
-                fontWeight: 500,
-              }}
-            >
-              + Add image
-              <input
-                type='file'
-                accept='image/*'
-                style={{ display: 'none' }}
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new window.FileReader();
-                    reader.onload = (ev) => {
-                      setForm((f) => ({
-                        ...f,
-                        images: [...f.images, ev.target.result],
-                        altTexts: [...f.altTexts, 'Alternative text'],
-                      }));
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                  e.target.value = '';
-                }}
-              />
-            </label>
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <ActionBtn onClick={handleSave}>Save Changes</ActionBtn>
           </div>
         )}
-      </ImageGallery>
-
-      {editMode ? (
-        <TextArea
-          rows={3}
-          value={form.bodyText}
-          onChange={(e) => setForm((f) => ({ ...f, bodyText: e.target.value }))}
-        />
-      ) : (
-        <BodyText>{idea.description}</BodyText>
-      )}
-
-      {idea.connectedBy && idea.connectedBy.length > 0 && (
-        <Connections>
-          {idea.connectedBy.map((connection, index) => (
-            <ConnRow key={connection._id || index}>
-              <span
-                role='img'
-                aria-label='connected'
-                style={{ color: '#3a7afe', fontSize: 18 }}
-              >
-                @
-              </span>
-              {connection.user?.fullName ||
-                connection.user?.firstName ||
-                'Unknown User'}{' '}
-              connected{' '}
-              <span style={{ marginLeft: 'auto', color: '#888', fontSize: 13 }}>
-                {new Date(connection.connectedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>
-            </ConnRow>
-          ))}
-        </Connections>
-      )}
-      <DateRow>
-        {new Date(idea.createdAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        })}
-      </DateRow>
+      </Content>
     </Page>
   );
 }

@@ -12,7 +12,7 @@ import stream from 'stream';
 console.log('Cloudinary config check:', {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set',
   apiKey: process.env.CLOUDINARY_API_KEY ? 'Set' : 'Not set',
-  apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set'
+  apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set',
 });
 import {
   sendConnectionNotification,
@@ -63,10 +63,13 @@ router.post(
     try {
       // Check if database is connected
       if (mongoose.connection.readyState !== 1) {
-        console.error('Database not connected. ReadyState:', mongoose.connection.readyState);
+        console.error(
+          'Database not connected. ReadyState:',
+          mongoose.connection.readyState
+        );
         return res.status(503).json({
           message: 'Database connection not available',
-          error: 'Database disconnected'
+          error: 'Database disconnected',
         });
       }
 
@@ -83,7 +86,7 @@ router.post(
       // Validate required fields
       if (!title || !description) {
         return res.status(400).json({
-          message: 'Title and description are required'
+          message: 'Title and description are required',
         });
       }
 
@@ -92,26 +95,12 @@ router.post(
       console.log('Files received:', req.files ? req.files.length : 0);
 
       if (req.files && req.files.length > 0) {
-        req.files.forEach((file, idx) => {
-          console.log(`File[${idx}]: name=${file.originalname}, size=${file.size}, type=${file.mimetype}`);
-        });
-        for (const file of req.files) {
-          try {
-            const buffer = file.buffer;
-            const result = await uploadBufferToCloudinary(buffer);
-            const imageUrl = result.secure_url;
-            console.log('File uploaded successfully:', imageUrl);
-            imageUrls.push(imageUrl);
-          } catch (uploadError) {
-            console.error('File upload error for', file.originalname, ':', uploadError);
-            // Continue with other files, don't fail the entire request
-          }
-        }
-      } else {
-        console.log('No files received in request');
-        return res.status(400).json({
-          message: 'No image files received. Please select images to upload.',
-          error: 'No files in request',
+        req.files.forEach((file) => {
+          // Create URL for the uploaded file
+          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
+            file.filename
+          }`;
+          imageUrls.push(imageUrl);
         });
       }
 
@@ -140,7 +129,7 @@ router.post(
       res.status(500).json({
         message: 'Internal server error',
         error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       });
     }
   }
@@ -149,38 +138,22 @@ router.post(
 // Get all ideas
 router.get('/', async (req, res) => {
   try {
-    console.log('Fetching ideas...');
-
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      console.error('Database not connected. ReadyState:', mongoose.connection.readyState);
-      return res.status(503).json({
-        message: 'Database connection not available',
-        error: 'Database disconnected'
-      });
-    }
-
     // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName role')
       .sort({ createdAt: -1 })
       .lean();
 
-    console.log('Ideas found:', ideas.length);
-
-    // Add null check for ideas
-    const safeIdeas = ideas || [];
-
     res.json({
       message: 'Ideas retrieved successfully',
-      ideas: safeIdeas,
+      ideas: ideas,
     });
   } catch (error) {
     console.error('Error in GET /ideas:', error);
     res.status(500).json({
       message: 'Server error',
       error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
 });
@@ -295,17 +268,8 @@ router.post('/:id/like', authenticateToken, async (req, res) => {
     }
 
     // Save both user and idea
-    console.log('About to save user and idea...');
     const savedUser = await user.save();
     const savedIdea = await idea.save();
-
-    console.log('Save operations completed');
-    console.log('Saved user likedIdeas:', savedUser.likedIdeas);
-    console.log('Saved idea likeCount:', savedIdea.likeCount);
-
-    // Verify the save worked by fetching the user again
-    const verifyUser = await User.findById(userId);
-    console.log('Verified user likedIdeas from DB:', verifyUser.likedIdeas);
 
     res.json({
       message: isLiked ? 'Idea unliked' : 'Idea liked',
@@ -414,10 +378,34 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
       // Don't fail the connection if email fails
     }
 
-    // 13. Return success
+    // 13. Populate the updated user data before returning
+    const populatedUser = await User.findById(userId)
+      .populate('likedIdeas')
+      .populate({
+        path: 'connectedIdeas.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.connectedBy',
+        select: 'firstName lastName email fullName',
+      });
+
+    // 14. Return success with updated user data
     res.json({
       message: 'Successfully connected to idea',
       success: true,
+      user: populatedUser,
+      idea: idea,
     });
   } catch (error) {
     console.error('Error in POST /ideas/:id/connect:', error);
@@ -478,11 +466,33 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
     // 8. Save all updates
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
 
-    // 9. Return success with updated user data
+    // 9. Populate the updated user data before returning
+    const populatedUser = await User.findById(userId)
+      .populate('likedIdeas')
+      .populate({
+        path: 'connectedIdeas.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.idea',
+        populate: {
+          path: 'creator',
+          select: 'firstName lastName email fullName',
+        },
+      })
+      .populate({
+        path: 'receivedConnections.connectedBy',
+        select: 'firstName lastName email fullName',
+      });
+
+    // 10. Return success with updated user data
     res.json({
       message: 'Successfully disconnected from idea',
       success: true,
-      user: user,
+      user: populatedUser,
       idea: idea,
     });
   } catch (error) {

@@ -10,6 +10,8 @@ const CarouselContainer = styled.div`
   border-radius: 8px;
   cursor: grab;
   user-select: none;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10); */
+  border: 1px solid rgba(0, 0, 0, 0.08);
 
   &:active {
     cursor: grabbing;
