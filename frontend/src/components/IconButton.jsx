@@ -2,27 +2,34 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Btn = styled.button`
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
-  background: transparent;
-  box-shadow: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 50%;
   cursor: pointer;
   padding: 0;
 
   img {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     filter: none;
     opacity: 0.55;
     transition: opacity 120ms ease-in-out;
     pointer-events: none;
   }
 
-  &:hover img { opacity: 1; }
+  &:hover {
+    background: #a80000;
+  }
+  &:hover img {
+    opacity: 1;
+    filter: brightness(0) invert(1);
+  }
 `;
 
 export default function IconButton({ iconSrc, alt = '', ariaLabel, title, onClick, className, style, children, ...rest }) {
