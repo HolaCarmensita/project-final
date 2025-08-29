@@ -21,8 +21,9 @@ const getColorPairForId = (stableId = '') => {
   // Derive saturation/lightness from hash to avoid overly similar tones
   const satSeed = ((base >> 8) & 0xff) / 255; // 0..1
   const lightSeed = ((base >> 16) & 0xff) / 255; // 0..1
-  const saturation = Math.round(40 + satSeed * 20); // 40%..60% (less saturated)
-  const lightness = Math.round(45 + lightSeed * 15); // 45%..60%
+  // Vibrant colors: high saturation, but keep lightness high so text is always darker
+  const saturation = Math.round(75 + satSeed * 20); // 75%..95% (vibrant)
+  const lightness = Math.round(70 + lightSeed * 10); // 70%..80% (light backgrounds)
 
   const auraHue = (orbHue + 180) % 360; // complementary for contrast
   const auraSaturation = Math.min(90, saturation + 10);
