@@ -152,6 +152,7 @@ const Scene = () => {
       }}
     >
       {/* Radial gradient background */}
+      s{' '}
       <div
         style={{
           position: 'absolute',
@@ -213,7 +214,6 @@ const Scene = () => {
         />
         {/* Removed postprocessing Bloom to avoid multiple-three/hook errors */}
       </Canvas>
-
       {showJoystick && <Joystick onMove={handleJoystickMove} />}
     </div>
   );
