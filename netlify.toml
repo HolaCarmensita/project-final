@@ -5,6 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  VITE_API_BASE_URL = "https://your-backend-url.com"
 
 [[redirects]]
   from = "/*"
