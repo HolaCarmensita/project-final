@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Button from '../components/Button';
 import { useIdeasStore } from '../store/useIdeasStore';
 import { useUIStore } from '../store/useUIStore';
+import { uploadMultipleImages } from '../services/firebaseStorage';
 
 const Overlay = styled.div`
   position: fixed;
@@ -133,7 +134,14 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
     const newFiles = Array.from(e.target.files || []);
     console.log('Files selected:', newFiles.length);
     newFiles.forEach((file, index) => {
-      console.log(`Selected file ${index}:`, file.name, 'Size:', file.size, 'Type:', file.type);
+      console.log(
+        `Selected file ${index}:`,
+        file.name,
+        'Size:',
+        file.size,
+        'Type:',
+        file.type
+      );
     });
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
@@ -186,10 +194,20 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
 
     try {
       console.log('Submitting idea with files:', files.length);
+
+      // Step 1: Upload images to Firebase Storage if there are any files
+      let imageUrls = [];
+      if (files.length > 0) {
+        console.log('Uploading images to Firebase Storage...');
+        imageUrls = await uploadMultipleImages(files, 'ideas');
+        console.log('Images uploaded successfully:', imageUrls);
+      }
+
+      // Step 2: Send idea data with image URLs to backend
       const result = await createIdea({
         title: title.trim(),
         description: desc.trim(),
-        files,
+        imageUrls, // Send URLs instead of files
       });
 
       if (result.success) {
