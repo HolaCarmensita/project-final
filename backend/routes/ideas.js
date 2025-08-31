@@ -63,27 +63,20 @@ router.post(
 
       // Process uploaded files with Cloudinary
       const imageUrls = [];
-      console.log('Files received:', req.files ? req.files.length : 0);
 
       if (req.files && req.files.length > 0) {
-        console.log('Attempting Cloudinary upload...');
-        
         // Upload images to Cloudinary
         const uploadResult = await cloudinaryService.uploadMultipleImages(
           req.files
         );
 
-        console.log('Upload result:', uploadResult);
-
         if (!uploadResult.success) {
-          console.error('Cloudinary upload failed:', uploadResult.error);
           return res.status(500).json({
             message: 'Failed to upload images',
             error: uploadResult.error,
           });
         }
 
-        console.log('Cloudinary URLs:', uploadResult.urls);
         imageUrls.push(...uploadResult.urls);
       }
 
