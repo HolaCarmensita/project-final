@@ -12,6 +12,7 @@ const IdeaPageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   height: 100%;
+  padding-bottom: 120px; /* Add bottom padding to prevent navbar from covering content */
 `;
 
 const LoadingMessage = styled.div`
