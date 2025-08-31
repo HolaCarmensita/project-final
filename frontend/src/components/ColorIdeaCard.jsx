@@ -7,7 +7,7 @@ const CardContent = styled.div`
   height: 100%;
   margin-top: 0;
 `;
-const IdeaTitle = styled.h4`
+const IdeaTitle = styled.h3`
   font-size: 20px;
   font-weight: 700;
   line-height: 1.2;

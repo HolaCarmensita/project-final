@@ -71,9 +71,9 @@ const SubSection = ({
 
   return (
     <Section>
-      <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
+      <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
         {title}
-      </h4>
+      </h3>
       <ConnectionsList>
         {connections.length > 0 ? (
           connections.map((connection, i) => (

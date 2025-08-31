@@ -24,7 +24,7 @@ const StackCard = styled.div`
   }
 `;
 
-const IdeaTitle = styled.h4`
+const IdeaTitle = styled.h3`
   font-size: 18px;
   line-height: 1.2;
   margin-bottom: 12px;

@@ -11,7 +11,7 @@ const SectionHeader = styled.div`
   align-items: baseline;
   justify-content: space-between;
   margin-bottom: 10px;
-  h3 {
+  h2 {
     font-size: 18px;
     font-weight: 600;
   }
@@ -96,7 +96,7 @@ const DeleteConfirmContent = styled.div`
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   text-align: center;
-  h3 {
+  h2 {
     margin-bottom: 15px;
   }
   p {
@@ -135,7 +135,7 @@ export default function ProfileSettingsSection() {
   return (
     <Section>
       <SectionHeader>
-        <h3>Profile settings</h3>
+        <h2>Profile settings</h2>
       </SectionHeader>
       <ProfileCard>
         <Avatar />
@@ -146,20 +146,24 @@ export default function ProfileSettingsSection() {
       </ProfileCard>
 
       <Field>
-        <label>Name</label>
-        <input defaultValue={user?.fullName || 'User'} />
+        <label htmlFor='name-input'>Name</label>
+        <input id='name-input' defaultValue={user?.fullName || 'User'} />
       </Field>
       <Field>
-        <label>Username</label>
-        <input defaultValue={user?.email || 'user@example.com'} />
+        <label htmlFor='username-input'>Username</label>
+        <input
+          id='username-input'
+          defaultValue={user?.email || 'user@example.com'}
+        />
       </Field>
       <Field>
-        <label>Title</label>
-        <input defaultValue={user?.role || 'User'} />
+        <label htmlFor='title-input'>Title</label>
+        <input id='title-input' defaultValue={user?.role || 'User'} />
       </Field>
       <Field>
-        <label>Biography</label>
+        <label htmlFor='biography-textarea'>Biography</label>
         <textarea
+          id='biography-textarea'
           rows={3}
           defaultValue={'Lorem Ipsum è un testo segnaposto.'}
         />
@@ -188,7 +192,7 @@ export default function ProfileSettingsSection() {
       {showDeleteConfirm && (
         <DeleteConfirmModal>
           <DeleteConfirmContent>
-            <h3>Delete Account</h3>
+            <h2>Delete Account</h2>
             <p>
               Are you sure you want to delete your account? This action cannot
               be undone.
