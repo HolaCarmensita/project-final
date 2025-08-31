@@ -48,7 +48,7 @@ https://project-final-backend-gq0x.onrender.com/api-docs
 If we had more time, we'd add:
 
 - BETTER errorhandling
-- BETTER Loading through out the app
+- BETTER Loading States through out the app
 - BETTER User Experience
 - Well, to be honest, finish the app? Its only at MVP stage
 - Real-time chat between users
