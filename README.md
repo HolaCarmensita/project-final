@@ -1,13 +1,57 @@
-# Final Project
+# Creative Ideas Hub / The Pensive
 
-Replace this readme with your own information about your project.
+A collaborative platform where users can share and discover creative ideas in an immersive 3D environment. Connect with ideas and find collaborators for your projects through idea connections.
 
-Start by briefly describing the assignment in a sentence or two. Keep it short and to the point.
+## What it does
 
-## The problem
+This app lets you:
 
-Describe how you approached to problem, and what tools and techniques you used to solve it. How did you plan? What technologies did you use? If you had more time, what would be next?
+- Share your creative ideas with text and images
+- Browse ideas in a cool 3D space where each idea is a floating orb
+- Connect with ideas you're interested in collaborating on
+- Receive email notifications when someone connects with your idea
+- Get social media links from potential collaborators
+- Navigate the 3D world using keyboard, mouse, or touch controls
+- Edit and manage your own ideas (under construction)
+- View and edit your profile (under construction)
+
+## How we built it
+
+### Frontend (React)
+
+- **React 19** - The main framework for building the user interface
+- **Three.js** - For the 3D graphics and interactive scene
+- **Zustand** - For managing app state (like user data and ideas)
+- **Styled Components** - For styling the app
+- **React Router** - For navigation between pages
+
+### Backend (Node.js)
+
+- **Express.js** - The server framework
+- **MongoDB** - Database to store users, ideas, and connections
+- **JWT** - For user authentication and security
+- **Cloudinary** - For storing and managing images
+- **Multer** - For handling file uploads
 
 ## View it live
 
-Every project should be deployed somewhere. Be sure to include the link to the deployed project so that the viewer can click around and see what it's all about.
+- **Frontend**: https://aesthetic-dolphin-63dc60.netlify.app/
+- **Backend API**: https://project-final-backend-gq0x.onrender.com
+
+## API Documentation
+
+The backend uses the `express-list-endpoints` library to automatically generate API documentation. You can view all available endpoints at:
+https://project-final-backend-gq0x.onrender.com/api-docs
+
+## Future improvements
+
+If we had more time, we'd add:
+
+- BETTER errorhandling
+- BETTER Loading through out the app
+- BETTER User Experience
+- Well, to be honest, finish the app? Its only at MVP stage
+- Real-time chat between users
+- More 3D effects and animations
+- Idea categories and search
+- Video upload support
