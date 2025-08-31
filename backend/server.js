@@ -103,8 +103,7 @@ app.use(
 );
 app.use(express.json());
 
-// Serve uploaded files statically
-app.use('/uploads', express.static('uploads'));
+// Static file serving removed - now using Cloudinary for image storage
 
 // Basic route
 app.get('/', (req, res) => {

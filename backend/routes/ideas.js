@@ -5,6 +5,7 @@ import Idea from '../models/Idea.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
+import cloudinaryService from '../services/cloudinaryService.js';
 
 import {
   sendConnectionNotification,
@@ -60,18 +61,30 @@ router.post(
         });
       }
 
-      // Process uploaded files
+      // Process uploaded files with Cloudinary
       const imageUrls = [];
       console.log('Files received:', req.files ? req.files.length : 0);
 
       if (req.files && req.files.length > 0) {
-        req.files.forEach((file) => {
-          // Create URL for the uploaded file
-          const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${
-            file.filename
-          }`;
-          imageUrls.push(imageUrl);
-        });
+        console.log('Attempting Cloudinary upload...');
+        
+        // Upload images to Cloudinary
+        const uploadResult = await cloudinaryService.uploadMultipleImages(
+          req.files
+        );
+
+        console.log('Upload result:', uploadResult);
+
+        if (!uploadResult.success) {
+          console.error('Cloudinary upload failed:', uploadResult.error);
+          return res.status(500).json({
+            message: 'Failed to upload images',
+            error: uploadResult.error,
+          });
+        }
+
+        console.log('Cloudinary URLs:', uploadResult.urls);
+        imageUrls.push(...uploadResult.urls);
       }
 
       // Create a new idea object

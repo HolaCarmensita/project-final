@@ -131,10 +131,6 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
 
   const handleFiles = (e) => {
     const newFiles = Array.from(e.target.files || []);
-    console.log('Files selected:', newFiles.length);
-    newFiles.forEach((file, index) => {
-      console.log(`Selected file ${index}:`, file.name, 'Size:', file.size, 'Type:', file.type);
-    });
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
@@ -185,7 +181,6 @@ const AddIdeaSheet = ({ isOpen, onClose }) => {
     }
 
     try {
-      console.log('Submitting idea with files:', files.length);
       const result = await createIdea({
         title: title.trim(),
         description: desc.trim(),

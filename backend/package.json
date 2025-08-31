@@ -13,6 +13,7 @@
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
     "bcrypt": "^5.1.0",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.17.3",
