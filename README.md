@@ -2,6 +2,8 @@
 
 A collaborative platform where users can share and discover creative ideas in an immersive 3D environment. Connect with ideas and find collaborators for your projects through idea connections.
 
+OBS!!! MVP mode - header and nav not fixed/animated on mobile, basic scroll behavior. The hidden mobileheader also take room in the desktop, no time to refactor that one. 
+
 ## What it does
 
 This app lets you:
