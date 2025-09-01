@@ -10,7 +10,7 @@ const IdeasFetcher = () => {
   const hasInitialized = useRef(false);
   const lastAuthState = useRef(null);
 
-  // Fetch ideas only when user is authenticated
+  // Fetch ideas when user becomes authenticated
   useEffect(() => {
     // Only log when auth state actually changes
     if (lastAuthState.current !== isAuthenticated) {
@@ -18,14 +18,13 @@ const IdeasFetcher = () => {
       lastAuthState.current = isAuthenticated;
     }
 
-    // Fetch once on first mount when not loading and ideas are empty
-    // Add null check for ideas
-    if (!hasInitialized.current && (!ideas || ideas.length === 0) && !isLoading) {
-      console.log('IdeasFetcher: Fetching ideas...');
+    // Fetch ideas when user becomes authenticated
+    if (isAuthenticated && !isLoading) {
+      console.log('IdeasFetcher: User authenticated, fetching ideas...');
       fetchIdeas();
       hasInitialized.current = true;
     }
-  }, [isAuthenticated, ideas?.length, isLoading]); // Use optional chaining
+  }, [isAuthenticated, isLoading, fetchIdeas]);
 
   // This component doesn't render anything
   return null;

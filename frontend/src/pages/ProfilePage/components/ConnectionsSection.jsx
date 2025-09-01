@@ -16,9 +16,9 @@ export default function ConnectionsSection() {
   const currentUser = useUserStore((store) => store.user);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Get both types of connections
-  const myConnections = currentUser?.connectedIdeas || [];
-  const receivedConnections = currentUser?.receivedConnections || [];
+  // Get both types of connections and filter out invalid ones
+  const myConnections = (currentUser?.connectedIdeas || []).filter(connection => connection.idea);
+  const receivedConnections = (currentUser?.receivedConnections || []).filter(connection => connection.idea);
 
   // Calculate total connections
   const totalConnections = myConnections.length + receivedConnections.length;

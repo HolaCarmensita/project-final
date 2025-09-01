@@ -14,6 +14,36 @@ import {
 
 const router = express.Router();
 
+// Utility function to clean up orphaned connections
+const cleanupOrphanedConnections = async () => {
+  try {
+    // Get all idea IDs that exist
+    const existingIdeaIds = await Idea.find({}, '_id');
+
+    // Clean up connectedIdeas that reference non-existent ideas
+    await User.updateMany(
+      {},
+      {
+        $pull: {
+          connectedIdeas: {
+            idea: { $nin: existingIdeaIds },
+          },
+          receivedConnections: {
+            idea: { $nin: existingIdeaIds },
+          },
+          likedIdeas: {
+            $nin: existingIdeaIds,
+          },
+        },
+      }
+    );
+
+    console.log('Cleaned up orphaned connections');
+  } catch (error) {
+    console.error('Error cleaning up orphaned connections:', error);
+  }
+};
+
 // Protect write/modify routes only; GET routes remain public
 
 router.post(
@@ -114,6 +144,14 @@ router.post(
 // Get all ideas
 router.get('/', async (req, res) => {
   try {
+    // Clean up orphaned connections periodically (only in development or when explicitly requested)
+    if (
+      process.env.NODE_ENV === 'development' ||
+      req.query.cleanup === 'true'
+    ) {
+      await cleanupOrphanedConnections();
+    }
+
     // Use stored counters instead of aggregation for better performance
     const ideas = await Idea.find()
       .populate('creator', 'firstName lastName email fullName role')
@@ -200,6 +238,18 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         .status(403)
         .json({ message: 'Not authorized to delete this idea' });
     }
+
+    // Clean up all connections to this idea before deleting
+    await User.updateMany(
+      {},
+      {
+        $pull: {
+          connectedIdeas: { idea: req.params.id },
+          receivedConnections: { idea: req.params.id },
+          likedIdeas: req.params.id,
+        },
+      }
+    );
 
     await Idea.findByIdAndDelete(req.params.id);
 
@@ -477,6 +527,20 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
       message: 'Server error',
       error: error.message,
     });
+  }
+});
+
+// Manual cleanup endpoint for orphaned connections (development only)
+router.post('/cleanup-orphaned', async (req, res) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return res.status(404).json({ message: 'Endpoint not found' });
+  }
+
+  try {
+    await cleanupOrphanedConnections();
+    res.json({ message: 'Orphaned connections cleaned up successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

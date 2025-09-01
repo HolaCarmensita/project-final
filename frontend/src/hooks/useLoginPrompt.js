@@ -9,20 +9,14 @@ export default function useLoginPrompt(isAuthenticated) {
     if (isAuthenticated) return;
 
     const path = location.pathname || '/';
-    const isPublicPath = path === '/' || path === '/ideas' || path.startsWith('/ideas/');
-    if (!isPublicPath) return;
+
+    // Allow users to see the home page without being logged in
+    if (path === '/') return;
+
+    // Don't redirect if already on auth pages
     if (path === '/login' || path === '/register') return;
 
-    const hasPrompted = localStorage.getItem('loginPromptShown') === 'true';
-    if (hasPrompted) return;
-
-    const timerId = setTimeout(() => {
-      localStorage.setItem('loginPromptShown', 'true');
-      navigate('/login');
-    }, 60000);
-
-    return () => clearTimeout(timerId);
+    // Redirect to login immediately for any other interaction
+    navigate('/login');
   }, [isAuthenticated, location.pathname, navigate]);
 }
-
-

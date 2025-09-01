@@ -5,14 +5,22 @@ import SubSection from '../../../components/SubSection';
 const MyConnections = ({ myConnections = [], receivedConnections = [] }) => {
   const navigate = useNavigate();
 
+  // Filter out connections to deleted ideas
+  const validMyConnections = myConnections.filter(connection => connection.idea);
+  const validReceivedConnections = receivedConnections.filter(connection => connection.idea);
+
   // Handler for clicking on ideas I connected to
   const handleMyConnectionClick = (connection) => {
-    navigate(`/connections/${connection.idea._id || connection.idea}`);
+    if (connection.idea && connection.idea._id) {
+      navigate(`/connections/${connection.idea._id}`);
+    }
   };
 
   // Handler for clicking on people who connected to my ideas
   const handleReceivedConnectionClick = (connection) => {
-    navigate(`/connections/${connection.idea._id || connection.idea}`);
+    if (connection.idea && connection.idea._id) {
+      navigate(`/connections/${connection.idea._id}`);
+    }
   };
 
   // Functions for "Ideas I Connected To" section
@@ -58,7 +66,7 @@ const MyConnections = ({ myConnections = [], receivedConnections = [] }) => {
     <>
       <SubSection
         title='Ideas I Connected To'
-        connections={myConnections}
+        connections={validMyConnections}
         onItemClick={handleMyConnectionClick}
         getItemTitle={getMyConnectionTitle}
         getItemInfo={getMyConnectionInfo}
@@ -68,7 +76,7 @@ const MyConnections = ({ myConnections = [], receivedConnections = [] }) => {
 
       <SubSection
         title='People Who Connected To My Ideas'
-        connections={receivedConnections}
+        connections={validReceivedConnections}
         onItemClick={handleReceivedConnectionClick}
         getItemTitle={getReceivedConnectionTitle}
         getItemInfo={getReceivedConnectionInfo}
