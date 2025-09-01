@@ -37,8 +37,6 @@ const cleanupOrphanedConnections = async () => {
         },
       }
     );
-
-    console.log('Cleaned up orphaned connections');
   } catch (error) {
     console.error('Error cleaning up orphaned connections:', error);
   }

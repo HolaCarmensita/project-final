@@ -14,12 +14,6 @@ const IdeasFetcher = () => {
 
   // Fetch ideas when user becomes authenticated or when on home page
   useEffect(() => {
-    // Only log when auth state actually changes
-    if (lastAuthState.current !== isAuthenticated) {
-      console.log('IdeasFetcher: isAuthenticated changed to:', isAuthenticated);
-      lastAuthState.current = isAuthenticated;
-    }
-
     const isHomePage = location.pathname === '/';
 
     // Fetch ideas if:
@@ -30,10 +24,6 @@ const IdeasFetcher = () => {
       !isLoading &&
       (!ideas || ideas.length === 0)
     ) {
-      console.log('IdeasFetcher: Fetching ideas...', {
-        isAuthenticated,
-        isHomePage,
-      });
       fetchIdeas();
       hasInitialized.current = true;
     }
