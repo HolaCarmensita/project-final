@@ -5,7 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  VITE_API_BASE_URL = "https://project-final-hwyo.onrender.com"
+  VITE_API_BASE_URL = "https://project-final-backend-gq0x.onrender.com"
 
 [[redirects]]
   from = "/*"
