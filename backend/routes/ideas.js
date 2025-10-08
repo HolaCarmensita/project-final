@@ -404,9 +404,13 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
 
     // 13. Populate the updated user data before returning
     const populatedUser = await User.findById(userId)
-      .populate('likedIdeas')
+      .populate({
+        path: 'likedIdeas',
+        match: { _id: { $ne: null } }, // Filter out null references
+      })
       .populate({
         path: 'connectedIdeas.idea',
+        match: { _id: { $ne: null } }, // Filter out null references
         populate: {
           path: 'creator',
           select: 'firstName lastName email fullName',
@@ -414,6 +418,7 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
       })
       .populate({
         path: 'receivedConnections.idea',
+        match: { _id: { $ne: null } }, // Filter out null references
         populate: {
           path: 'creator',
           select: 'firstName lastName email fullName',
@@ -422,7 +427,23 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
       .populate({
         path: 'receivedConnections.connectedBy',
         select: 'firstName lastName email fullName',
-      });
+      })
+      .lean(); // Convert to plain JavaScript object to handle null values better
+
+    // Filter out any null values from arrays that might have been populated
+    if (populatedUser) {
+      populatedUser.likedIdeas = (populatedUser.likedIdeas || []).filter(
+        (idea) => idea !== null
+      );
+      populatedUser.connectedIdeas = (
+        populatedUser.connectedIdeas || []
+      ).filter((conn) => conn && conn.idea !== null);
+      populatedUser.receivedConnections = (
+        populatedUser.receivedConnections || []
+      ).filter(
+        (conn) => conn && conn.idea !== null && conn.connectedBy !== null
+      );
+    }
 
     // 14. Return success with updated user data
     res.json({
@@ -492,9 +513,13 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
 
     // 9. Populate the updated user data before returning
     const populatedUser = await User.findById(userId)
-      .populate('likedIdeas')
+      .populate({
+        path: 'likedIdeas',
+        match: { _id: { $ne: null } }, // Filter out null references
+      })
       .populate({
         path: 'connectedIdeas.idea',
+        match: { _id: { $ne: null } }, // Filter out null references
         populate: {
           path: 'creator',
           select: 'firstName lastName email fullName',
@@ -502,6 +527,7 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
       })
       .populate({
         path: 'receivedConnections.idea',
+        match: { _id: { $ne: null } }, // Filter out null references
         populate: {
           path: 'creator',
           select: 'firstName lastName email fullName',
@@ -510,7 +536,23 @@ router.delete('/:id/connect', authenticateToken, async (req, res) => {
       .populate({
         path: 'receivedConnections.connectedBy',
         select: 'firstName lastName email fullName',
-      });
+      })
+      .lean(); // Convert to plain JavaScript object to handle null values better
+
+    // Filter out any null values from arrays that might have been populated
+    if (populatedUser) {
+      populatedUser.likedIdeas = (populatedUser.likedIdeas || []).filter(
+        (idea) => idea !== null
+      );
+      populatedUser.connectedIdeas = (
+        populatedUser.connectedIdeas || []
+      ).filter((conn) => conn && conn.idea !== null);
+      populatedUser.receivedConnections = (
+        populatedUser.receivedConnections || []
+      ).filter(
+        (conn) => conn && conn.idea !== null && conn.connectedBy !== null
+      );
+    }
 
     // 10. Return success with updated user data
     res.json({
