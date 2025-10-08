@@ -309,10 +309,6 @@ router.post('/:id/like', authenticateToken, async (req, res) => {
 // Connect to idea
 router.post('/:id/connect', authenticateToken, async (req, res) => {
   try {
-    console.log('=== CONNECT ENDPOINT STARTED ===');
-    console.log('Request params:', req.params);
-    console.log('Request body:', req.body);
-
     // 1. Get the idea ID from the URL parameter
     const ideaId = req.params.id;
 
@@ -321,7 +317,6 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
 
     // 3. Get the user ID from the authentication token (already available from middleware)
     const userId = req.user._id;
-    console.log('User ID:', userId);
 
     // 4. Validate the message
     if (!message || message.trim().length === 0) {
@@ -387,12 +382,9 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
     idea.connectionCount += 1;
 
     // 11. Save all updates
-    console.log('Saving connection data...');
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
-    console.log('Connection saved successfully');
 
     // 12. Send email notifications asynchronously (don't block the response)
-    console.log('Triggering email notifications (async)...');
     // Fire and forget - don't await emails to prevent blocking the response
     Promise.all([
       sendConnectionNotification(
@@ -403,14 +395,11 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
         socialLink
       ),
       sendConnectionConfirmation(user, ideaCreator, idea),
-    ])
-      .then(() => console.log('Emails sent successfully'))
-      .catch((emailError) =>
-        console.error('Failed to send connection emails:', emailError)
-      );
+    ]).catch((emailError) =>
+      console.error('Failed to send connection emails:', emailError)
+    );
 
     // 13. Populate the updated user data before returning
-    console.log('Populating user data...');
     const populatedUser = await User.findById(userId)
       .populate({
         path: 'likedIdeas',
@@ -437,7 +426,6 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
         select: 'firstName lastName email fullName',
       })
       .lean(); // Convert to plain JavaScript object to handle null values better
-    console.log('User data populated successfully');
 
     // Filter out any null values from arrays that might have been populated
     if (populatedUser) {
@@ -453,21 +441,16 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
         (conn) => conn && conn.idea !== null && conn.connectedBy !== null
       );
     }
-    console.log('Filtered out null values');
 
     // 14. Return success with updated user data
-    console.log('Sending response...');
     res.json({
       message: 'Successfully connected to idea',
       success: true,
       user: populatedUser,
       idea: idea,
     });
-    console.log('=== CONNECT ENDPOINT COMPLETED SUCCESSFULLY ===');
   } catch (error) {
-    console.error('=== ERROR IN CONNECT ENDPOINT ===');
     console.error('Error in POST /ideas/:id/connect:', error);
-    console.error('Stack trace:', error.stack);
     res.status(500).json({
       message: 'Server error',
       error: error.message,
