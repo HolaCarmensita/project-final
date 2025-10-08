@@ -391,25 +391,23 @@ router.post('/:id/connect', authenticateToken, async (req, res) => {
     await Promise.all([user.save(), ideaCreator.save(), idea.save()]);
     console.log('Connection saved successfully');
 
-    // 12. Send email notifications (don't block the response if email fails)
-    console.log('Attempting to send email notifications...');
-    try {
-      // Send notification to idea creator
-      await sendConnectionNotification(
+    // 12. Send email notifications asynchronously (don't block the response)
+    console.log('Triggering email notifications (async)...');
+    // Fire and forget - don't await emails to prevent blocking the response
+    Promise.all([
+      sendConnectionNotification(
         ideaCreator,
         user,
         idea,
         message.trim(),
         socialLink
+      ),
+      sendConnectionConfirmation(user, ideaCreator, idea),
+    ])
+      .then(() => console.log('Emails sent successfully'))
+      .catch((emailError) =>
+        console.error('Failed to send connection emails:', emailError)
       );
-
-      // Send confirmation to connecting user
-      await sendConnectionConfirmation(user, ideaCreator, idea);
-      console.log('Emails sent successfully');
-    } catch (emailError) {
-      console.error('Failed to send connection emails:', emailError);
-      // Don't fail the connection if email fails
-    }
 
     // 13. Populate the updated user data before returning
     console.log('Populating user data...');
