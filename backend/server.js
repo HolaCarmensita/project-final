@@ -16,7 +16,9 @@ const redactMongoUri = (uri = '') => {
     if (!uri) return '[empty]';
     // Hide credentials but show host/db for debugging
     const url = new URL(
-      uri.replace('mongodb+srv://', 'https://').replace('mongodb://', 'http://')
+      uri
+        .replace('mongodb+srv://', 'https://')
+        .replace('mongodb://', 'http://'),
     );
     const protocol = uri.startsWith('mongodb+srv://')
       ? 'mongodb+srv://'
@@ -51,7 +53,7 @@ database.on('connecting', () => console.log('Mongo: connecting...'));
 database.on('connected', () => console.log('Mongo: connected'));
 database.on('open', () => console.log('Mongo: connection open'));
 database.on('error', (err) =>
-  console.error('Mongo: connection error:', err?.message || err)
+  console.error('Mongo: connection error:', err?.message || err),
 );
 database.on('disconnected', () => console.warn('Mongo: disconnected'));
 database.on('reconnected', () => console.log('Mongo: reconnected'));
@@ -80,7 +82,7 @@ const allowedOrigins = [
   'http://localhost:5173', // Vite dev server
   'http://localhost:3000', // Common React dev server
   'http://localhost:4173', // Vite preview
-  'https://aesthetic-dolphin-63dc60.netlify.app', // Your Netlify URL
+  'https://pensieve-ideas.netlify.app/', // Your Netlify URL
   process.env.FRONTEND_URL, // Production frontend URL
 ].filter(Boolean); // Remove any undefined values
 
@@ -99,7 +101,7 @@ app.use(
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  })
+  }),
 );
 app.use(express.json());
 
